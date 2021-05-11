@@ -6,5 +6,5 @@
 
 [ Main Developer ]
 
-JunseoKR
-Zerix43
+* JunseoKR
+* Zerix
