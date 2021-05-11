@@ -8,7 +8,7 @@
 <br/>
 <br/>
 <br/>
-[ Main Developer ]  
+[ Main Developer ]<br/>
 
 * JunseoKR<br/>
 * Zerix
@@ -28,7 +28,7 @@
 <br/>
 <br/>
 <br/>
-[ 개발자 ]
+[ 개발자 ]<br/>
 
 * JunseoKR<br/>
 * Zerix
