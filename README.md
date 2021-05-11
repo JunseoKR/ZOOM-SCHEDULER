@@ -1,6 +1,7 @@
 # ZOOM SCHEDULER [ ZOSC ]
 
-# Korea HighSchool Online ZOOM Class Auto Entry
+Korea HighSchool Online ZOOM Class Auto Entry
+---------------------------------------------
 
 
 
