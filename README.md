@@ -16,9 +16,9 @@
 
 * JunseoKR<br/>
 * Zerix
-* Forestcoldbrew
+* forestcoldbrew
 * MeltHub
-* Yshtitanic
+* yshtitanic
 
 
 ---------------------------------------
@@ -40,6 +40,6 @@
 
 * JunseoKR<br/>
 * Zerix
-* Forestcoldbrew
+* forestcoldbrew
 * MeltHub
-* Yshtitanic
+* yshtitanic
