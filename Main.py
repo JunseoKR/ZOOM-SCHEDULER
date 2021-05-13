@@ -1,3 +1,6 @@
+""" Qt UI 임포트 """
+from PyQt4.QtGui import
+
 """ FTP 라이브러리 """
 import ftplib
 
