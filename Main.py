@@ -1,3 +1,6 @@
+""" [ Import ] --------------------------------------------------------------------------------------------------- """
+
+
 """ Qt UI 임포트 """
 from PyQt4.QtGui import
 
@@ -13,9 +16,9 @@ import urllib
 
 
 
+""" [ 메인 ] --------------------------------------------------------------------------------------------------- """
+
+
 url = 'http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/INF/CHECK_INF.txt'
 
 urllib.urlretrieve(url, "CHECK_INF.txt")
-
-
-data=CHECK.read()
