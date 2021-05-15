@@ -20,33 +20,51 @@ import urllib.request
 # Import [ configparser_ini File ]
 import configparser
 
-
+# Import [ Msgboxtk ]
+import tkinter as tk
+from tkinter import *
 
 
 """ [ 메인 ] --------------------------------------------------------------------------------------------------- """
 
-
 # USER Information Check
+ws = Tk()
+ws.title("학번/이름")
+ws.geometry('400x300')
+ws['bg'] = '#C0C0C0'
 
-def User():
-    ID = input("학번을 입력하세요 : ")
-    Name = input("\n이름을 입력하세요 : ")
-    print("학번 : ",ID)
-    print("이름: ",Name)
+def printValue():
+    pID = ID.get()
+    pName = Name.get()
+    Label(ws, text=f'{pID} {pName}, 환영합니다!', pady = 20, bg = '#C0C0C0').pack()
 
-    config_User = configparser.ConfigParser()
-    config_User['User'] = {}
-    config_User['User']['Grade'] = ID[0:1]
-    config_User['User']['Class'] = ID[1:3]
-    config_User['User']['Number'] = ID[3:5]
-    config_User['User']['Name'] = Name
+ID = Entry(ws)
+Name = Entry(ws)
 
-    with open('Setting.ini', 'w', encoding='utf-8') as configfile:
-        config_User.write(configfile)
+ID.pack(pady = 30)
+Name.pack(pady = 30)
 
-    print("\n[ 설정되었습니다 ]")
+Button(
+    ws,
+    text = "승인", 
+    padx = 10, 
+    pady = 5,
+    command = printValue
+    ).pack()
 
+ws.mainloop()
 
+config_User = configparser.ConfigParser()
+config_User['User'] = {}
+config_User['User']['Grade'] = ID[0:1]
+config_User['User']['Class'] = ID[1:3]
+config_User['User']['Number'] = ID[3:5]
+config_User['User']['Name'] = Name
+
+with open('Setting.ini', 'w', encoding='utf-8') as configfile:
+    config_User.write(configfile)
+
+messagebox.showinfo(title = "완료", message = "등록에 성공했습니다.")
 
 # FTP Server State Check [ URL Download ]
 
