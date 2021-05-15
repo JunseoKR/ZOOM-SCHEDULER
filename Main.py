@@ -5,7 +5,8 @@
 
 
 # Import [ Qt UI ]
-# from PyQt4.QtGui import
+# from PyQt5.QtGui import
+# import pyautogui as pg
 
 # Import [ Ftplib ]
 # import ftplib
@@ -30,6 +31,7 @@ def User():
     print("학번 : ",ID)
     print("이름: ",Name)
     print("\n[ 확인되었습니다 ]")
+    
 
 
 
