@@ -22,12 +22,6 @@ import urllib.request
 # Import [ configparser_ini File ]
 import configparser
 
-# Import tkinter messagebox
-import tkinter as Tk
-from tkinter import messagebox
-
-import ctypes
-
 
 
 """ [ Main ] --------------------------------------------------------------------------------------------------- """
