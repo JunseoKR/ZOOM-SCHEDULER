@@ -1,7 +1,9 @@
 """ [ Import ] --------------------------------------------------------------------------------------------------- """
 
 # Local에서 실행 시 pip으로 모듈을 설치해야 함.
-# 현재 필요한 모듈 이외는 모두 주석 처리하였음.
+# 현재 필요한 모듈 이외는 모두 주석 처리하였습니다.
+# ( 주석 처리된 모듈은 모두 사용 예정입니다. )
+
 
 
 # Import [ Qt UI ]
@@ -20,31 +22,63 @@ import urllib.request
 # Import [ configparser_ini File ]
 import configparser
 
+# Import tkinter messagebox
+import tkinter as Tk
+from tkinter import messagebox
+
+import ctypes
 
 
 
-""" [ 메인 ] --------------------------------------------------------------------------------------------------- """
+""" [ Main ] --------------------------------------------------------------------------------------------------- """
+
+# Function (def) Section
 
 
 # USER Information Check
 
 def User():
-    ID = input("학번을 입력하세요 : ")
+    
+
+    while True:
+        ID = input("학번을 입력하세요 : ")
+        
+
+        if int(ID[0:1]) >= 4:
+            print("학번을 제대로 입력해 주세요.\n")
+            continue
+        
+        elif int(ID[1:3]) >= 14:
+            print("학번을 제대로 입력해 주세요.\n")
+            continue
+
+        elif int(ID[3:5]) >= 35:
+            print("학번을 제대로 입력해 주세요.\n")
+            continue
+
+        else:
+            config_User = configparser.ConfigParser()
+            config_User['User'] = {}
+            config_User['User']['Grade'] = ID[0:1]
+            config_User['User']['Class'] = ID[1:3]
+            config_User['User']['Number'] = ID[3:5]
+            break
+
+
+
+
     Name = input("\n이름을 입력하세요 : ")
     print("학번 : ",ID)
     print("이름: ",Name)
 
-    config_User = configparser.ConfigParser()
-    config_User['User'] = {}
-    config_User['User']['Grade'] = ID[0:1]
-    config_User['User']['Class'] = ID[1:3]
-    config_User['User']['Number'] = ID[3:5]
+    
     config_User['User']['Name'] = Name
 
     with open('Setting.ini', 'w', encoding='utf-8') as configfile:
         config_User.write(configfile)
 
     print("\n[ 설정되었습니다 ]")
+
 
 
 
@@ -69,6 +103,7 @@ def State():
 
 
 
+
 # Subject Schedule ZOSC.ini Create
 
 def ZOSC_ini():
@@ -90,6 +125,10 @@ def ZOSC_ini():
     
 
 
+
+
+
+# Main Runtime
 
 
 User()
