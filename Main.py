@@ -127,8 +127,8 @@ def ZOSC_ini():
 
 User()
 
-State()
-
 ZOSC_ini()
+
+State()
 
 print(exit)
