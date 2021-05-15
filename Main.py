@@ -16,6 +16,9 @@
 # Import [ URL Request ]
 import urllib.request
 
+# Import [ configparser_ini File ]
+import configparser
+
 
 
 
@@ -29,7 +32,18 @@ def User():
     Name = input("\n이름을 입력하세요 : ")
     print("학번 : ",ID)
     print("이름: ",Name)
-    print("\n[ 확인되었습니다 ]")
+
+    config_User = configparser.ConfigParser()
+    config_User['User'] = {}
+    config_User['User']['Grade'] = ID[0:1]
+    config_User['User']['Class'] = ID[1:3]
+    config_User['User']['Number'] = ID[3:5]
+    config_User['User']['Name'] = Name
+
+    with open('Setting.ini', 'w', encoding='utf-8') as configfile:
+        config_User.write(configfile)
+
+    print("\n[ 설정되었습니다 ]")
 
 
 
@@ -54,7 +68,25 @@ def State():
 
 
 
+# Subject Schedule ZOSC.ini Create
 
+def ZOSC_ini():
+
+    Sub1, Sub2, Sub3, Sub4, Sub5, Sub6, Sub7 = input("테스트용 시간표 입력 : ").split()
+
+    config_Subject = configparser.ConfigParser()
+    config_Subject['Subject'] = {}
+    config_Subject['Subject']['Subject1'] = Sub1
+    config_Subject['Subject']['Subject2'] = Sub2
+    config_Subject['Subject']['Subject3'] = Sub3
+    config_Subject['Subject']['Subject4'] = Sub4
+    config_Subject['Subject']['Subject5'] = Sub5
+    config_Subject['Subject']['Subject6'] = Sub6
+    config_Subject['Subject']['Subject7'] = Sub7
+
+    with open('ZOSC.ini', 'w', encoding='utf-8') as configfile:
+        config_Subject.write(configfile)
+    
 
 
 
@@ -62,3 +94,7 @@ def State():
 User()
 
 State()
+
+ZOSC_ini()
+
+print(exit)
