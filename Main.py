@@ -29,7 +29,7 @@ def User():
     Name = input("\n이름을 입력하세요 : ")
     print("학번 : ",ID)
     print("이름: ",Name)
-    print("\n[ 확인되었습니다 ]")
+    print("\n확인되었습니다")
 
 
 
