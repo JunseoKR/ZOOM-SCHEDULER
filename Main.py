@@ -35,14 +35,25 @@ from tkinter import messagebox
 
 # Function (def) Section
 
+def User():
+    ID = input("학번을 입력하세요 : ")
+    Name = input("\n이름을 입력하세요 : ")
+    print("학번 : ",ID)
+    print("이름: ",Name)
+
+    top = Tk()
+    top.geometry("200x200")
+
+    messagebox.showinfo('확인 완료', '학번과 이름이 확인되었습니다.')
+
+    top.mainloop()
+    
 def Folder(directory):
     try:
         if not os.path.exists(directory):
             os.makedirs(directory)
     except OSError:
         print ('Error: Creating directory. ' +  directory)
-
-
 
 
 # USER Information Check
