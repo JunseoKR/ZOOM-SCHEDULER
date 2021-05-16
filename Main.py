@@ -67,8 +67,6 @@ def User_New():
     # User Information Setting
     UserSetting_ini = 'C:\ZOOM SCHEDULER\Setting.ini'
 
-
-    # ini File Read
     if os.path.isfile(UserSetting_ini):
         config_User = configparser.ConfigParser()
 
@@ -161,12 +159,9 @@ def State():
 
 def ZOSC_ini():
 
-    Sub1, Sub2, Sub3, Sub4, Sub5, Sub6, Sub7 = input("\n테스트용 시간표 입력 : ").split()
-    Time1, Time2, Time3, Time4, Time5, Time6, Time7 = input("\n테스트용 시간 입력 ( 입력형식 = HHMM ) :").split()
+    Sub1, Sub2, Sub3, Sub4, Sub5, Sub6, Sub7 = input("테스트용 시간표 입력 : ").split()
 
     config_Subject = configparser.ConfigParser()
-
-    # Save Subject Schedule
     config_Subject['Subject'] = {}
     config_Subject['Subject']['Subject1'] = Sub1
     config_Subject['Subject']['Subject2'] = Sub2
@@ -175,16 +170,6 @@ def ZOSC_ini():
     config_Subject['Subject']['Subject5'] = Sub5
     config_Subject['Subject']['Subject6'] = Sub6
     config_Subject['Subject']['Subject7'] = Sub7
-
-    # Save Time Schedule
-    config_Subject['Time'] = {}
-    config_Subject['Time']['Time1'] = Time1
-    config_Subject['Time']['Time2'] = Time2
-    config_Subject['Time']['Time3'] = Time3
-    config_Subject['Time']['Time4'] = Time4
-    config_Subject['Time']['Time5'] = Time5
-    config_Subject['Time']['Time6'] = Time6
-    config_Subject['Time']['Time7'] = Time7
     
     ZOSCini_path = 'C:\ZOOM SCHEDULER\ZOSC.ini'
     with open(ZOSCini_path, 'w', encoding='utf-8') as configfile:
