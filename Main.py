@@ -14,7 +14,7 @@
 # import ftplib
 
 # Import [ OS ]
-# import os
+import os
 
 # Import [ URL Request ]
 import urllib.request
@@ -22,56 +22,101 @@ import urllib.request
 # Import [ configparser_ini File ]
 import configparser
 
+# Import [ File path ]
+import os.path
+
+
+
+
 
 
 """ [ Main ] --------------------------------------------------------------------------------------------------- """
 
 # Function (def) Section
 
+def Folder(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    except OSError:
+        print ('Error: Creating directory. ' +  directory)
+
+
+
 
 # USER Information Check
 
-def User():
+def User_New():
     
+    # 파일 존재하지 않으면 생성 [ Folder 함수 호출 ]
+    Folder('\ZOOM SCHEDULER')
 
-    while True:
-        ID = input("학번을 입력하세요 : ")
-        
 
-        if int(ID[0:1]) >= 4:
-            print("학번을 제대로 입력해 주세요.\n")
-            continue
-        
-        elif int(ID[1:3]) >= 14:
-            print("학번을 제대로 입력해 주세요.\n")
-            continue
+    # User Information Setting
+    UserSetting_ini = 'C:\ZOOM SCHEDULER\Setting.ini'
 
-        elif int(ID[3:5]) >= 35:
-            print("학번을 제대로 입력해 주세요.\n")
-            continue
+    if os.path.isfile(UserSetting_ini):
+        config_User = configparser.ConfigParser()
 
-        else:
-            config_User = configparser.ConfigParser()
-            config_User['User'] = {}
-            config_User['User']['Grade'] = ID[0:1]
-            config_User['User']['Class'] = ID[1:3]
-            config_User['User']['Number'] = ID[3:5]
-            break
+        config_User.read(UserSetting_ini, encoding='utf-8')
+        config_User.sections()
+
+        Grade = config_User['User']['Grade']
+        Class = config_User['User']['Class']
+        Number = config_User['User']['Number']
+        Name = config_User['User']['Name']
+
+        ID = Grade+Class+Number
+        print(ID)
+        print(Name)
+        pass
 
 
 
+    else:
+        while True:
+            ID = input("학번을 입력하세요 : ")
 
-    Name = input("\n이름을 입력하세요 : ")
-    print("학번 : ",ID)
-    print("이름: ",Name)
+            if int(ID[0:1]) >= 4:
+                print("학번을 제대로 입력해 주세요.\n")
+                continue
 
-    
-    config_User['User']['Name'] = Name
+            elif int(ID[1:3]) >= 14:
+                print("학번을 제대로 입력해 주세요.\n")
+                continue
 
-    with open('Setting.ini', 'w', encoding='utf-8') as configfile:
+            elif int(ID[3:5]) >= 35:
+                print("학번을 제대로 입력해 주세요.\n")
+                continue
+
+            else:
+                config_User = configparser.ConfigParser()
+                config_User['User'] = {}
+                config_User['User']['Grade'] = ID[0:1]
+                config_User['User']['Class'] = ID[1:3]
+                config_User['User']['Number'] = ID[3:5]
+                break
+            
+
+        while True:
+            Name = input("\n이름을 입력하세요 : ")
+
+            if len(Name) > 4:
+                print("이름을 제대로 입력해 주세요.\n")
+                continue
+
+            else:
+                config_User['User']['Name'] = Name
+
+                print("\n[ 설정되었습니다 ]\n")
+                break
+
+
+
+
+    Userini_path = 'C:\ZOOM SCHEDULER\Setting.ini'
+    with open(Userini_path, 'w', encoding='utf-8') as configfile:
         config_User.write(configfile)
-
-    print("\n[ 설정되었습니다 ]")
 
 
 
@@ -113,8 +158,9 @@ def ZOSC_ini():
     config_Subject['Subject']['Subject5'] = Sub5
     config_Subject['Subject']['Subject6'] = Sub6
     config_Subject['Subject']['Subject7'] = Sub7
-
-    with open('ZOSC.ini', 'w', encoding='utf-8') as configfile:
+    
+    ZOSCini_path = 'C:\ZOOM SCHEDULER\ZOSC.ini'
+    with open(ZOSCini_path, 'w', encoding='utf-8') as configfile:
         config_Subject.write(configfile)
     
 
@@ -125,7 +171,7 @@ def ZOSC_ini():
 # Main Runtime
 
 
-User()
+User_New()
 
 ZOSC_ini()
 
