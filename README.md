@@ -12,7 +12,7 @@
 <br/>
 <br/>
 <br/>
-[ Main Developer ]<br/>
+[ Developer ]<br/>
 
 * JunseoKR<br/>
 * Zerix
