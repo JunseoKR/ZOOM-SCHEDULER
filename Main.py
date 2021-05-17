@@ -28,6 +28,8 @@ import os.path
 # Imoport requests
 import requests
 
+import re
+
 
 
 
@@ -37,6 +39,40 @@ import requests
 
 # Function (def) Section
 # 기능 삽입 구역
+
+
+# ZOSC 버전
+curVer = 2.2
+
+
+
+# Version Check
+# 프로그램 버전 체크
+
+def Version():
+
+    FTP_version = 'http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Version/Version.txt'
+
+    FTPver1 = urllib.request.urlopen(FTP_version)
+
+    UpdateVer = FTPver1.read()
+
+    # UpdateVer 실수 추출 필요 !!!
+    # 오류 : [ b'2.2' ]로 출력됨. [ 2.2 ]로 출력되어야 함
+    print(curVer)
+    print(UpdateVer)
+
+    if UpdateVer == curVer:
+        print("\n최신 버전입니다.")
+
+    else:
+        print("\n업데이트가 있습니다.")
+
+
+
+
+
+
 
 
 # Folder Create
@@ -232,7 +268,7 @@ def Server_Get():
 
 # Main Runtime
 
-
+Version()
 
 User_New()
 
