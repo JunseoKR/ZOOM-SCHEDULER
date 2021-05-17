@@ -35,6 +35,10 @@ import requests
 """ [ Main ] --------------------------------------------------------------------------------------------------- """
 
 # Function (def) Section
+# 기능 삽입 구역
+
+
+# Folder Create
 
 def Folder(directory):
     try:
@@ -148,6 +152,7 @@ def State():
 
 
 # Subject Schedule ZOSC.ini Create
+# Server Request
 
 def ZOSC_ini():
 
@@ -184,6 +189,7 @@ def ZOSC_ini():
 
 
 
+# [ 해결해야할 문제 ]
 # URL = 'https://zosc-server.run.goorm.io/ a_b_c_d
 # a, b, c, d는 모두 변수. 링크 속에 이 변수들을 넣고 선언할 수 있는가?
 
@@ -214,6 +220,6 @@ ZOSC_ini()
 
 State()
 
-print("Test Complete")
+print("\nTest Complete\n")
 
 print(exit)
