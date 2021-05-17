@@ -32,7 +32,8 @@ import requests
 
 
 
-""" [ Main ] --------------------------------------------------------------------------------------------------- """
+""" [ Function ] --------------------------------------------------------------------------------------------------- """
+
 
 # Function (def) Section
 # 기능 삽입 구역
@@ -194,8 +195,25 @@ def ZOSC_ini():
 # a, b, c, d는 모두 변수. 링크 속에 이 변수들을 넣고 선언할 수 있는가?
 
 def Server_Get():
+    
+    # nodeJS 서버 상태 확인
+    # goorm IDE는 실행 중이므로 code 200 발생
 
-    Subject1 = requests.get('https://zosc-server.run.goorm.io/2_1_1_1')
+    nodeJS_Check = requests.get('https://zosc-server.run.goorm.io/Time')
+    if nodeJS_Check.status_code == 200:
+        print("\nnodeJS Server Online\n")
+
+    else:
+        print("\nnodeJS Server Offline\n")
+
+
+
+
+    # 임시 서버 요청 테스트
+
+    Subject1 = requests.get('https://zosc-server.run.goorm.io/2_9_1_1')
+    print(Subject1)
+
     Subject2 = requests.get('https://zosc-server.run.goorm.io/2_1_1_2')
     Subject3 = requests.get('https://zosc-server.run.goorm.io/2_1_1_3')
     Subject4 = requests.get('https://zosc-server.run.goorm.io/2_1_1_4')
@@ -210,8 +228,10 @@ def Server_Get():
 
 
 
+""" [ Main ] --------------------------------------------------------------------------------------------------- """
 
 # Main Runtime
+
 
 
 User_New()
@@ -219,6 +239,8 @@ User_New()
 ZOSC_ini()
 
 State()
+
+Server_Get()
 
 print("\nTest Complete\n")
 
