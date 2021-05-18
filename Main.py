@@ -28,8 +28,6 @@ import os.path
 # Imoport requests
 import requests
 
-import re
-
 
 
 
@@ -57,7 +55,7 @@ def Version():
 
     UpdateVer = FTPver1.read()
 
-    # UpdateVer 실수 추출 필요 !!!
+    # UpdateVer 실수 추출 필요함
     # 오류 : [ b'2.2' ]로 출력됨. [ 2.2 ]로 출력되어야 함
     print(curVer)
     print(UpdateVer)
