@@ -258,7 +258,18 @@ def ZOSC_ini():
 
 
 
-    # RunTime
+
+# Notification
+
+def Notification():
+    toaster = ToastNotifier()
+    toaster.show_toast("ZOOM SCHEDULER", "수업이 5초 후에 켜집니다.", icon_path=None, duration=5, threaded=False)
+
+
+
+
+
+# RunTime
 
 def RunTime():
 
@@ -267,6 +278,7 @@ def RunTime():
         # UI Show Section
           # [         ]
 
+        Notification()
         time.sleep(5)
         os.system("start "+Link1)
         
