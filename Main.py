@@ -46,6 +46,17 @@ curVer = "2.2"
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 # Version Check
 # 프로그램 버전 체크
 
@@ -99,6 +110,12 @@ def User_New():
     # User Information Setting
     UserSetting_ini = 'C:\ZOOM SCHEDULER\Setting.ini'
 
+    global Grade
+    global Class
+    global Number
+    global Name
+    global ID
+
 
     # ini File Read
     if os.path.isfile(UserSetting_ini):
@@ -108,13 +125,13 @@ def User_New():
         config_User.sections()
 
         Grade = config_User['User']['Grade']
-        Class = config_User['User']['Class']
+        ClassR = config_User['User']['Class']
         Number = config_User['User']['Number']
         Name = config_User['User']['Name']
 
+        Class = ClassR.strip("0")
+
         ID = Grade+Class+Number
-        print(ID)
-        print(Name)
         pass
 
 
@@ -192,6 +209,7 @@ def State():
 # Subject Schedule ZOSC.ini Create
 # Server Request
 
+# ***  사용 중지 ***
 def ZOSC_ini():
 
     Sub1, Sub2, Sub3, Sub4, Sub5, Sub6, Sub7 = input("테스트용 시간표 입력 : ").split()
@@ -247,15 +265,16 @@ def Server_Get():
 
     # 임시 서버 요청 테스트
 
-    Subject1 = requests.get('https://zosc-server.run.goorm.io/2_9_1_1')
-    print(Subject1)
+    global ZOSC_1
 
-    Subject2 = requests.get('https://zosc-server.run.goorm.io/2_1_1_2')
-    Subject3 = requests.get('https://zosc-server.run.goorm.io/2_1_1_3')
-    Subject4 = requests.get('https://zosc-server.run.goorm.io/2_1_1_4')
-    Subject5 = requests.get('https://zosc-server.run.goorm.io/2_1_1_5')
-    Subject6 = requests.get('https://zosc-server.run.goorm.io/2_1_1_6')
-    Subject7 = requests.get('https://zosc-server.run.goorm.io/2_1_1_7')
+
+
+    ZOSC_1 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(Class)+"_1_1"
+
+    Subject1 = requests.get(ZOSC_1)
+    print(Subject1.text)
+
+
 
     Time = requests.get('https://zosc-server.run.goorm.io/Time')
 
@@ -274,7 +293,7 @@ Version()
 
 User_New()
 
-ZOSC_ini()
+print(Grade)
 
 State()
 
