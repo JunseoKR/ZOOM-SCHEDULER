@@ -42,17 +42,8 @@ import requests
 
 
 # ZOSC 버전
+# 업데이트 시 변경 필요
 curVer = "2.2"
-
-
-
-
-
-
-
-
-
-
 
 
 
