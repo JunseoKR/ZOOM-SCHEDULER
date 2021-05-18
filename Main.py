@@ -32,6 +32,8 @@ import requests
 
 
 
+
+
 """ [ Function ] --------------------------------------------------------------------------------------------------- """
 
 
@@ -40,7 +42,7 @@ import requests
 
 
 # ZOSC 버전
-curVer = 2.2
+curVer = "2.2"
 
 
 
@@ -49,23 +51,27 @@ curVer = 2.2
 
 def Version():
 
-    FTP_version = 'http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Version/Version.txt'
+    # 경로 지정
+    FTP_version = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Version/Version.txt"
+    FTP_verPath = "C:\\ZOOM SCHEDULER\\version.txt"
 
-    FTPver1 = urllib.request.urlopen(FTP_version)
+    # 서버 요청
+    urllib.request.urlretrieve(FTP_version, FTP_verPath)
+    
+    # 파일 읽기
+    FTPread1 = open(FTP_verPath, 'r')
+    UpdateVer = FTPread1.read()
+    FTPread1.close()
 
-    UpdateVer = FTPver1.read()
+    # 파일 제거
+    os.remove(FTP_verPath)
 
-    # UpdateVer 실수 추출 필요함
-    # 오류 : [ b'2.2' ]로 출력됨. [ 2.2 ]로 출력되어야 함
-    # 정규식 사용?
-    print(curVer)
-    print(UpdateVer)
-
-    if UpdateVer == curVer:
-        print("\n최신 버전입니다.")
+    # 버전 판별
+    if curVer == UpdateVer:
+        pass
 
     else:
-        print("\n업데이트가 있습니다.")
+        print("업데이트가 있습니다.\n")
 
 
 
@@ -90,10 +96,6 @@ def Folder(directory):
 
 def User_New():
     
-    # 파일 존재하지 않으면 생성 [ Folder 함수 호출 ]
-    Folder('\ZOOM SCHEDULER')
-
-
     # User Information Setting
     UserSetting_ini = 'C:\ZOOM SCHEDULER\Setting.ini'
 
@@ -143,7 +145,7 @@ def User_New():
             
 
         while True:
-            Name = input("\n이름을 입력하세요 : ")
+            Name = input("이름을 입력하세요 : ")
 
             if len(Name) > 4:
                 print("이름을 제대로 입력해 주세요.\n")
@@ -152,7 +154,7 @@ def User_New():
             else:
                 config_User['User']['Name'] = Name
 
-                print("\n[ 설정되었습니다 ]\n")
+                print("[ 설정되었습니다 ]\n")
                 break
 
 
@@ -178,10 +180,10 @@ def State():
     State = data.decode("utf-8")
 
     if State == "NORMAL":
-        print("\nFTP ONLINE")
+        print("\nFTP ONLINE\n")
 
     else:
-        print("\nFTP OFFLINE")
+        print("\nFTP OFFLINE\n")
         print(exit)
 
 
@@ -192,7 +194,7 @@ def State():
 
 def ZOSC_ini():
 
-    Sub1, Sub2, Sub3, Sub4, Sub5, Sub6, Sub7 = input("\n테스트용 시간표 입력 : ").split()
+    Sub1, Sub2, Sub3, Sub4, Sub5, Sub6, Sub7 = input("테스트용 시간표 입력 : ").split()
     Time1, Time2, Time3, Time4, Time5, Time6, Time7 = input("\n테스트용 시간 입력 ( 입력형식 = HHMM ) :").split()
 
     config_Subject = configparser.ConfigParser()
@@ -236,10 +238,10 @@ def Server_Get():
 
     nodeJS_Check = requests.get('https://zosc-server.run.goorm.io/Time')
     if nodeJS_Check.status_code == 200:
-        print("\nnodeJS Server Online\n")
+        print("nodeJS Server Online\n")
 
     else:
-        print("\nnodeJS Server Offline\n")
+        print("nodeJS Server Offline\n")
 
 
 
@@ -266,6 +268,8 @@ def Server_Get():
 """ [ Main ] --------------------------------------------------------------------------------------------------- """
 
 # Main Runtime
+
+Folder('\ZOOM SCHEDULER')
 
 Version()
 
