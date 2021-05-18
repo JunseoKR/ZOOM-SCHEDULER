@@ -152,8 +152,11 @@ def User_New():
                 config_User['User']['Class'] = ID[1:3]
                 config_User['User']['Number'] = ID[3:5]
 
-                # 반 09 → 9
+                Grade = ID[0:1]
                 Class = ID[1:3]
+                Number = ID[3:5]
+                
+                # 반 09 → 9
                 ClassR = Class.strip("0")
                 break
 
@@ -347,7 +350,5 @@ User_New()
 State()
 
 Server_Get()
-
-print("\nTest Complete\n")
 
 print(exit) 
