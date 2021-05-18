@@ -226,11 +226,6 @@ def ZOSC_ini():
 
 
 
-
-# [ 해결해야할 문제 ]
-# URL = 'https://zosc-server.run.goorm.io/ a_b_c_d
-# a, b, c, d는 모두 변수. 링크 속에 이 변수들을 넣고 선언할 수 있는가?
-
 def Server_Get():
     
     # nodeJS 서버 상태 확인
@@ -242,6 +237,10 @@ def Server_Get():
 
     else:
         print("nodeJS Server Offline\n")
+
+       
+
+
 
 
 
