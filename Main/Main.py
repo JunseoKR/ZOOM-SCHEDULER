@@ -68,7 +68,7 @@ def Version():
 
     # 서버 요청
     urllib.request.urlretrieve(FTP_version, FTP_verPath)
-    
+
     # 파일 읽기
     FTPread1 = open(FTP_verPath, 'r')
     UpdateVer = FTPread1.read()
@@ -106,12 +106,13 @@ def Folder(directory):
 # USER Information Check
 
 def User_New():
-    
+
     # User Information Setting
     UserSetting_ini = 'C:\ZOOM SCHEDULER\Setting.ini'
 
     global Grade
     global Class
+    global ClassR
     global Number
     global Name
     global ID
@@ -125,11 +126,12 @@ def User_New():
         config_User.sections()
 
         Grade = config_User['User']['Grade']
-        ClassR = config_User['User']['Class']
+        Class = config_User['User']['Class']
         Number = config_User['User']['Number']
         Name = config_User['User']['Name']
 
-        Class = ClassR.strip("0")
+        # 반 09 → 9
+        ClassR = Class.strip("0")
 
         ID = Grade+Class+Number
         pass
@@ -158,8 +160,12 @@ def User_New():
                 config_User['User']['Grade'] = ID[0:1]
                 config_User['User']['Class'] = ID[1:3]
                 config_User['User']['Number'] = ID[3:5]
+
+                # 반 09 → 9
+                Class = ID[1:3]
+                ClassR = Class.strip("0")
                 break
-            
+
 
         while True:
             Name = input("이름을 입력하세요 : ")
@@ -236,16 +242,16 @@ def ZOSC_ini():
     config_Subject['Time']['Time5'] = Time5
     config_Subject['Time']['Time6'] = Time6
     config_Subject['Time']['Time7'] = Time7
-    
+
     ZOSCini_path = 'C:\ZOOM SCHEDULER\ZOSC.ini'
     with open(ZOSCini_path, 'w', encoding='utf-8') as configfile:
         config_Subject.write(configfile)
-    
+
 
 
 
 def Server_Get():
-    
+
     # nodeJS 서버 상태 확인
     # goorm IDE는 실행 중이므로 code 200 발생
 
@@ -256,7 +262,7 @@ def Server_Get():
     else:
         print("nodeJS Server Offline\n")
 
-       
+
 
 
 
@@ -265,14 +271,60 @@ def Server_Get():
 
     # 임시 서버 요청 테스트
 
-    global ZOSC_1
 
 
 
-    ZOSC_1 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(Class)+"_1_1"
 
-    Subject1 = requests.get(ZOSC_1)
-    print(Subject1.text)
+    Subject_1 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_1"
+    Subject_2 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_2"
+    Subject_3 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_3"
+    Subject_4 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_4"
+    Subject_5 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_5"
+    Subject_6 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_6"
+    Subject_7 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_7"
+
+    ZOSCA_1 = requests.get(Subject_1)
+    ZOSCA_2 = requests.get(Subject_2)
+    ZOSCA_3 = requests.get(Subject_3)
+    ZOSCA_4 = requests.get(Subject_4)
+    ZOSCA_5 = requests.get(Subject_5)
+    ZOSCA_6 = requests.get(Subject_6)
+    ZOSCA_7 = requests.get(Subject_7)
+
+    ZOSC_1 = ''.join(filter(str.isalnum, ZOSCA_1.text))
+    ZOSC_2 = ''.join(filter(str.isalnum, ZOSCA_2.text))
+    ZOSC_3 = ''.join(filter(str.isalnum, ZOSCA_3.text))
+    ZOSC_4 = ''.join(filter(str.isalnum, ZOSCA_4.text))
+    ZOSC_5 = ''.join(filter(str.isalnum, ZOSCA_5.text))
+    ZOSC_6 = ''.join(filter(str.isalnum, ZOSCA_6.text))
+    ZOSC_7 = ''.join(filter(str.isalnum, ZOSCA_7.text))
+
+    Z1_Tr = ZOSC_1[13:15]
+    Z1_Sj = ZOSC_1[22:32]
+
+    Z2_Tr = ZOSC_2[13:15]
+    Z2_Sj = ZOSC_2[22:32]
+
+    Z3_Tr = ZOSC_3[13:15]
+    Z3_Sj = ZOSC_3[22:32]
+
+    Z4_Tr = ZOSC_4[13:15]
+    Z4_Sj = ZOSC_4[22:32]
+
+    Z5_Tr = ZOSC_5[13:15]
+    Z5_Sj = ZOSC_5[22:32]
+
+    Z6_Tr = ZOSC_6[13:15]
+    Z6_Sj = ZOSC_6[22:32]
+
+    Z7_Tr = ZOSC_7[13:15]
+    Z7_Sj = ZOSC_7[22:32]
+
+
+
+
+
+
 
 
 
@@ -293,12 +345,10 @@ Version()
 
 User_New()
 
-print(Grade)
-
 State()
 
 Server_Get()
 
 print("\nTest Complete\n")
 
-print(exit)
+print(exit) 
