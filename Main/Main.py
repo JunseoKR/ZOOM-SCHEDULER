@@ -28,6 +28,20 @@ import os.path
 # Imoport requests
 import requests
 
+# Import datetime
+import threading
+
+# Import time
+import time
+
+#Import datetime
+import datetime
+from datetime import datetime
+from datetime import timedelta
+
+#Import win10toast
+from win10toast import ToastNotifier
+
 
 
 
@@ -244,10 +258,54 @@ def ZOSC_ini():
 
 
 
+    # RunTime
+
+def RunTime():
+
+    # ZOOM Link 실행
+    def Start_Check():
+        # UI Show Section
+          # [         ]
+
+        time.sleep(5)
+        os.system("start "+Link1)
+        
+
+
+    # 지연 시간 계산
+
+    # 현재 시간 불러오기
+    now = time.localtime()
+    now_time = ("%02d:%02d" % (now.tm_hour, now.tm_min))
+
+    # 시간 값 형식 판별
+    KK = input("\n시간 입력 :")  # 임시 입력
+    Scheduler_time = (KK)
+    HM = '%H:%M'
+
+    # 남은 시간 계산 ( 단위 | 시:분:초)
+    time_dif = datetime.strptime(Scheduler_time, HM) - datetime.strptime(now_time, HM)
+
+    # 시간 판별 ( 0 미만일 시 내일로 넘어감 ( 오류 처리 ) )
+    if time_dif.days < 0:
+        time_dif = timedelta(days=0, seconds = time_dif.seconds, microseconds = time_dif.microseconds)
+
+    # 시:분:초 형식에서 시, 분 받아오기
+    hour, minute, null = str(time_dif).split(":")
+
+    # 남은 시간, 분 모두 초로 변환
+    result_min = int(hour)*3600 + int(minute)*60
+
+    # 타이머 시작
+    threading.Timer(result_min, Start_Check).start()
+
+
+
+
 def Server_Get():
 
     # nodeJS 서버 상태 확인
-    # goorm IDE는 실행 중이므로 code 200 발생
+    # goorm IDE는 실행 중이므로 code 200 발생 ( AWS 이전 필요! )
 
     nodeJS_Check = requests.get('https://zosc-server.run.goorm.io/Time')
     if nodeJS_Check.status_code == 200:
@@ -258,17 +316,35 @@ def Server_Get():
 
 
 
+        global Z1_Sj
+        global Z2_Sj
+        global Z3_Sj
+        global Z4_Sj
+        global Z5_Sj
+        global Z6_Sj
+        global Z7_Sj
+
+        global Z1_Tr
+        global Z2_Tr
+        global Z3_Tr
+        global Z4_Tr
+        global Z5_Tr
+        global Z6_Tr
+        global Z7_Tr
+
+        global Link1
+        global Link2
+        global Link3
+        global Link4
+        global Link5
+        global Link6
+        global Link7
 
 
 
 
 
-    # 임시 서버 요청 테스트
-
-
-
-
-
+    # Schedule Scraping
     Subject_1 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_1"
     Subject_2 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_2"
     Subject_3 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_3"
@@ -293,35 +369,78 @@ def Server_Get():
     ZOSC_6 = ''.join(filter(str.isalnum, ZOSCA_6.text))
     ZOSC_7 = ''.join(filter(str.isalnum, ZOSCA_7.text))
 
-    Z1_Tr = ZOSC_1[13:15]
-    Z1_Sj = ZOSC_1[22:32]
+    Z1_TrA = ZOSC_1[13:15]
+    Z1_SjA = ZOSC_1[22:32]
 
-    Z2_Tr = ZOSC_2[13:15]
-    Z2_Sj = ZOSC_2[22:32]
+    Z2_TrA = ZOSC_2[13:15]
+    Z2_SjA = ZOSC_2[22:32]
 
-    Z3_Tr = ZOSC_3[13:15]
-    Z3_Sj = ZOSC_3[22:32]
+    Z3_TrA = ZOSC_3[13:15]
+    Z3_SjA = ZOSC_3[22:32]
 
-    Z4_Tr = ZOSC_4[13:15]
-    Z4_Sj = ZOSC_4[22:32]
+    Z4_TrA = ZOSC_4[13:15]
+    Z4_SjA = ZOSC_4[22:32]
 
-    Z5_Tr = ZOSC_5[13:15]
-    Z5_Sj = ZOSC_5[22:32]
+    Z5_TrA = ZOSC_5[13:15]
+    Z5_SjA = ZOSC_5[22:32]
 
-    Z6_Tr = ZOSC_6[13:15]
-    Z6_Sj = ZOSC_6[22:32]
+    Z6_TrA = ZOSC_6[13:15]
+    Z6_SjA = ZOSC_6[22:32]
 
-    Z7_Tr = ZOSC_7[13:15]
-    Z7_Sj = ZOSC_7[22:32]
-
-
+    Z7_TrA = ZOSC_7[13:15]
+    Z7_SjA = ZOSC_7[22:32]
 
 
 
+    # Read Class Information ini
+    configread = configparser.ConfigParser()
+    configread.read('C:\\ZOOM SCHEDULER\\SEXY.ini', encoding='utf-8')
+
+    configread.sections()
+
+    # 선생님 성함 읽어오기
+    Z1_Tr = configread['TrName'][Z1_TrA]
+    Z2_Tr = configread['TrName'][Z2_TrA]
+    Z3_Tr = configread['TrName'][Z3_TrA]
+    Z4_Tr = configread['TrName'][Z4_TrA]
+    Z5_Tr = configread['TrName'][Z5_TrA]
+    Z6_Tr = configread['TrName'][Z6_TrA]
+    Z7_Tr = configread['TrName'][Z7_TrA]
+
+    # 과목명 읽어오기
+    Z1_Sj = configread['Subject'][Z1_SjA]
+    Z2_Sj = configread['Subject'][Z2_SjA]
+    Z3_Sj = configread['Subject'][Z3_SjA]
+    Z4_Sj = configread['Subject'][Z4_SjA]
+    Z5_Sj = configread['Subject'][Z5_SjA]
+    Z6_Sj = configread['Subject'][Z6_SjA]
+    Z7_Sj = configread['Subject'][Z7_SjA]
+
+    # 링크 변수 처리
+    Z1_Link = Z1_Sj+"_"+Z1_Tr
+    Z2_Link = Z2_Sj+"_"+Z2_Tr
+    Z3_Link = Z3_Sj+"_"+Z3_Tr
+    Z4_Link = Z4_Sj+"_"+Z4_Tr
+    Z5_Link = Z5_Sj+"_"+Z5_Tr
+    Z6_Link = Z6_Sj+"_"+Z6_Tr
+    Z7_Link = Z7_Sj+"_"+Z7_Tr
+
+    # 링크 읽어오기
+    Link1 = configread['Link'][Z1_Link]
+    Link2 = configread['Link'][Z2_Link]
+    Link3 = configread['Link'][Z3_Link]
+    Link4 = configread['Link'][Z4_Link]
+    Link5 = configread['Link'][Z5_Link]
+    Link6 = configread['Link'][Z6_Link]
+    Link7 = configread['Link'][Z7_Link]
 
 
 
 
+
+
+
+    # Time Information Scraping
     Time = requests.get('https://zosc-server.run.goorm.io/Time')
 
     Time1 = Time.text[4:9]
@@ -331,6 +450,11 @@ def Server_Get():
     Time5 = Time.text[48:53]
     Time6 = Time.text[59:64]
     Time7 = Time.text[70:75]
+
+
+    RunTime()
+
+
 
 
 
