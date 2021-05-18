@@ -330,14 +330,6 @@ def Server_Get():
 
     Time = requests.get('https://zosc-server.run.goorm.io/Time')
 
-    Time1 = Time.text[4:9]
-    Time2 = Time.text[15:20]
-    Time3 = Time.text[26:31]
-    Time4 = Time.text[37:42]
-    Time5 = Time.text[48:53]
-    Time6 = Time.text[59:64]
-    Time7 = Time.text[70:75]
-
 
 
 
