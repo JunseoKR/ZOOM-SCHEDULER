@@ -112,7 +112,6 @@ def User_New():
 
     global Grade
     global Class
-    global ClassR
     global Number
     global Name
     global ID
@@ -126,12 +125,11 @@ def User_New():
         config_User.sections()
 
         Grade = config_User['User']['Grade']
-        Class = config_User['User']['Class']
+        ClassR = config_User['User']['Class']
         Number = config_User['User']['Number']
         Name = config_User['User']['Name']
 
-        # 반 09 → 9
-        ClassR = Class.strip("0")
+        Class = ClassR.strip("0")
 
         ID = Grade+Class+Number
         pass
@@ -160,10 +158,6 @@ def User_New():
                 config_User['User']['Grade'] = ID[0:1]
                 config_User['User']['Class'] = ID[1:3]
                 config_User['User']['Number'] = ID[3:5]
-
-                # 반 09 → 9
-                Class = ID[1:3]
-                ClassR = Class.strip("0")
                 break
             
 
@@ -271,72 +265,18 @@ def Server_Get():
 
     # 임시 서버 요청 테스트
 
-    
+    global ZOSC_1
 
 
 
-    Subject_1 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_1"
-    Subject_2 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_2"
-    Subject_3 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_3"
-    Subject_4 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_4"
-    Subject_5 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_5"
-    Subject_6 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_6"
-    Subject_7 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_7"
+    ZOSC_1 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(Class)+"_1_1"
 
-    ZOSCA_1 = requests.get(Subject_1)
-    ZOSCA_2 = requests.get(Subject_2)
-    ZOSCA_3 = requests.get(Subject_3)
-    ZOSCA_4 = requests.get(Subject_4)
-    ZOSCA_5 = requests.get(Subject_5)
-    ZOSCA_6 = requests.get(Subject_6)
-    ZOSCA_7 = requests.get(Subject_7)
-
-    ZOSC_1 = ''.join(filter(str.isalnum, ZOSCA_1.text))
-    ZOSC_2 = ''.join(filter(str.isalnum, ZOSCA_2.text))
-    ZOSC_3 = ''.join(filter(str.isalnum, ZOSCA_3.text))
-    ZOSC_4 = ''.join(filter(str.isalnum, ZOSCA_4.text))
-    ZOSC_5 = ''.join(filter(str.isalnum, ZOSCA_5.text))
-    ZOSC_6 = ''.join(filter(str.isalnum, ZOSCA_6.text))
-    ZOSC_7 = ''.join(filter(str.isalnum, ZOSCA_7.text))
-
-    Z1_Tr = ZOSC_1[13:15]
-    Z1_Sj = ZOSC_1[22:32]
-
-    Z2_Tr = ZOSC_2[13:15]
-    Z2_Sj = ZOSC_2[22:32]
-
-    Z3_Tr = ZOSC_3[13:15]
-    Z3_Sj = ZOSC_3[22:32]
-
-    Z4_Tr = ZOSC_4[13:15]
-    Z4_Sj = ZOSC_4[22:32]
-
-    Z5_Tr = ZOSC_5[13:15]
-    Z5_Sj = ZOSC_5[22:32]
-
-    Z6_Tr = ZOSC_6[13:15]
-    Z6_Sj = ZOSC_6[22:32]
-
-    Z7_Tr = ZOSC_7[13:15]
-    Z7_Sj = ZOSC_7[22:32]
-
-
-
-
-
-
+    Subject1 = requests.get(ZOSC_1)
+    print(Subject1.text)
 
 
 
     Time = requests.get('https://zosc-server.run.goorm.io/Time')
-
-    Time1 = Time.text[4:9]
-    Time2 = Time.text[15:20]
-    Time3 = Time.text[26:31]
-    Time4 = Time.text[37:42]
-    Time5 = Time.text[48:53]
-    Time6 = Time.text[59:64]
-    Time7 = Time.text[70:75]
 
 
 
@@ -352,6 +292,8 @@ Folder('\ZOOM SCHEDULER')
 Version()
 
 User_New()
+
+print(Grade)
 
 State()
 
