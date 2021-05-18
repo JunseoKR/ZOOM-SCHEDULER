@@ -57,6 +57,7 @@ def Version():
 
     # UpdateVer 실수 추출 필요함
     # 오류 : [ b'2.2' ]로 출력됨. [ 2.2 ]로 출력되어야 함
+    # 정규식 사용?
     print(curVer)
     print(UpdateVer)
 
