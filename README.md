@@ -1,6 +1,15 @@
 # ZOOM SCHEDULER [ ZOSC ]
 
+## Taejang High School
+
+---------------------------------------
+---------------------------------------
+
 ## Korea HighSchool ZOOM Class Auto Entry
+
+
+
+
 
 ### English
 **This program is co-project to reorganize it in Python, and you can find the program currently being released at the link below.**
@@ -17,8 +26,6 @@
 * JunseoKR<br/>
 * Zerix
 * forestcoldbrew
-* MeltHub
-* yshtitanic
 
 
 ---------------------------------------
@@ -41,5 +48,3 @@
 * JunseoKR<br/>
 * Zerix
 * forestcoldbrew
-* MeltHub
-* yshtitanic
