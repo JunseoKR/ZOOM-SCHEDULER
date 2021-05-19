@@ -271,42 +271,17 @@ def Notification():
 
 # RunTime
 
-def RunTime():
+def RunTime(result_min):
 
     # ZOOM Link 실행
-    def Start_Check():
+    def Start_Check(Link1):
+
         # UI Show Section
-          # [         ]
 
         Notification()
         time.sleep(5)
-        os.system("start "+Link1)
+        os.system("start "+Link_Run)
         
-
-
-    # 지연 시간 계산
-
-    # 현재 시간 불러오기
-    now = time.localtime()
-    now_time = ("%02d:%02d" % (now.tm_hour, now.tm_min))
-
-    # 시간 값 형식 판별
-    KK = input("\n시간 입력 :")  # 임시 입력
-    Scheduler_time = (KK)
-    HM = '%H:%M'
-
-    # 남은 시간 계산 ( 단위 | 시:분:초)
-    time_dif = datetime.strptime(Scheduler_time, HM) - datetime.strptime(now_time, HM)
-
-    # 시간 판별 ( 0 미만일 시 내일로 넘어감 ( 오류 처리 ) )
-    if time_dif.days < 0:
-        time_dif = timedelta(days=0, seconds = time_dif.seconds, microseconds = time_dif.microseconds)
-
-    # 시:분:초 형식에서 시, 분 받아오기
-    hour, minute, null = str(time_dif).split(":")
-
-    # 남은 시간, 분 모두 초로 변환
-    result_min = int(hour)*3600 + int(minute)*60
 
     # 타이머 시작
     threading.Timer(result_min, Start_Check).start()
@@ -380,6 +355,7 @@ def Server_Get():
     ZOSC_5 = ''.join(filter(str.isalnum, ZOSCA_5.text))
     ZOSC_6 = ''.join(filter(str.isalnum, ZOSCA_6.text))
     ZOSC_7 = ''.join(filter(str.isalnum, ZOSCA_7.text))
+
 
     Z1_TrA = ZOSC_1[13:15]
     Z1_SjA = ZOSC_1[22:32]
@@ -464,7 +440,37 @@ def Server_Get():
     Time7 = Time.text[70:75]
 
 
-    RunTime()
+
+
+
+
+    def Time_Set(Time1):
+
+        # 현재 시간 불러오기
+        now = time.localtime()
+        now_time = ("%02d:%02d" % (now.tm_hour, now.tm_min))
+
+        # 시간 값 형식 판별
+        Scheduler_time = (Time1)
+        HM = '%H:%M'
+
+        # 남은 시간 계산 ( 단위 | 시:분:초)
+        time_dif = datetime.strptime(Scheduler_time, HM) - datetime.strptime(now_time, HM)
+
+        # 시간 판별 ( 0 미만일 시 내일로 넘어감 ( 오류 처리 ) )
+        if time_dif.days < 0:
+            time_dif = timedelta(days=0, seconds = time_dif.seconds, microseconds = time_dif.microseconds)
+
+        # 시:분:초 형식에서 시, 분 받아오기
+        hour, minute, null = str(time_dif).split(":")
+
+        # 남은 시간, 분 모두 초로 변환
+        result_min = int(hour)*3600 + int(minute)*60
+        
+        print(result_min)
+        RunTime(result_min)
+
+    Time_Set(Time1)
 
 
 
