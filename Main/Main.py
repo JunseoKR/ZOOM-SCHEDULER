@@ -271,24 +271,12 @@ def Notification():
 
 # RunTime
 
-def RunTime(result_min):
-
-    # ZOOM Link 실행
-    def Start_Check(Link1):
-
-        # UI Show Section
-
-        Notification()
-        time.sleep(5)
-        os.system("start "+Link_Run)
-        
-
-    # 타이머 시작
-    threading.Timer(result_min, Start_Check).start()
 
 
+    
 
 
+    
 def Server_Get():
 
     # nodeJS 서버 상태 확인
@@ -442,35 +430,68 @@ def Server_Get():
 
 
 
+    def RunTime(result, Link):
+
+        # ZOOM Link 실행
+        def Start_Check():
+            # UI Show Section
+
+            Notification()
+            time.sleep(5)
+            os.system("start "+Link)
 
 
-    def Time_Set(Time1):
+        threading.Timer(result, Start_Check).start()
+
+
+
+
+
+
+    def Time_Set(Time, Link):
 
         # 현재 시간 불러오기
         now = time.localtime()
-        now_time = ("%02d:%02d" % (now.tm_hour, now.tm_min))
+        now_times = ("%02d:%02d" % (now.tm_hour, now.tm_min))
 
         # 시간 값 형식 판별
-        Scheduler_time = (Time1)
         HM = '%H:%M'
 
         # 남은 시간 계산 ( 단위 | 시:분:초)
-        time_dif = datetime.strptime(Scheduler_time, HM) - datetime.strptime(now_time, HM)
+        time_dif = datetime.strptime(Time, HM) - datetime.strptime(now_times, HM)
 
         # 시간 판별 ( 0 미만일 시 내일로 넘어감 ( 오류 처리 ) )
         if time_dif.days < 0:
-            time_dif = timedelta(days=0, seconds = time_dif.seconds, microseconds = time_dif.microseconds)
+            time_dif = timedelta(days=0,seconds=time_dif.seconds, microseconds=time_dif.microseconds)
 
         # 시:분:초 형식에서 시, 분 받아오기
         hour, minute, null = str(time_dif).split(":")
 
         # 남은 시간, 분 모두 초로 변환
         result_min = int(hour)*3600 + int(minute)*60
-        
-        print(result_min)
-        RunTime(result_min)
 
-    Time_Set(Time1)
+        RunTime(result_min, Link)
+
+
+
+
+    now = datetime.now()
+    NT = now.hour
+    if NT >= 18:
+        print("현재 실행이 불가합니다.")
+        return
+
+
+
+
+
+    Time_Set(Time1, Link1)
+    Time_Set(Time2, Link2)
+    Time_Set(Time3, Link3)
+    Time_Set(Time4, Link4)
+    Time_Set(Time5, Link5)
+    Time_Set(Time6, Link6)
+    Time_Set(Time7, Link7)
 
 
 
@@ -482,6 +503,7 @@ def Server_Get():
 """ [ Main ] --------------------------------------------------------------------------------------------------- """
 
 # Main Runtime
+
 
 Folder('\ZOOM SCHEDULER')
 
