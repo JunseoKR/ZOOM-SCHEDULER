@@ -267,8 +267,6 @@ def Notification():
 
 
 
-
-
 # RunTime
 
 
@@ -306,14 +304,6 @@ def Server_Get():
         global Z5_Tr
         global Z6_Tr
         global Z7_Tr
-
-        global Link1
-        global Link2
-        global Link3
-        global Link4
-        global Link5
-        global Link6
-        global Link7
 
 
 
