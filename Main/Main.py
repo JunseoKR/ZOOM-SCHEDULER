@@ -11,7 +11,7 @@
 # import pyautogui as pg
 
 # Import [ Ftplib ]
-# import ftplib
+import ftplib
 
 # Import [ OS ]
 import os
@@ -113,7 +113,8 @@ def Folder(directory):
 def User_New():
 
     # User Information Setting
-    UserSetting_ini = 'C:\ZOOM SCHEDULER\Setting.ini'
+    UserSetting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
+    User_Temp = r'C:\ZOOM SCHEDULER\Upload.ini'
 
     global Grade
     global Class
@@ -139,8 +140,11 @@ def User_New():
         ClassR = Class.strip("0")
 
         ID = Grade+Class+Number
-        pass
 
+        User_Get = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/DATA/ZOSC/User/"+str(Grade)+"학년%20"+str(Class)+"반/"+str(ID)+"%20"+Name+".txt"
+        User_ini = User_Get
+        os.system("start "+User_ini)
+        pass
 
 
     else:
@@ -190,10 +194,38 @@ def User_New():
 
 
 
-
-    Userini_path = 'C:\ZOOM SCHEDULER\Setting.ini'
-    with open(Userini_path, 'w', encoding='utf-8') as configfile:
+    with open(UserSetting_ini, 'w', encoding='utf-8') as configfile:
         config_User.write(configfile)
+
+
+
+    # FTP Server Upload
+    # [ 주의 ] : FTP ID, Password 작성 후 commit 금지!!! ( 서버 보안 )
+
+    
+
+    config_FTP = configparser.ConfigParser()
+    config_FTP['User'] = {}
+    config_FTP['Premium'] = {}
+    config_FTP['User']['Grade'] = ID[0:1]
+    config_FTP['User']['Class'] = ID[1:3]
+    config_FTP['User']['Number'] = ID[3:5]
+    config_FTP['User']['Name'] = Name
+    config_FTP['Premium']['Premium'] = "0"
+
+    with open(User_Temp, 'w', encoding='utf-8') as configfile:
+        config_FTP.write(configfile)
+
+    # 서버 IP 주소 넣기!
+    FTP = ftplib.FTP()
+    FTP.connect("DataJunseo.ipdisk.co.kr",  21)
+    FTP.login("???", "???")
+    FTP.cwd("./")
+    os.chdir(r"C:\ZOOM SCHEDULER")
+    Uploadini = open(User_Temp, 'rb')
+    FTP.storbinary('STOR '+User_Temp, Uploadini)
+    Uploadini.close()
+    FTP.close
 
 
 
@@ -267,14 +299,10 @@ def Notification():
 
 
 
+
+
 # RunTime
 
-
-
-    
-
-
-    
 def Server_Get():
 
     # nodeJS 서버 상태 확인
@@ -286,6 +314,8 @@ def Server_Get():
 
     else:
         print("nodeJS Server Offline\n")
+
+
 
 
 
