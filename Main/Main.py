@@ -559,5 +559,3 @@ User_New()
 State()
 
 Server_Get()
-
-print(exit) 
