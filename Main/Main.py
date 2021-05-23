@@ -18,6 +18,7 @@ import os
 
 # Import [ URL Request ]
 import urllib.request
+from urllib.parse import quote
 
 # Import [ configparser_ini File ]
 import configparser
@@ -106,6 +107,28 @@ def Folder(directory):
 
 
 
+
+# FTP Upload/Download
+# FTP ID/Password 꼭 제거 후 Commit !
+def FTP_Upload(Name, FTPPath, LocalPath):
+
+    FTP_host = "DataJunseo.ipdisk.co.kr"
+    FTP_user = "???"
+    FTP_passwod = "???"
+
+    #FTP Connect
+    FTP_Upload = ftplib.FTP(FTP_host, FTP_user, FTP_password)
+    FTP_Upload.cwd(FTPPath)    #FTP File Path
+
+    FTP_Open = open(LocalPath, 'rb')    #Upload File Open
+    FTP_Upload.storbinary('STOR '+Name, FTP_Open)    #FTP File Upload
+    FTP_Open.close()    #FTP Close
+    FTP_Upload.close()    #File Close
+
+
+
+
+
 # USER Information Check
 
 def User_New():
@@ -119,6 +142,7 @@ def User_New():
     global Number
     global Name
     global ID
+    global Premium
 
 
     # ini File Read
@@ -135,13 +159,36 @@ def User_New():
 
         # 반 09 → 9
         ClassR = Class.strip("0")
-
+        
         ID = Grade+Class+Number
 
-        User_Get = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/DATA/ZOSC/User/"+str(Grade)+"학년%20"+str(Class)+"반/"+str(ID)+"%20"+Name+".ini"
+        SCName = quote(Name)    # [ 중요 ] : 한글 → ASCII로 변환 필요!
+        User_Get = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/DATA/ZOSC/User/"+str(Grade)+"%ed%95%99%eb%85%84%20"+str(Class)+"%eb%b0%98/"+str(ID)+"%20"+SCName+".ini"
+
+         # 경로 지정
+        UserPrCheck = "C:\\ZOOM SCHEDULER\\PrCheck.ini"
+
+        # 서버 요청
+        urllib.request.urlretrieve(User_Get, UserPrCheck)
+
+        # 파일 읽기
+        config_PrCheck = configparser.ConfigParser()
+
+        config_PrCheck.read(UserPrCheck, encoding='utf-8')
+        config_PrCheck.sections()
+
+        Premium = config_PrCheck['Premium']['Premium']
+        
+        # 파일 제거
+        os.remove(UserPrCheck)
+
+        print(Premium)
         pass
 
 
+
+
+    # Setting.ini Set
     else:
         while True:
             ID = input("학번을 입력하세요 : ")
@@ -210,22 +257,18 @@ def User_New():
             config_FTP.write(configfile)
 
 
+        # FTP Upload
 
-        FTP_host = "DataJunseo.ipdisk.co.kr"
-        FTP_user = "ZOSC"
-        FTP_password = "ZOSC"
         FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Grade)+"학년 "+str(Class)+"반/"
         FTP_UpName = ID+" "+Name+".ini"
 
-        FTP_Upload = ftplib.FTP(FTP_host, FTP_user, FTP_password)
-        FTP_Upload.cwd(FTP_UpPath)
-        print(FTP_Upload.pwd())
-    
-        FTP_MF = open(User_Temp, 'rb')
-        FTP_Upload.storbinary('STOR '+FTP_UpName, FTP_MF)
-        FTP_MF.close()
-        FTP_Upload.close()
-        os.remove(User_Temp)
+        FTP_Upload(FTP_UpName, FTP_UpPath, User_Temp)    # FTP_Upload 함수 호출
+
+        os.remove(User_Temp)    # Upload Temp File Delete
+        Premium = "0"
+
+
+
 
 
 # FTP Server State Check [ URL Download ]
