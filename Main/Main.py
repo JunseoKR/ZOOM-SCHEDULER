@@ -138,7 +138,7 @@ def User_New():
 
         ID = Grade+Class+Number
 
-        User_Get = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/DATA/ZOSC/User/"+str(Grade)+"학년%20"+str(Class)+"반/"+str(ID)+"%20"+Name+".txt"
+        User_Get = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/DATA/ZOSC/User/"+str(Grade)+"학년%20"+str(Class)+"반/"+str(ID)+"%20"+Name+".ini"
         pass
 
 
@@ -212,8 +212,8 @@ def User_New():
 
 
         FTP_host = "DataJunseo.ipdisk.co.kr"
-        FTP_user = "codedata"
-        FTP_password = "codedata"
+        FTP_user = "ZOSC"
+        FTP_password = "ZOSC"
         FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Grade)+"학년 "+str(Class)+"반/"
         FTP_UpName = ID+" "+Name+".ini"
 
@@ -225,7 +225,6 @@ def User_New():
         FTP_Upload.storbinary('STOR '+FTP_UpName, FTP_MF)
         FTP_MF.close()
         FTP_Upload.close()
-        
         os.remove(User_Temp)
 
 
