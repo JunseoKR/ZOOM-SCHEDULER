@@ -46,8 +46,6 @@ from win10toast import ToastNotifier
 
 
 
-
-
 """ [ Function ] --------------------------------------------------------------------------------------------------- """
 
 
@@ -114,7 +112,6 @@ def User_New():
 
     # User Information Setting
     UserSetting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
-    User_Temp = r'C:\ZOOM SCHEDULER\Upload.ini'
 
     global Grade
     global Class
@@ -142,8 +139,6 @@ def User_New():
         ID = Grade+Class+Number
 
         User_Get = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/DATA/ZOSC/User/"+str(Grade)+"학년%20"+str(Class)+"반/"+str(ID)+"%20"+Name+".txt"
-        User_ini = User_Get
-        os.system("start "+User_ini)
         pass
 
 
@@ -192,42 +187,46 @@ def User_New():
                 print("[ 설정되었습니다 ]\n")
                 break
 
-
-
-    with open(UserSetting_ini, 'w', encoding='utf-8') as configfile:
-        config_User.write(configfile)
+        with open(UserSetting_ini, 'w', encoding='utf-8') as configfile:
+            config_User.write(configfile)
 
 
 
-    # FTP Server Upload
-    # [ 주의 ] : FTP ID, Password 작성 후 commit 금지!!! ( 서버 보안 )
+        # FTP Server Upload
+        # [ 주의 ] : FTP ID, Password 작성 후 commit 금지!!! ( 서버 보안 )
 
+        User_Temp = "C:\\ZOOM SCHEDULER\\"+str(ID)+" "+str(Name)+".ini"
+
+        config_FTP = configparser.ConfigParser()
+        config_FTP['User'] = {}
+        config_FTP['Premium'] = {}
+        config_FTP['User']['Grade'] = ID[0:1]
+        config_FTP['User']['Class'] = ID[1:3]
+        config_FTP['User']['Number'] = ID[3:5]
+        config_FTP['User']['Name'] = Name
+        config_FTP['Premium']['Premium'] = "0"
+
+        with open(User_Temp, 'w', encoding='utf-8') as configfile:
+            config_FTP.write(configfile)
+
+
+
+        FTP_host = "DataJunseo.ipdisk.co.kr"
+        FTP_user = "codedata"
+        FTP_password = "codedata"
+        FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Grade)+"학년 "+str(Class)+"반/"
+        FTP_UpName = ID+" "+Name+".ini"
+
+        FTP_Upload = ftplib.FTP(FTP_host, FTP_user, FTP_password)
+        FTP_Upload.cwd(FTP_UpPath)
+        print(FTP_Upload.pwd())
     
-
-    config_FTP = configparser.ConfigParser()
-    config_FTP['User'] = {}
-    config_FTP['Premium'] = {}
-    config_FTP['User']['Grade'] = ID[0:1]
-    config_FTP['User']['Class'] = ID[1:3]
-    config_FTP['User']['Number'] = ID[3:5]
-    config_FTP['User']['Name'] = Name
-    config_FTP['Premium']['Premium'] = "0"
-
-    with open(User_Temp, 'w', encoding='utf-8') as configfile:
-        config_FTP.write(configfile)
-
-    # 서버 IP 주소 넣기!
-    FTP = ftplib.FTP()
-    FTP.connect("DataJunseo.ipdisk.co.kr",  21)
-    FTP.login("???", "???")
-    FTP.cwd("./")
-    os.chdir(r"C:\ZOOM SCHEDULER")
-    Uploadini = open(User_Temp, 'rb')
-    FTP.storbinary('STOR '+User_Temp, Uploadini)
-    Uploadini.close()
-    FTP.close
-
-
+        FTP_MF = open(User_Temp, 'rb')
+        FTP_Upload.storbinary('STOR '+FTP_UpName, FTP_MF)
+        FTP_MF.close()
+        FTP_Upload.close()
+        
+        os.remove(User_Temp)
 
 
 # FTP Server State Check [ URL Download ]
