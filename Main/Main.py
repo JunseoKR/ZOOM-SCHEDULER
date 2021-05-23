@@ -513,6 +513,7 @@ def Server_Get():
         result_min = int(hour)*3600 + int(minute)*60
         if result_min >= 37800:
             print("ERROR : 시간 초과")
+            os.system("taskkill /F /im Main.exe")
             return
 
         RunTime(result_min, Link)
