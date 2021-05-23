@@ -113,8 +113,8 @@ def Folder(directory):
 def FTP_Upload(Name, FTPPath, LocalPath):
 
     FTP_host = "DataJunseo.ipdisk.co.kr"
-    FTP_user = "ZOSC"
-    FTP_password = "ZOSC"
+    FTP_user = "???"
+    FTP_password = "???"
 
     #FTP Connect
     FTP_Upload = ftplib.FTP(FTP_host, FTP_user, FTP_password)
