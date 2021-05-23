@@ -1,3 +1,5 @@
+# -*- conding: utf-8 -*-
+
 """ [ Import ] --------------------------------------------------------------------------------------------------- """
 
 # Local에서 실행 시 pip으로 모듈을 설치해야 함.
@@ -74,9 +76,9 @@ def Version():
     urllib.request.urlretrieve(FTP_version, FTP_verPath)
 
     # 파일 읽기
-    FTPread1 = open(FTP_verPath, 'r')
-    UpdateVer = FTPread1.read()
-    FTPread1.close()
+    FTPreadA = open(FTP_verPath, 'r')
+    UpdateVer = FTPreadA.read()
+    FTPreadA.close()
 
     # 파일 제거
     os.remove(FTP_verPath)
@@ -101,6 +103,7 @@ def Folder(directory):
     try:
         if not os.path.exists(directory):
             os.makedirs(directory)
+
     except OSError:
         print ('Error: Creating directory. ' +  directory)
 
@@ -108,19 +111,41 @@ def Folder(directory):
 
 
 
-# FTP Upload/Download
-# FTP ID/Password 꼭 제거 후 Commit !
-def FTP_Upload(Name, FTPPath, LocalPath):
+
+def FTP_Check(Name, FTPPath, Local):
 
     FTP_host = "DataJunseo.ipdisk.co.kr"
-    FTP_user = "???"
-    FTP_password = "???"
+    FTP_user = "ZOSC"
+    FTP_password = "ZOSC"
+
+    FTP_Check = ftplib.FTP(FTP_host, FTP_user, FTP_password)
+    FTP_Check.cwd(FTPPath)    #FTP File Path
+    FTP_List = FTP_Check.nlst()
+
+    if Name in FTP_List:
+        return
+
+    else:
+        FTP_Upload(Name, FTPPath, Local)    # FTP_Upload 함수 호출
+
+
+
+
+
+# FTP Upload/Download
+# FTP ID/Password 꼭 제거 후 Commit !
+
+def FTP_Upload(Name, FTPPath, Local):
+
+    FTP_host = "DataJunseo.ipdisk.co.kr"
+    FTP_user = "ZOSC"
+    FTP_password = "ZOSC"
 
     #FTP Connect
     FTP_Upload = ftplib.FTP(FTP_host, FTP_user, FTP_password)
     FTP_Upload.cwd(FTPPath)    #FTP File Path
 
-    FTP_Open = open(LocalPath, 'rb')    #Upload File Open
+    FTP_Open = open(Local, 'rb')    #Upload File Open
     FTP_Upload.storbinary('STOR '+Name, FTP_Open)    #FTP File Upload
     FTP_Open.close()    #FTP Close
     FTP_Upload.close()    #File Close
@@ -255,14 +280,11 @@ def User_New():
 
 
         # FTP Upload
-
-        FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Grade)+"학년 "+str(Class)+"반/"
-        FTP_UpName = ID+" "+Name+".ini"
-
-        FTP_Upload(FTP_UpName, FTP_UpPath, User_Temp)    # FTP_Upload 함수 호출
-
+        FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Grade)+"학년 "+str(Class)+"반/"    # FTP Path 지정
+        FTP_UpName = ID+" "+Name+".ini"    # User ini 파일 이름 지정
+        FTP_Check(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
         os.remove(User_Temp)    # Upload Temp File Delete
-        Premium = "0"
+        Premium = "0"    # Premium = None
 
 
 
@@ -286,44 +308,6 @@ def State():
     else:
         print("\nFTP OFFLINE\n")
         print(exit)
-
-
-
-
-# Subject Schedule ZOSC.ini Create
-# Server Request
-
-# ***  사용 중지 ***
-def ZOSC_ini():
-
-    Sub1, Sub2, Sub3, Sub4, Sub5, Sub6, Sub7 = input("테스트용 시간표 입력 : ").split()
-    Time1, Time2, Time3, Time4, Time5, Time6, Time7 = input("\n테스트용 시간 입력 ( 입력형식 = HHMM ) :").split()
-
-    config_Subject = configparser.ConfigParser()
-
-    # Save Subject Schedule
-    config_Subject['Subject'] = {}
-    config_Subject['Subject']['Subject1'] = Sub1
-    config_Subject['Subject']['Subject2'] = Sub2
-    config_Subject['Subject']['Subject3'] = Sub3
-    config_Subject['Subject']['Subject4'] = Sub4
-    config_Subject['Subject']['Subject5'] = Sub5
-    config_Subject['Subject']['Subject6'] = Sub6
-    config_Subject['Subject']['Subject7'] = Sub7
-
-    # Save Time Schedule
-    config_Subject['Time'] = {}
-    config_Subject['Time']['Time1'] = Time1
-    config_Subject['Time']['Time2'] = Time2
-    config_Subject['Time']['Time3'] = Time3
-    config_Subject['Time']['Time4'] = Time4
-    config_Subject['Time']['Time5'] = Time5
-    config_Subject['Time']['Time6'] = Time6
-    config_Subject['Time']['Time7'] = Time7
-
-    ZOSCini_path = 'C:\ZOOM SCHEDULER\ZOSC.ini'
-    with open(ZOSCini_path, 'w', encoding='utf-8') as configfile:
-        config_Subject.write(configfile)
 
 
 
@@ -490,17 +474,17 @@ def Server_Get():
 
     def RunTime(result, Link):
 
+        global Timer
+
         # ZOOM Link 실행
         def Start_Check():
             # UI Show Section
-
             Notification()
             time.sleep(5)
             os.system("start "+Link)
 
-
+        print("타이머 설정 완료")
         threading.Timer(result, Start_Check).start()
-
 
 
 
@@ -527,17 +511,16 @@ def Server_Get():
 
         # 남은 시간, 분 모두 초로 변환
         result_min = int(hour)*3600 + int(minute)*60
+        if result_min >= 37800:
+            print("ERROR : 시간 초과")
+            return
 
         RunTime(result_min, Link)
 
 
 
 
-    now = datetime.now()
-    NT = now.hour
-    if NT >= 18:
-        print("현재 실행이 불가합니다.")
-        return
+    
 
 
 
