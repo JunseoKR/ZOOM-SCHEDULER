@@ -181,8 +181,6 @@ def User_New():
         
         # 파일 제거
         os.remove(UserPrCheck)
-
-        print(Premium)
         pass
 
 
