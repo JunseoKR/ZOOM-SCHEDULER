@@ -113,8 +113,8 @@ def Folder(directory):
 def FTP_Upload(Name, FTPPath, LocalPath):
 
     FTP_host = "DataJunseo.ipdisk.co.kr"
-    FTP_user = "???"
-    FTP_passwod = "???"
+    FTP_user = "ZOSC"
+    FTP_password = "ZOSC"
 
     #FTP Connect
     FTP_Upload = ftplib.FTP(FTP_host, FTP_user, FTP_password)
@@ -159,7 +159,6 @@ def User_New():
 
         # 반 09 → 9
         ClassR = Class.strip("0")
-        
         ID = Grade+Class+Number
 
         SCName = quote(Name)    # [ 중요 ] : 한글 → ASCII로 변환 필요!
@@ -556,7 +555,11 @@ def Server_Get():
 
 
 
+def Outer():
+    print("줌을 종료하겠습니까?")   # 확인 질문
 
+    time.sleep(10)   # 10초 대기
+    os.system ( "taskkill /F /im Zoom.exe")   # 줌 종료
 
 
 """ [ Main ] --------------------------------------------------------------------------------------------------- """
