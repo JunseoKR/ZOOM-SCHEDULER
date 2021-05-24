@@ -474,8 +474,6 @@ def Server_Get():
 
     def RunTime(result, Link):
 
-        global Timer
-
         # ZOOM Link 실행
         def Start_Check():
             # UI Show Section
@@ -485,6 +483,15 @@ def Server_Get():
 
         print("타이머 설정 완료")
         threading.Timer(result, Start_Check).start()
+
+        # Premium/FreeTier 판별
+        if Premium == 1:
+            print("Premium")
+            ZOOM_Kill()
+            
+        else:
+            print("FreeTier")
+            pass
 
 
 
@@ -539,17 +546,20 @@ def Server_Get():
 
 
 
-def Outer():
-    print("줌을 종료하겠습니까?")   # 확인 질문
-
-    time.sleep(10)   # 10초 대기
+def ZOOM_Kill():
+    print("Out")
     os.system ( "taskkill /F /im Zoom.exe")   # 줌 종료
+
+
+
+
 
 
 """ [ Main ] --------------------------------------------------------------------------------------------------- """
 
 # Main Runtime
 
+Notification()
 
 Folder('\ZOOM SCHEDULER')
 
