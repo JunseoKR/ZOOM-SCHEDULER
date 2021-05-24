@@ -69,22 +69,20 @@ curVer = "2.2"
 def Version():
 
     # 경로 지정
-    FTP_version = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Version/Version.txt"
-    FTP_verPath = "C:\\ZOOM SCHEDULER\\version.txt"
-
+    FTP_version = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Version/Version.txt"    # Version Check 파일 경로 ( FTP 서버 )
+    FTP_verPath = "C:\\ZOOM SCHEDULER\\version.txt"    # Version.txt 저장 경로
     # 서버 요청
     urllib.request.urlretrieve(FTP_version, FTP_verPath)
-
     # 파일 읽기
-    FTPreadA = open(FTP_verPath, 'r')
-    UpdateVer = FTPreadA.read()
-    FTPreadA.close()
-
+    FTPread = open(FTP_verPath, 'r')
+    UpdateVer = FTPread.read()
+    FTPread.close()
     # 파일 제거
     os.remove(FTP_verPath)
 
     # 버전 판별
     if curVer == UpdateVer:
+        print("최신 버전입니다.\n")
         pass
 
     else:
@@ -96,9 +94,8 @@ def Version():
 
 
 
-
-# Folder Create
-
+# [ 삭제 예정 ]
+# ZOOM SCHEDULER 파일 생성
 def Folder(directory):
     try:
         if not os.path.exists(directory):
@@ -113,16 +110,16 @@ def Folder(directory):
 
 
 def FTP_Check(Name, FTPPath, Local):
-
+    # FTP Server 로그인
     FTP_host = "DataJunseo.ipdisk.co.kr"
     FTP_user = "ZOSC"
     FTP_password = "ZOSC"
 
     FTP_Check = ftplib.FTP(FTP_host, FTP_user, FTP_password)
-    FTP_Check.cwd(FTPPath)    #FTP File Path
-    FTP_List = FTP_Check.nlst()
+    FTP_Check.cwd(FTPPath)    # FTP File Path
+    FTP_List = FTP_Check.nlst()    # FTP 목록 불러옴
 
-    if Name in FTP_List:
+    if Name in FTP_List:    # 사용자 판단
         return
 
     else:
@@ -136,7 +133,7 @@ def FTP_Check(Name, FTPPath, Local):
 # FTP ID/Password 꼭 제거 후 Commit !
 
 def FTP_Upload(Name, FTPPath, Local):
-
+    # FTP Server 로그인
     FTP_host = "DataJunseo.ipdisk.co.kr"
     FTP_user = "ZOSC"
     FTP_password = "ZOSC"
@@ -157,10 +154,7 @@ def FTP_Upload(Name, FTPPath, Local):
 # USER Information Check
 
 def User_New():
-
-    # User Information Setting
-    UserSetting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
-
+    # 변수 전역 설정
     global Grade
     global Class
     global ClassR
@@ -170,39 +164,33 @@ def User_New():
     global Premium
 
 
+    # User Information Setting
+    UserSetting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
+
     # ini File Read
     if os.path.isfile(UserSetting_ini):
         config_User = configparser.ConfigParser()
+        config_User.read(UserSetting_ini, encoding='utf-8')    # ini 파일 설정
+        config_User.sections()    # Section 값 읽어오기
 
-        config_User.read(UserSetting_ini, encoding='utf-8')
-        config_User.sections()
+        Grade = config_User['User']['Grade']    # Grade 값 읽기
+        Class = config_User['User']['Class']    # Class 값 읽기  :  [ 0n ] 으로 저장됨
+        Number = config_User['User']['Number']    # Number 값 읽기
+        Name = config_User['User']['Name']    # Name 값 읽기
+        ClassR = Class.strip("0")    # Class의 "0" 제거
+        ID = Grade+Class+Number    # 학번 조합
 
-        Grade = config_User['User']['Grade']
-        Class = config_User['User']['Class']
-        Number = config_User['User']['Number']
-        Name = config_User['User']['Name']
-
-        # 반 09 → 9
-        ClassR = Class.strip("0")
-        ID = Grade+Class+Number
-
+        # [ Premium Tier Check ]
         SCName = quote(Name)    # [ 중요 ] : 한글 → ASCII로 변환 필요!
         User_Get = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/DATA/ZOSC/User/"+str(Grade)+"%ed%95%99%eb%85%84%20"+str(Class)+"%eb%b0%98/"+str(ID)+"%20"+SCName+".ini"
-
          # 경로 지정
         UserPrCheck = "C:\\ZOOM SCHEDULER\\PrCheck.ini"
-
         # 서버 요청
         urllib.request.urlretrieve(User_Get, UserPrCheck)
-
-        # 파일 읽기
         config_PrCheck = configparser.ConfigParser()
-
         config_PrCheck.read(UserPrCheck, encoding='utf-8')
         config_PrCheck.sections()
-
         Premium = config_PrCheck['Premium']['Premium']
-        
         # 파일 제거
         os.remove(UserPrCheck)
         pass
@@ -233,12 +221,9 @@ def User_New():
                 config_User['User']['Grade'] = ID[0:1]
                 config_User['User']['Class'] = ID[1:3]
                 config_User['User']['Number'] = ID[3:5]
-
                 Grade = ID[0:1]
                 Class = ID[1:3]
                 Number = ID[3:5]
-                
-                # 반 09 → 9
                 ClassR = Class.strip("0")
                 break
 
@@ -262,8 +247,6 @@ def User_New():
 
 
         # FTP Server Upload
-        # [ 주의 ] : FTP ID, Password 작성 후 commit 금지!!! ( 서버 보안 )
-
         User_Temp = "C:\\ZOOM SCHEDULER\\"+str(ID)+" "+str(Name)+".ini"
 
         config_FTP = configparser.ConfigParser()
@@ -317,7 +300,7 @@ def State():
 
 def Notification():
     toaster = ToastNotifier()
-    toaster.show_toast("ZOOM SCHEDULER", "수업이 5초 후에 켜집니다.", icon_path=None, duration=5, threaded=False)
+    toaster.show_toast("ZOOM SCHEDULER", "수업이 5초 후에 켜집니다.", icon_path=None, duration=5, threaded=True)
 
 
 
@@ -362,49 +345,39 @@ def Server_Get():
 
 
     # Schedule Scraping
-    Subject_1 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_1"
+    Subject_1 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_1"    # 서버 주소 지정
     Subject_2 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_2"
     Subject_3 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_3"
     Subject_4 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_4"
     Subject_5 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_5"
     Subject_6 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_6"
     Subject_7 = "https://zosc-server.run.goorm.io/"+str(Grade)+"_"+str(ClassR)+"_1_7"
-
-    ZOSCA_1 = requests.get(Subject_1)
+    ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
     ZOSCA_2 = requests.get(Subject_2)
     ZOSCA_3 = requests.get(Subject_3)
     ZOSCA_4 = requests.get(Subject_4)
     ZOSCA_5 = requests.get(Subject_5)
     ZOSCA_6 = requests.get(Subject_6)
     ZOSCA_7 = requests.get(Subject_7)
-
-    ZOSC_1 = ''.join(filter(str.isalnum, ZOSCA_1.text))
+    ZOSC_1 = ''.join(filter(str.isalnum, ZOSCA_1.text))    # 모든 특수문자 제거
     ZOSC_2 = ''.join(filter(str.isalnum, ZOSCA_2.text))
     ZOSC_3 = ''.join(filter(str.isalnum, ZOSCA_3.text))
     ZOSC_4 = ''.join(filter(str.isalnum, ZOSCA_4.text))
     ZOSC_5 = ''.join(filter(str.isalnum, ZOSCA_5.text))
     ZOSC_6 = ''.join(filter(str.isalnum, ZOSCA_6.text))
     ZOSC_7 = ''.join(filter(str.isalnum, ZOSCA_7.text))
-
-
-    Z1_TrA = ZOSC_1[13:15]
+    Z1_TrA = ZOSC_1[13:15]    # 문자열 처리
     Z1_SjA = ZOSC_1[22:32]
-
     Z2_TrA = ZOSC_2[13:15]
     Z2_SjA = ZOSC_2[22:32]
-
     Z3_TrA = ZOSC_3[13:15]
     Z3_SjA = ZOSC_3[22:32]
-
     Z4_TrA = ZOSC_4[13:15]
     Z4_SjA = ZOSC_4[22:32]
-
     Z5_TrA = ZOSC_5[13:15]
     Z5_SjA = ZOSC_5[22:32]
-
     Z6_TrA = ZOSC_6[13:15]
     Z6_SjA = ZOSC_6[22:32]
-
     Z7_TrA = ZOSC_7[13:15]
     Z7_SjA = ZOSC_7[22:32]
 
@@ -413,9 +386,7 @@ def Server_Get():
     # Read Class Information ini
     configread = configparser.ConfigParser()
     configread.read('C:\\ZOOM SCHEDULER\\SEXY.ini', encoding='utf-8')
-
     configread.sections()
-
     # 선생님 성함 읽어오기
     Z1_Tr = configread['TrName'][Z1_TrA]
     Z2_Tr = configread['TrName'][Z2_TrA]
@@ -424,7 +395,6 @@ def Server_Get():
     Z5_Tr = configread['TrName'][Z5_TrA]
     Z6_Tr = configread['TrName'][Z6_TrA]
     Z7_Tr = configread['TrName'][Z7_TrA]
-
     # 과목명 읽어오기
     Z1_Sj = configread['Subject'][Z1_SjA]
     Z2_Sj = configread['Subject'][Z2_SjA]
@@ -433,7 +403,6 @@ def Server_Get():
     Z5_Sj = configread['Subject'][Z5_SjA]
     Z6_Sj = configread['Subject'][Z6_SjA]
     Z7_Sj = configread['Subject'][Z7_SjA]
-
     # 링크 변수 처리
     Z1_Link = Z1_Sj+"_"+Z1_Tr
     Z2_Link = Z2_Sj+"_"+Z2_Tr
@@ -442,7 +411,6 @@ def Server_Get():
     Z5_Link = Z5_Sj+"_"+Z5_Tr
     Z6_Link = Z6_Sj+"_"+Z6_Tr
     Z7_Link = Z7_Sj+"_"+Z7_Tr
-
     # 링크 읽어오기
     Link1 = configread['Link'][Z1_Link]
     Link2 = configread['Link'][Z2_Link]
@@ -455,12 +423,8 @@ def Server_Get():
 
 
 
-
-
-
     # Time Information Scraping
     Time = requests.get('https://zosc-server.run.goorm.io/Time')
-
     Time1 = Time.text[4:9]
     Time2 = Time.text[15:20]
     Time3 = Time.text[26:31]
@@ -474,23 +438,21 @@ def Server_Get():
 
     def RunTime(result, Link):
 
-        # ZOOM Link 실행
-        def Start_Check():
+        def Start_Check():    # ZOOM Start
             # UI Show Section
             Notification()
             time.sleep(5)
             os.system("start "+Link)
 
+
         print("타이머 설정 완료")
         threading.Timer(result, Start_Check).start()
 
         # Premium/FreeTier 판별
-        if Premium == 1:
-            print("Premium")
+        if Premium == "1":
             ZOOM_Kill()
             
         else:
-            print("FreeTier")
             pass
 
 
@@ -521,6 +483,7 @@ def Server_Get():
         if result_min >= 37800:
             print("ERROR : 시간 초과")
             os.system("taskkill /F /im Main.exe")
+            os._exit(1)    # 실행 종료
             return
 
         RunTime(result_min, Link)
@@ -533,7 +496,7 @@ def Server_Get():
 
 
 
-
+    # Time_Set() → RunTime() 함수 호출
     Time_Set(Time1, Link1)
     Time_Set(Time2, Link2)
     Time_Set(Time3, Link3)
@@ -556,7 +519,6 @@ def ZOOM_Kill():
 
 
 """ [ Main ] --------------------------------------------------------------------------------------------------- """
-
 # Main Runtime
 
 Notification()
