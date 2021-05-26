@@ -2,15 +2,8 @@
 
 """ [ Import ] --------------------------------------------------------------------------------------------------- """
 
-# Local에서 실행 시 pip으로 모듈을 설치해야 함.
-# 현재 필요한 모듈 이외는 모두 주석 처리하였습니다.
-# ( 주석 처리된 모듈은 모두 사용 예정입니다. )
 
 
-
-# Import [ Qt UI ]
-# from PyQt5.QtGui import
-# import pyautogui as pg
 
 # Import [ Ftplib ]
 import ftplib
@@ -42,15 +35,18 @@ import datetime
 from datetime import datetime
 from datetime import timedelta
 
+import sys
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import Qt, QRect, QCoreApplication, QEvent
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QPushButton, QMainWindow, QLabel
+from PyQt5.QtGui import QMouseEvent, QCursor, QFont, QPainter
+
 #Import win10toast
 from win10toast import ToastNotifier
 
 
-
-
-
 """ [ Function ] --------------------------------------------------------------------------------------------------- """
-
 
 # Function (def) Section
 # 기능 삽입 구역
@@ -92,24 +88,39 @@ def Version():
 
 
 
+def Notice():
+    NoticeLink = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Notice/notice.txt"
+    NoticePath = "C:\\ZOOM SCHEDULER\\Notice.txt"
+    urllib.request.urlretrieve(NoticeLink, NoticePath)
+    # 파일 읽기
+    NoticeRead = open(NoticePath, 'r', encoding='UTF8')
+    Read = NoticeRead.readlines()
+
+    NoticeA = Read[0]
+    NoticeB = Read[1]
+    NoticeC = Read[2]
+    NoticeD = Read[3]
+    NoticeE = Read[4]
+    NoticeF = Read[5]
+    NoticeG = Read[6]
+    NoticeH = Read[7]
+    NoticeI = Read[8]
+    NoticeJ = Read[9]
+    NoticeK = Read[10]
+    NoticeL =  Read[11]
+    NoticeM = Read[12]
+    NoticeRead.close()
+
+    Notice = NoticeA+NoticeB+NoticeC+NoticeD+NoticeE+NoticeF+NoticeG+NoticeH+NoticeI+NoticeJ+NoticeK+NoticeL+NoticeM
+    print(Notice)
+    return Notice
 
 
-# [ 삭제 예정 ]
-# ZOOM SCHEDULER 파일 생성
-def Folder(directory):
-    try:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-    except OSError:
-        print ('Error: Creating directory. ' +  directory)
 
 
 
 
-
-
-def FTP_Check(Name, FTPPath, Local):
+def FTP_UserCheck(Name, FTPPath, Local):
     # FTP Server 로그인
     FTP_host = "DataJunseo.ipdisk.co.kr"
     FTP_user = "ZOSC"
@@ -265,7 +276,7 @@ def User_New():
         # FTP Upload
         FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Grade)+"학년 "+str(Class)+"반/"    # FTP Path 지정
         FTP_UpName = ID+" "+Name+".ini"    # User ini 파일 이름 지정
-        FTP_Check(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
+        FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
         os.remove(User_Temp)    # Upload Temp File Delete
         Premium = "0"    # Premium = None
 
@@ -516,19 +527,194 @@ def ZOOM_Kill():
 
 
 
+""" [ UI ] --------------------------------------------------------------------------------------------------- """
+
+class Ui_MainWindow(QMainWindow):
+    # self 메인 창 생성
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.show()
+        
 
 
-""" [ Main ] --------------------------------------------------------------------------------------------------- """
-# Main Runtime
 
-Notification()
+    # 메인 창 구성요소 설정
+    def setupUi(self, MainWindow):
+        MainWindow.setWindowFlags(Qt.FramelessWindowHint)    # 창 프레임, 버튼 삭제
+        MainWindow.setMinimumSize(1100, 650)    # 최대화, 최소화 창 고정
 
-Folder('\ZOOM SCHEDULER')
 
-Version()
+        # 창 기본 구성 설정
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
 
-User_New()
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.title = QtWidgets.QLabel(self.centralwidget)
+        self.title.setGeometry(QtCore.QRect(-10, -10, 1121, 61))
+        self.title.setPixmap(QtGui.QPixmap("C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/elements/zosc.png"))
+        self.title.setObjectName("title")
+        self.background = QtWidgets.QLabel(self.centralwidget)
+        self.background.setGeometry(QtCore.QRect(0, 40, 1111, 611))
+        self.background.setText("")
+        self.background.setPixmap(QtGui.QPixmap("C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/Main.png"))
+        self.background.setObjectName("background")
+        
 
-State()
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(25, 150, 645, 382)) # (x, y, w, h)
 
-Server_Get()
+        self.label.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15)) #폰트,크기 조절
+        self.label.setStyleSheet("Color : Black") #글자색 변환
+        self.label.setText(str(Notice()))
+
+        
+
+
+
+
+
+        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+        """실행 버튼"""
+        self.btn_run = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_run.setGeometry(QtCore.QRect(865, 575, 151, 61))
+        self.btn_run.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.run.png); border:0px;}
+            QPushButton:hover{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.run.active.png); border:0px;}
+            '''
+        )
+
+        font = QtGui.QFont()
+        font.setFamily("AppleSDGothicNeoB00")
+        font.setPointSize(28)
+        self.btn_run.setFont(font)
+        self.btn_run.setObjectName("btn_run")
+        """end"""
+
+
+
+        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+        """공지 버튼"""
+        self.btn_notice = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_notice.setGeometry(QtCore.QRect(15, 80, 101, 71))
+        self.btn_notice.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/notice.refresh.png); border:0px;}
+            QPushButton:hover{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/notice.refresh.active.png); border:0px;}
+            '''
+        )
+
+        font = QtGui.QFont()
+        font.setFamily("AppleSDGothicNeoB00")
+        self.btn_notice.setFont(font)
+        self.btn_notice.setObjectName("btn_notice")
+        # 버튼 오류 해결 필요
+        self.btn_notice.clicked.connect(self.Set)
+        
+        """end"""
+
+
+
+        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+        """설정 버튼"""
+        self.btn_setting = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_setting.setGeometry(QtCore.QRect(10, 5, 30, 30))
+        self.btn_setting.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.setting.png); border:0px;}
+            QPushButton:hover{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.setting.active.png); border:0px;}
+            '''
+        )
+
+        self.btn_setting.setObjectName("btn_setting")
+        """end"""
+
+
+
+        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+        """최소화 버튼"""
+        self.btn_hide = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_hide.setGeometry(QtCore.QRect(990, 10, 40, 20))
+        self.btn_hide.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/line.hide.png); border:0px;}
+            QPushButton:hover{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/line.hide.active.png); border:0px;}
+            '''
+        )
+
+        self.btn_hide.clicked.connect(MainWindow.showMinimized)
+
+        """end"""
+
+
+
+        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+        """종료 버튼"""
+        self.btn_close = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_close.setGeometry(QtCore.QRect(1045, 10, 40, 20))
+        self.btn_close.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
+            QPushButton:hover{image:url(C:/Users/Develop/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
+            '''
+        )
+
+        self.btn_close.setObjectName("btn_close")
+
+        # 메인창 종료
+        self.btn_close.clicked.connect(QCoreApplication.instance().quit)    # 종료 함수 호출
+        """end"""
+
+
+
+        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
+
+    # Notice Set 함수 수정 필요
+    def Set(self):
+        self.label.setText(Notice()) #텍스트 변환
+
+        
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.m_flag=True
+            self.m_Position=event.globalPos()-self.pos()
+            event.accept()
+            self.setCursor(QCursor(Qt.OpenHandCursor))
+
+    def mouseMoveEvent(self, QMouseEvent):
+        if Qt.LeftButton and self.m_flag:
+            self.move(QMouseEvent.globalPos()-self.m_Position)
+            QMouseEvent.accept()
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.m_flag=False
+        self.setCursor(QCursor(Qt.ArrowCursor))
+    
+
+
+# import zosc_resource_rc
+
+
+if __name__ == "__main__":
+    Version()
+    State()
+    User_New()
+    # Server_Get()
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    sys.exit(app.exec_())
+
+
+
