@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="background">
+    <file>Main.png</file>
+  </qresource>
+  <qresource prefix="title">
+    <file>ZOSC.png</file>
+  </qresource>
+  <qresource prefix="btn"/>
+</RCC>
