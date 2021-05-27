@@ -110,9 +110,7 @@ def Notice():
     NoticeL =  Read[11]
     NoticeM = Read[12]
     NoticeRead.close()
-
     Notice = NoticeA+NoticeB+NoticeC+NoticeD+NoticeE+NoticeF+NoticeG+NoticeH+NoticeI+NoticeJ+NoticeK+NoticeL+NoticeM
-    print(Notice)
     return Notice
 
 
@@ -461,7 +459,7 @@ def Server_Get():
 
         # Premium/FreeTier 판별
         if Premium == "1":
-            ZOOM_Kill()
+            pass
             
         else:
             pass
@@ -491,11 +489,7 @@ def Server_Get():
 
         # 남은 시간, 분 모두 초로 변환
         result_min = int(hour)*3600 + int(minute)*60
-        if result_min >= 37800:
-            print("ERROR : 시간 초과")
-            os.system("taskkill /F /im Main.exe")
-            os._exit(1)    # 실행 종료
-            return
+
 
         RunTime(result_min, Link)
 
@@ -534,6 +528,22 @@ class Ui_MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+        # 공지 레이블
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(25, 150, 645, 382)) # (x, y, w, h)
+        self.label.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15)) #폰트,크기 조절
+        self.label.setStyleSheet("Color : Black") #글자색 변환
+        self.label.setText(Notice())
+
+        self.RunState = QtWidgets.QLabel(self.centralwidget)
+        self.RunState.setGeometry(QtCore.QRect(740, 515, 320, 40)) # (x, y, w, h)
+        self.RunState.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15)) #폰트,크기 조절
+        self.RunState.setStyleSheet("Color : Black") #글자색 변환
+        self.RunState.setStyleSheet("color: #5E56FF; border-style: solid; border-width: 3px; border-color: #9EA9FF; border-radius: 10px; ")
+        self.RunState.setText("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ")
+
+
         self.show()
         
 
@@ -563,14 +573,6 @@ class Ui_MainWindow(QMainWindow):
         self.background.setObjectName("background")
         
 
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(25, 150, 645, 382)) # (x, y, w, h)
-
-        self.label.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15)) #폰트,크기 조절
-        self.label.setStyleSheet("Color : Black") #글자색 변환
-        self.label.setText(str(Notice()))
-
-        
 
 
 
@@ -592,6 +594,8 @@ class Ui_MainWindow(QMainWindow):
         font.setPointSize(28)
         self.btn_run.setFont(font)
         self.btn_run.setObjectName("btn_run")
+
+        self.btn_run.clicked.connect(Server_Get)
         """end"""
 
 
@@ -612,8 +616,7 @@ class Ui_MainWindow(QMainWindow):
         self.btn_notice.setFont(font)
         self.btn_notice.setObjectName("btn_notice")
         # 버튼 오류 해결 필요
-        self.btn_notice.clicked.connect(self.Set)
-        
+        self.btn_notice.clicked.connect(self.Notice)
         """end"""
 
 
@@ -675,13 +678,14 @@ class Ui_MainWindow(QMainWindow):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
 
-    # Notice Set 함수 수정 필요
-    def Set(self):
-        self.label.setText(Notice()) #텍스트 변환
+    def Notice(self):
+        self.label.setText(Notice())
 
         
     def mousePressEvent(self, event):
