@@ -47,19 +47,19 @@ class UI_MainWindow(QMainWindow):
 
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.title = QtWidgets.QLabel(self.centralwidget)
         self.title.setGeometry(QtCore.QRect(-10, -10, 1121, 61))
-        self.title.setPixmap(QtGui.QPixmap("C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/elements/zosc.png"))
+        self.title.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/zosc.png"))
         self.title.setObjectName("title")
         self.background = QtWidgets.QLabel(self.centralwidget)
         self.background.setGeometry(QtCore.QRect(0, 40, 1111, 611))
         self.background.setText("")
-        self.background.setPixmap(QtGui.QPixmap("C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/Main.png"))
+        self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/Main.png"))
         self.background.setObjectName("background")
         
 
@@ -74,8 +74,8 @@ class UI_MainWindow(QMainWindow):
         self.btn_run.setGeometry(QtCore.QRect(865, 575, 151, 61))
         self.btn_run.setStyleSheet(
             '''
-            QPushButton{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.run.png); border:0px;}
-            QPushButton:hover{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.run.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.run.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.run.active.png); border:0px;}
             '''
         )
 
@@ -95,8 +95,8 @@ class UI_MainWindow(QMainWindow):
         self.btn_notice.setGeometry(QtCore.QRect(15, 80, 101, 71))
         self.btn_notice.setStyleSheet(
             '''
-            QPushButton{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/notice.refresh.png); border:0px;}
-            QPushButton:hover{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/notice.refresh.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/notice.refresh.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/notice.refresh.active.png); border:0px;}
             '''
         )
 
@@ -116,8 +116,8 @@ class UI_MainWindow(QMainWindow):
         self.btn_setting.setGeometry(QtCore.QRect(10, 5, 30, 30))
         self.btn_setting.setStyleSheet(
             '''
-            QPushButton{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.setting.png); border:0px;}
-            QPushButton:hover{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.setting.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.setting.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.setting.active.png); border:0px;}
             '''
         )
 
@@ -132,8 +132,8 @@ class UI_MainWindow(QMainWindow):
         self.btn_hide.setGeometry(QtCore.QRect(990, 10, 40, 20))
         self.btn_hide.setStyleSheet(
             '''
-            QPushButton{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/line.hide.png); border:0px;}
-            QPushButton:hover{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/line.hide.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/line.hide.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/line.hide.active.png); border:0px;}
             '''
         )
 
@@ -149,8 +149,8 @@ class UI_MainWindow(QMainWindow):
         self.btn_close.setGeometry(QtCore.QRect(1045, 10, 40, 20))
         self.btn_close.setStyleSheet(
             '''
-            QPushButton{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
-            QPushButton:hover{image:url(C:/Users/준서/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
             '''
         )
         
