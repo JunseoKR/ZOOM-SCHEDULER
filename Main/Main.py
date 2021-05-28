@@ -30,6 +30,9 @@ import threading
 # Import time
 import time
 
+import multiprocessing
+from multiprocessing import Process
+
 #Import datetime
 import datetime
 from datetime import datetime
@@ -38,9 +41,9 @@ from datetime import timedelta
 import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt, QRect, QCoreApplication, QEvent
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QPushButton, QMainWindow, QLabel
-from PyQt5.QtGui import QMouseEvent, QCursor, QFont, QPainter
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 
 #Import win10toast
 from win10toast import ToastNotifier
@@ -521,13 +524,21 @@ def ZOOM_Kill():
 
 
 
+
+
+
+
+
 """ [ UI ] --------------------------------------------------------------------------------------------------- """
 
-class Ui_MainWindow(QMainWindow):
+class UI_MainWindow(QMainWindow):
     # self 메인 창 생성
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        
+        self.threadpool = QThreadPool()
+
 
         # 공지 레이블
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -542,9 +553,8 @@ class Ui_MainWindow(QMainWindow):
         self.RunState.setStyleSheet("Color : Black") #글자색 변환
         self.RunState.setStyleSheet("color: #5E56FF; border-style: solid; border-width: 3px; border-color: #9EA9FF; border-radius: 10px; ")
         self.RunState.setText("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ")
-
-
         self.show()
+        
         
 
 
@@ -595,7 +605,6 @@ class Ui_MainWindow(QMainWindow):
         self.btn_run.setFont(font)
         self.btn_run.setObjectName("btn_run")
 
-        self.btn_run.clicked.connect(Server_Get)
         """end"""
 
 
@@ -615,7 +624,7 @@ class Ui_MainWindow(QMainWindow):
         font.setFamily("AppleSDGothicNeoB00")
         self.btn_notice.setFont(font)
         self.btn_notice.setObjectName("btn_notice")
-        # 버튼 오류 해결 필요
+
         self.btn_notice.clicked.connect(self.Notice)
         """end"""
 
@@ -684,6 +693,7 @@ class Ui_MainWindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
 
+
     def Notice(self):
         self.label.setText(Notice())
 
@@ -713,10 +723,10 @@ if __name__ == "__main__":
     Version()
     State()
     User_New()
-    # Server_Get()
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = UI_MainWindow()
     ui.setupUi(MainWindow)
     sys.exit(app.exec_())
 
