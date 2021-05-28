@@ -188,7 +188,6 @@ class UI_MainWindow(QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
-
     def RunTime(self):
         print("호출됨")
 
