@@ -8,6 +8,18 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
+""" [ SubProcess ] --------------------------------------------------------------------------------------------------- """
+class RunTime(QThread):
+    Process = pyqtSignal()
+
+    def Run(self):
+        print("RunTime 내부함수 호출 완료")
+        self.Process.emit()
+
+
+
+
+
 
 
 
@@ -34,6 +46,11 @@ class UI_MainWindow(QMainWindow):
         self.RunState.setStyleSheet("Color : Black")
         self.RunState.setStyleSheet("color: #5E56FF; border-style: solid; border-width: 3px; border-color: #9EA9FF; border-radius: 10px; ")
         self.RunState.setText("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ")
+
+        RT = RunTime()
+        RT.Process.connect(self.RunTime)
+        RT.Run()
+
         self.show()
         
         
@@ -61,8 +78,10 @@ class UI_MainWindow(QMainWindow):
         self.background.setText("")
         self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/Main.png"))
         self.background.setObjectName("background")
-        
 
+
+
+        
 
 
 
@@ -85,6 +104,7 @@ class UI_MainWindow(QMainWindow):
         self.btn_run.setFont(font)
         self.btn_run.setObjectName("btn_run")
 
+        self.btn_run.clicked.connect(self.RunTime)
         """end"""
 
 
@@ -156,7 +176,8 @@ class UI_MainWindow(QMainWindow):
         self.btn_close.setObjectName("btn_close")
 
 
-        self.btn_close.clicked.connect(QCoreApplication.instance().quit)    # ���� �Լ� ȣ��
+        self.btn_close.clicked.connect(self.close)
+        # QCoreApplication.instance().quit
         """end"""
 
 
@@ -166,15 +187,15 @@ class UI_MainWindow(QMainWindow):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    
+
+
+    def RunTime(self):
+        print("호출됨")
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
-
-
-    def Notice(self):
-        self.label.setText(Notice())
 
         
     def mousePressEvent(self, event):
