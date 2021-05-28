@@ -26,7 +26,7 @@ class UI_MainWindow(QMainWindow):
         self.label.setGeometry(QtCore.QRect(25, 150, 645, 382)) # (x, y, w, h)
         self.label.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15))
         self.label.setStyleSheet("Color : Black")
-        self.label.setText(Notice())
+        self.label.setText("1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1")
 
         self.RunState = QtWidgets.QLabel(self.centralwidget)
         self.RunState.setGeometry(QtCore.QRect(740, 515, 320, 40)) # (x, y, w, h)
@@ -105,7 +105,6 @@ class UI_MainWindow(QMainWindow):
         self.btn_notice.setFont(font)
         self.btn_notice.setObjectName("btn_notice")
 
-        self.btn_notice.clicked.connect(self.Notice)
         """end"""
 
 
@@ -117,7 +116,7 @@ class UI_MainWindow(QMainWindow):
         self.btn_setting.setStyleSheet(
             '''
             QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.setting.png); border:0px;}
-            QPushButton:hover{image:url(C:/GitHub/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.setting.active.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.setting.active.png); border:0px;}
             '''
         )
 
