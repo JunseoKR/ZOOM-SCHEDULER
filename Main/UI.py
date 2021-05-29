@@ -14,7 +14,7 @@ class RunTime(QThread):
 
     def Run(self):
         print("RunTime 내부함수 호출 완료")
-        self.Process.emit()
+        # self.Process.emit()
 
 
 
@@ -48,8 +48,7 @@ class UI_MainWindow(QMainWindow):
         self.RunState.setText("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ")
 
         RT = RunTime()
-        RT.Process.connect(self.RunTime)
-        RT.Run()
+        # RT.Process.connect(self.RunTime)
 
         self.show()
         
