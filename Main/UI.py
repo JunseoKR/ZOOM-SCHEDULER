@@ -2,19 +2,31 @@
 
 
 import sys
-
+import time
+import PyQt5
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
 """ [ SubProcess ] --------------------------------------------------------------------------------------------------- """
-class RunTime(QThread):
-    Process = pyqtSignal()
+print("실행")
 
+class RunTime(QObject):
+    Process = pyqtSignal(int)
+
+    def __init__(self, parent=None):
+        super(self.__class__, self).__init__(parent)
+
+    print("호출")
+    @pyqtSlot()
     def Run(self):
-        print("RunTime 내부함수 호출 완료")
-        # self.Process.emit()
+        _cnt = 0
+        while _cnt < 10000:
+            _cnt += 1
+            self.sig_numbers.emit(_cnt) # pyqtSignal 에 숫자데이터를 넣어 보낸다
+            print(_cnt)                 # consol에서 어떻게 진행 되는지 보기 위해서 넣어준다
+            time.sleep(1)
 
 
 
@@ -45,10 +57,8 @@ class UI_MainWindow(QMainWindow):
         self.RunState.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15))
         self.RunState.setStyleSheet("Color : Black")
         self.RunState.setStyleSheet("color: #5E56FF; border-style: solid; border-width: 3px; border-color: #9EA9FF; border-radius: 10px; ")
-        self.RunState.setText("ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ")
+        
 
-        RT = RunTime()
-        # RT.Process.connect(self.RunTime)
 
         self.show()
         
@@ -103,7 +113,6 @@ class UI_MainWindow(QMainWindow):
         self.btn_run.setFont(font)
         self.btn_run.setObjectName("btn_run")
 
-        self.btn_run.clicked.connect(self.RunTime)
         """end"""
 
 
@@ -187,6 +196,11 @@ class UI_MainWindow(QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
+    # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+    
+
+    
+
     def RunTime(self):
         print("호출됨")
 
@@ -211,10 +225,36 @@ class UI_MainWindow(QMainWindow):
     def mouseReleaseEvent(self, QMouseEvent):
         self.m_flag=False
         self.setCursor(QCursor(Qt.ArrowCursor))
+
+    @pyqtSlot(int)
+    def updateStatus(self, status):
+        self.RunState.setText('{}'.format(status))
+
     
-
-
 # import zosc_resource_rc
+
+class Test(QObject):
+
+    def __init__(self, parent=None):
+        super(self.__class__, self).__init__(parent)
+
+        self.gui = UI_MainWindow()
+        self.RunTime = RunTime()
+        self.RunTime_thread = QThread()
+        self.RunTime.moveToThread(self.RunTime_thread)
+        self.RunTime_thread.start()
+        print("실행")
+
+        self.connectSignals()
+
+        self.gui.show()
+
+    def connectSignals(self):
+        self.gui.btn_run.clicked.connect(self.RunTime.Run)
+        self.RunTime.sig_numbers.connect(self.gui.updateStatus)
+
+
+
 
 
 if __name__ == "__main__":
