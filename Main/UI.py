@@ -301,7 +301,7 @@ class UI_MainWindow(QMainWindow):
         self.label.setGeometry(QtCore.QRect(25, 150, 645, 382)) # (x, y, w, h)
         self.label.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15))
         self.label.setStyleSheet("Color : Black")
-        self.label.setText("현재 테스트 중입니다.")
+        self.label.setText(Notice())
 
         self.RunState = QtWidgets.QLabel(self.centralwidget)
         self.RunState.setGeometry(QtCore.QRect(740, 515, 320, 40)) # (x, y, w, h)
@@ -324,7 +324,7 @@ class UI_MainWindow(QMainWindow):
         tray_menu.addAction(quit_action)
         tray_menu.addAction(hide_action)
         self.tray_icon.setContextMenu(tray_menu)
-        self.tray_icon.show()
+        
         
 
         # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -427,8 +427,8 @@ class UI_MainWindow(QMainWindow):
     def hideT(self):
         self.hide()
         self.tray_icon.showMessage(
-                "Tray Program",
-                "Application was minimized to Tray",
+                "ZOOM SCHEDULER",
+                "ZOSC가 백그라운드에서 실행됩니다.",
                 QSystemTrayIcon.Information,
                 2000
             )
@@ -477,6 +477,7 @@ class Connect(QObject):
 
 
         self._connectSignals()
+        self.gui.tray_icon.show()
         self.gui.show()
 
     def _connectSignals(self):
