@@ -76,6 +76,8 @@ def Notice():
 
 
 
+
+
 """ [ Function ] --------------------------------------------------------------------------------------------------- """
 
 
@@ -87,6 +89,13 @@ Version()
 
 """ [ RunTime ] --------------------------------------------------------------------------------------------------- """
 
+
+
+
+
+
+
+
 class Worker(QObject):
     sig_numbers = pyqtSignal(str)
 
@@ -95,6 +104,8 @@ class Worker(QObject):
 
     @pyqtSlot()
     def Server_Connect(self):
+
+
         self.sig_numbers.emit("서버 연결중")
         
         Grade = 2
@@ -279,6 +290,7 @@ class UI_MainWindow(QMainWindow):
         self.title.setGeometry(QtCore.QRect(-10, -10, 1121, 61))
         self.title.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/zosc.png"))
         self.title.setObjectName("title")
+
         self.background = QtWidgets.QLabel(self.centralwidget)
         self.background.setGeometry(QtCore.QRect(0, 40, 1111, 611))
         self.background.setText("")
@@ -297,6 +309,22 @@ class UI_MainWindow(QMainWindow):
         self.RunState.setStyleSheet("Color : Black")
         self.RunState.setStyleSheet("color: #5E56FF; border-style: solid; border-width: 3px; border-color: #9EA9FF; border-radius: 10px; ")
 
+        self.tray_icon = QSystemTrayIcon(self)
+        self.tray_icon.setIcon(icon)
+
+        show_action = QAction("Show", self)
+        quit_action = QAction("Exit", self)
+        hide_action = QAction("Hide", self)
+        show_action.triggered.connect(self.show)
+        quit_action.triggered.connect(self.close)
+        hide_action.triggered.connect(self.hide)
+        self.tray_icon.activated.connect(self.Activation_Reason)
+        tray_menu = QMenu()
+        tray_menu.addAction(show_action)
+        tray_menu.addAction(quit_action)
+        tray_menu.addAction(hide_action)
+        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.show()
         
 
         # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -359,7 +387,8 @@ class UI_MainWindow(QMainWindow):
             QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/line.hide.active.png); border:0px;}
             ''')
 
-        self.btn_hide.clicked.connect(self.showMinimized)
+        self.btn_hide.clicked.connect(self.hideT)
+        #self.btn_hide.clicked.connect(self.showMinimized)
 
         """end"""
 
@@ -394,6 +423,21 @@ class UI_MainWindow(QMainWindow):
 
     def Notice_Check(self):
         self.label.setText(Notice())
+
+    def hideT(self):
+        self.hide()
+        self.tray_icon.showMessage(
+                "Tray Program",
+                "Application was minimized to Tray",
+                QSystemTrayIcon.Information,
+                2000
+            )
+
+    # 수정필요
+    def Activation_Reason(self, i_reason):
+        buttons = QApplication.mouseButtons()
+        if buttons & QtCore.Qt.LeftButton:
+            self.show()
 
 
     def mousePressEvent(self, event):
