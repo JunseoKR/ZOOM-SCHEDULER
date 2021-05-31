@@ -5,15 +5,16 @@ import sys
 import time
 import os
 import urllib.request
-import configparser
+import configparser    # configparser
 import os.path
-import requests
+import requests    # requests
 import threading
 import datetime
-from win10toast import ToastNotifier
+from tendo import singleton    # tendo
+from win10toast import ToastNotifier    # win10toast
 from datetime import datetime
 from datetime import timedelta
-import PyQt5
+import PyQt5    # PyQt5 / PyQt5-tools
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -21,6 +22,7 @@ from PyQt5.QtGui import *
 
 
 """ [ Function ] --------------------------------------------------------------------------------------------------- """
+me = singleton.SingleInstance()    # 중복 실행 방지
 # ZOSC 버전 확인
 curVer = "2.2"
 
@@ -259,6 +261,7 @@ class Worker(QObject):
         self.sig_numbers.emit("RunTime Ready")
         time.sleep(3)
         self.sig_numbers.emit("백그라운드 실행")
+        
 
 
 
@@ -272,7 +275,6 @@ class UI_MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        
 
 
 
@@ -312,17 +314,11 @@ class UI_MainWindow(QMainWindow):
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(icon)
 
-        show_action = QAction("Show", self)
-        quit_action = QAction("Exit", self)
-        hide_action = QAction("Hide", self)
-        show_action.triggered.connect(self.show)
-        quit_action.triggered.connect(self.close)
-        hide_action.triggered.connect(self.hide)
+        quit_action = QAction("종료", self)
+        quit_action.triggered.connect(self.quit)
         self.tray_icon.activated.connect(self.Activation_Reason)
         tray_menu = QMenu()
-        tray_menu.addAction(show_action)
         tray_menu.addAction(quit_action)
-        tray_menu.addAction(hide_action)
         self.tray_icon.setContextMenu(tray_menu)
         
         
@@ -387,8 +383,7 @@ class UI_MainWindow(QMainWindow):
             QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/line.hide.active.png); border:0px;}
             ''')
 
-        self.btn_hide.clicked.connect(self.hideT)
-        #self.btn_hide.clicked.connect(self.showMinimized)
+        self.btn_hide.clicked.connect(self.Tray)
 
         """end"""
 
@@ -404,13 +399,14 @@ class UI_MainWindow(QMainWindow):
             ''')
         self.btn_close.setObjectName("btn_close")
 
-        self.btn_close.clicked.connect(self.close)
+        self.btn_close.clicked.connect(self.quit)
         """end"""
 
 
         self.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
 
 
     # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -421,10 +417,12 @@ class UI_MainWindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
 
+
     def Notice_Check(self):
         self.label.setText(Notice())
 
-    def hideT(self):
+
+    def Tray(self):
         self.hide()
         self.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
@@ -433,10 +431,20 @@ class UI_MainWindow(QMainWindow):
                 2000
             )
 
-    # 수정필요
-    def Activation_Reason(self, i_reason):
-        buttons = QApplication.mouseButtons()
-        if buttons & QtCore.Qt.LeftButton:
+
+    def quit(self):
+        self.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "ZOSC의 모든 프로세스가 종료됩니다.",
+                QSystemTrayIcon.Information,
+                2000
+            )
+        time.sleep(3)
+        self.close()
+
+
+    def Activation_Reason(self, reason):
+        if  reason == QSystemTrayIcon.DoubleClick:
             self.show()
 
 
