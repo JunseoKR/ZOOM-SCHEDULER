@@ -19,7 +19,73 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
-""" [ SubProcess ] --------------------------------------------------------------------------------------------------- """
+
+""" [ Function ] --------------------------------------------------------------------------------------------------- """
+# ZOSC 버전 확인
+curVer = "2.2"
+
+
+
+def Version():
+
+    # 경로 지정
+    FTP_version = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Version/Version.txt"    # Version Check 파일 경로 ( FTP 서버 )
+    FTP_verPath = "C:\\ZOOM SCHEDULER\\version.txt"    # Version.txt 저장 경로
+    # 서버 요청
+    urllib.request.urlretrieve(FTP_version, FTP_verPath)
+    # 파일 읽기
+    FTPread = open(FTP_verPath, 'r')
+    UpdateVer = FTPread.read()
+    FTPread.close()
+    # 파일 제거
+    os.remove(FTP_verPath)
+
+    # 버전 판별
+    if curVer == UpdateVer:
+        print("최신 버전입니다.\n")
+        pass
+
+    else:
+        print("업데이트가 있습니다.\n")
+
+
+def Notice():
+    NoticeLink = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Notice/notice.txt"
+    NoticePath = "C:\\ZOOM SCHEDULER\\Notice.txt"
+    urllib.request.urlretrieve(NoticeLink, NoticePath)
+    # 파일 읽기
+    NoticeRead = open(NoticePath, 'r', encoding='UTF8')
+    Read = NoticeRead.readlines()
+
+    NoticeA = Read[0]
+    NoticeB = Read[1]
+    NoticeC = Read[2]
+    NoticeD = Read[3]
+    NoticeE = Read[4]
+    NoticeF = Read[5]
+    NoticeG = Read[6]
+    NoticeH = Read[7]
+    NoticeI = Read[8]
+    NoticeJ = Read[9]
+    NoticeK = Read[10]
+    NoticeL =  Read[11]
+    NoticeM = Read[12]
+    NoticeRead.close()
+    Notice = NoticeA+NoticeB+NoticeC+NoticeD+NoticeE+NoticeF+NoticeG+NoticeH+NoticeI+NoticeJ+NoticeK+NoticeL+NoticeM
+    return Notice
+
+
+
+""" [ Function ] --------------------------------------------------------------------------------------------------- """
+
+
+
+Version()
+
+
+
+
+""" [ RunTime ] --------------------------------------------------------------------------------------------------- """
 
 class Worker(QObject):
     sig_numbers = pyqtSignal(str)
@@ -122,21 +188,21 @@ class Worker(QObject):
         Time7 = Time.text[70:75]
 
 
-        def RunTime(result, Link):
+        def RunTime(result, Link):  # 메인 런타임
 
-            def Notification():
+            def Notification(): # win10toast 수업시간 알림
                 toaster = ToastNotifier()
                 toaster.show_toast("ZOOM SCHEDULER", "수업이 5초 후에 켜집니다.", icon_path=None, duration=5, threaded=True)
 
-            def Start_Check():
+            def Start_Check():  # 줌 LINK 실행(OS)
                 Notification()
                 time.sleep(5)
                 os.system("start "+Link)
 
             threading.Timer(result, Start_Check).start()
-            print("설정 완료")
+            print("타이머 설정 완료")
 
-        def Time_Set(Time, Link):
+        def Time_Set(Time, Link):   # 시간 판별 - 타이머
 
             # 현재 시간 불러오기
             now = time.localtime()
@@ -159,7 +225,7 @@ class Worker(QObject):
             result_min = int(hour)*3600 + int(minute)*60
 
 
-            RunTime(result_min, Link)
+            RunTime(result_min, Link)   # 런타임 호출
 
 
 
@@ -223,7 +289,7 @@ class UI_MainWindow(QMainWindow):
         self.label.setGeometry(QtCore.QRect(25, 150, 645, 382)) # (x, y, w, h)
         self.label.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15))
         self.label.setStyleSheet("Color : Black")
-        self.label.setText("1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1")
+        self.label.setText("현재 테스트 중입니다.")
 
         self.RunState = QtWidgets.QLabel(self.centralwidget)
         self.RunState.setGeometry(QtCore.QRect(740, 515, 320, 40)) # (x, y, w, h)
@@ -293,7 +359,7 @@ class UI_MainWindow(QMainWindow):
             QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/line.hide.active.png); border:0px;}
             ''')
 
-        self.btn_hide.clicked.connect(MainWindow.showMinimized)
+        self.btn_hide.clicked.connect(self.showMinimized)
 
         """end"""
 
@@ -326,7 +392,10 @@ class UI_MainWindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
 
-        
+    def Notice_Check(self):
+        self.label.setText(Notice())
+
+
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             self.m_flag = True
@@ -353,7 +422,6 @@ class Connect(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
-
         self.gui = UI_MainWindow()
         self.gui.setupUi(MainWindow)
         
@@ -369,6 +437,7 @@ class Connect(QObject):
 
     def _connectSignals(self):
         self.gui.btn_run.clicked.connect(self.worker.Server_Connect)
+        self.gui.btn_notice.clicked.connect(self.gui.Notice_Check)
         self.worker.sig_numbers.connect(self.gui.updateStatus)
 
 
