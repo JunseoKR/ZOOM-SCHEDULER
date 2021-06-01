@@ -52,7 +52,7 @@ def Version():
 
 
 def Notice():
-    NoticeLink = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Notice/notice.txt"
+    NoticeLink = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Notice/Notice_Ex.txt"
     NoticePath = "C:\\ZOOM SCHEDULER\\Notice.txt"
     urllib.request.urlretrieve(NoticeLink, NoticePath)
     # 파일 읽기
@@ -97,10 +97,9 @@ class Worker(QObject):
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
 
-
     @pyqtSlot()
     def Server_Connect(self, parent=None):
-
+        
         def Run():
             self.sig_numbers.emit("서버 연결중")
         
@@ -254,9 +253,13 @@ class Worker(QObject):
             Time_Set(Time7, Link7)
             self.sig_numbers.emit("RunTime Ready")
             time.sleep(2)
-            self.sig_numbers.emit("백그라운드 실행중")
+            self.sig_numbers.emit("ZOSC 백그라운드 실행중")
 
         Run()
+
+
+
+        
 
 
 
@@ -435,6 +438,16 @@ class UI_MainWindow(QMainWindow):
         time.sleep(2)
         self.close()
 
+    def Running(self):
+        self.tray_icon.showMessage(
+            "ZOOM SCHEDULER",
+            "ZOSC가 이미 실행중입니다.",
+            QSystemTrayIcon.Information,
+            2000
+        )
+        self.hide()
+
+
 
     def Activation_Reason(self, reason):
         if  reason == QSystemTrayIcon.DoubleClick:
@@ -461,7 +474,7 @@ class UI_MainWindow(QMainWindow):
     def updateStatus(self, status):
 
         self.RunState.setText('{}'.format(status))
-        if status == "백그라운드 실행중":
+        if status == "ZOSC 백그라운드 실행중":
             self.Tray()
 
     
@@ -488,10 +501,14 @@ class Connect(QObject):
         self.gui.tray_icon.show()
         self.gui.show()
 
+
     def _connectSignals(self):
         self.gui.btn_run.clicked.connect(self.worker.Server_Connect)
         self.gui.btn_notice.clicked.connect(self.gui.Notice_Check)
         self.worker.sig_numbers.connect(self.gui.updateStatus)
+
+    def connect(self):
+        self.worker.Server_Connect()
 
 
 
