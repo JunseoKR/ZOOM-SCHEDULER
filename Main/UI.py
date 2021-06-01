@@ -14,6 +14,7 @@ from tendo import singleton    # tendo
 from win10toast import ToastNotifier    # win10toast
 from datetime import datetime
 from datetime import timedelta
+
 import PyQt5    # PyQt5 / PyQt5-tools
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
@@ -260,9 +261,6 @@ class Worker(QObject):
 
 
         
-
-
-
 """ [ UI ] --------------------------------------------------------------------------------------------------- """
 
 class UI_MainWindow(QMainWindow):
@@ -484,39 +482,200 @@ class UI_MainWindow(QMainWindow):
         if status == "ZOSC 백그라운드 실행중":
             self.Tray()
 
-    
+  
+class UI_User(QMainWindow):
+    Name = "기본값"
+    ID = 00000
+
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+
+    def setupUi(self, MainWindow):
+
+        MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.setWindowIcon(icon)
+
+        self.setObjectName("사용자 설정")
+        self.resize(800, 500)
+        self.setMinimumSize(QtCore.QSize(800, 500))
+        self.center()
+
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+
+        self.background = QtWidgets.QLabel(self.centralwidget)
+        self.background.setGeometry(QtCore.QRect(0, 0, 800, 500))
+        self.background.setText("")
+        self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/ID-Name.png"))
+        self.background.setObjectName("background")
+
+        self.setting_title = QtWidgets.QLabel(self.centralwidget)
+        self.setting_title.setGeometry(QtCore.QRect(-10, 0, 811, 41))
+        self.setting_title.setText("")
+        self.setting_title.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/userset.title.png"))
+        self.setting_title.setObjectName("setting_title")
+
+        self.title = QtWidgets.QLabel(self.centralwidget)
+        self.title.setGeometry(QtCore.QRect(-10, 35, 811, 141))
+        self.title.setText("")
+        self.title.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/welcome.png"))
+        self.title.setObjectName("title")
+
+        """close button"""
+        self.btn_close = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_close.setGeometry(QtCore.QRect(745, 10, 40, 20))
+        self.btn_close.setObjectName("btn_close")
+        self.btn_close.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
+            '''
+        )
+
+        self.btn_close.clicked.connect(self.close)
+        """end"""
+
+        self.userid_input = QtWidgets.QLabel(self.centralwidget)
+        self.userid_input.setGeometry(QtCore.QRect(170, 210, 461, 181))
+        self.userid_input.setText("")
+        self.userid_input.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/get.id.name.png"))
+        self.userid_input.setObjectName("userid_input")
+
+        """input: student id"""
+        self.input_id = QtWidgets.QLineEdit(self.centralwidget)
+        self.input_id.setGeometry(QtCore.QRect(312, 218, 307, 40))
+        self.input_id.setObjectName("input_id")
+        font = QtGui.QFont()
+        font.setFamily("AppleSDGothicNeoL00")
+        font.setPointSize(25)           
+        self.input_id.setFont(font)
+
+        """input: student name"""
+        self.input_name = QtWidgets.QLineEdit(self.centralwidget)
+        self.input_name.setGeometry(QtCore.QRect(312, 342, 307, 40))
+        self.input_name.setObjectName("input_name")
+        font = QtGui.QFont()
+        font.setFamily("AppleSDGothicNeoL00")
+        font.setPointSize(25)               
+        self.input_name.setFont(font)
+
+        """yes button"""
+        self.btn_yes = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_yes.setGeometry(QtCore.QRect(550, 430, 135, 55))
+        self.btn_yes.setObjectName("btn_yes")
+        self.btn_yes.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.yes.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.yes.active.png); border:0px;}
+            '''
+        )
+        """end"""
+
+        self.setCentralWidget(self.centralwidget)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "사용자 설정"))
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.m_flag = True
+            self.m_Position=event.globalPos()-self.pos()
+            event.accept()
+            self.setCursor(QCursor(Qt.OpenHandCursor))
+
+    def mouseMoveEvent(self, QMouseEvent):
+        if Qt.LeftButton and self.m_flag:
+            self.move(QMouseEvent.globalPos()-self.m_Position)
+            QMouseEvent.accept()
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.m_flag = False
+        self.setCursor(QCursor(Qt.ArrowCursor))
 
 
 
 
 # import zosc_resource_rc
+""" [ Connect ] --------------------------------------------------------------------------------------------------- """
+class Middle(QObject):
+
+    Grade = 0
+    Class = 00
+    ClassR = 0
+    Number = 00
+    Name = "기본값"
+    ID = 00000
+    Premium = 0
+
+    def __init__(self, parent=None):
+        super(self.__class__, self).__init__(parent)
+        
+    # 입력 처리 수정 필요
+    def UserCheck(self):
+        self.gui_userset = UI_User()
+        print("입력 처리 Section")
+        
+
+
+
 class Connect(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
-        self.gui = UI_MainWindow()
-        self.gui.setupUi(MainWindow)
+        self.gui_main = UI_MainWindow()
+        self.gui_userset = UI_User()
+        
+        self.gui_main.setupUi(MainWindow)
+        self.gui_userset.setupUi(MainWindow)
         
 
+        # Worker() 쓰레드
         self.worker = Worker()
         self.worker_thread = QThread()
         self.worker.moveToThread(self.worker_thread)
         self.worker_thread.start()
 
+        self.middle = Middle()
+        self.middle_thread = QThread()
+        self.middle.moveToThread(self.middle_thread)
+        self.middle_thread.start()
+
+
 
         self._connectSignals()
-        self.gui.tray_icon.show()
-        self.gui.show()
+        self.gui_main.tray_icon.show()
+        self.gui_main.show()
+        self.gui_main.hide()
+        self.gui_userset.show()
 
 
+    
     def _connectSignals(self):
-        self.gui.btn_run.clicked.connect(self.worker.Server_Connect)
-        self.gui.btn_notice.clicked.connect(self.gui.Notice_Check)
-        self.worker.sig_numbers.connect(self.gui.updateStatus)
+        self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)
+        self.gui_main.btn_notice.clicked.connect(self.gui_main.Notice_Check)
+        self.gui_userset.btn_yes.clicked.connect(self.Bridge)
+        self.worker.sig_numbers.connect(self.gui_main.updateStatus)
 
-    def connect(self):
-        self.worker.Server_Connect()
 
+    def Bridge(self):
+        self.middle = Middle()
+        self.middle.UserCheck()
+        self.gui_main.show()
+        self.gui_userset.close()
 
 
 
