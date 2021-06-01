@@ -277,6 +277,7 @@ class UI_MainWindow(QMainWindow):
     def setupUi(self, MainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setMinimumSize(1100, 650)
+        self.center()
 
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -413,6 +414,12 @@ class UI_MainWindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
 
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def Notice_Check(self):
         self.label.setText(Notice())
