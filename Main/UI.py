@@ -485,7 +485,7 @@ class UI_MainWindow(QMainWindow):
   
 class UI_User(QMainWindow):
     Name = "기본값"
-    ID = 00000
+    ID = "00000"
 
     def __init__(self):
         super().__init__()
@@ -540,11 +540,15 @@ class UI_User(QMainWindow):
         self.btn_close.clicked.connect(self.close)
         """end"""
 
+
         self.userid_input = QtWidgets.QLabel(self.centralwidget)
         self.userid_input.setGeometry(QtCore.QRect(170, 210, 461, 181))
         self.userid_input.setText("")
         self.userid_input.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/get.id.name.png"))
         self.userid_input.setObjectName("userid_input")
+
+
+        
 
         """input: student id"""
         self.input_id = QtWidgets.QLineEdit(self.centralwidget)
@@ -552,7 +556,7 @@ class UI_User(QMainWindow):
         self.input_id.setObjectName("input_id")
         font = QtGui.QFont()
         font.setFamily("AppleSDGothicNeoL00")
-        font.setPointSize(25)           
+        font.setPointSize(25)
         self.input_id.setFont(font)
 
         """input: student name"""
@@ -583,6 +587,12 @@ class UI_User(QMainWindow):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "사용자 설정"))
+
+
+    def line_value(self):
+        print(self.input_id.text())
+        return UI_User.ID
+
 
     def center(self):
         qr = self.frameGeometry()
@@ -626,8 +636,9 @@ class Middle(QObject):
         
     # 입력 처리 수정 필요
     def UserCheck(self):
-        self.gui_userset = UI_User()
-        print("입력 처리 Section")
+        Setting_ini
+        
+        
         
 
 
@@ -672,7 +683,8 @@ class Connect(QObject):
 
 
     def Bridge(self):
-        self.middle = Middle()
+        Middle.ID = self.gui_userset.input_id.text()
+        Middle.Name = self.gui_userset.input_name.text()
         self.middle.UserCheck()
         self.gui_main.show()
         self.gui_userset.close()
