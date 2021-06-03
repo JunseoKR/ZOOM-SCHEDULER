@@ -4,7 +4,9 @@
 import sys
 import time
 import os
+import ftplib
 import urllib.request
+from urllib.parse import quote
 import configparser    # configparser
 import os.path
 import requests    # requests
@@ -75,10 +77,41 @@ def Notice():
     NoticeM = Read[12]
     NoticeRead.close()
     Notice = NoticeA+NoticeB+NoticeC+NoticeD+NoticeE+NoticeF+NoticeG+NoticeH+NoticeI+NoticeJ+NoticeK+NoticeL+NoticeM
+    os.remove(NoticePath)
     return Notice
 
 
+def FTP_UserCheck(Name, FTPPath, Local):
+    # FTP Server 로그인
+    FTP_host = "DataJunseo.ipdisk.co.kr"
+    FTP_user = "ZOSC"
+    FTP_password = "ZOSC"
 
+    FTP_Check = ftplib.FTP(FTP_host, FTP_user, FTP_password)
+    FTP_Check.cwd(FTPPath)    # FTP File Path
+    FTP_List = FTP_Check.nlst()    # FTP 목록 불러옴
+
+    if Name in FTP_List:    # 사용자 판단
+        return
+
+    else:
+        FTP_Upload(Name, FTPPath, Local)    # FTP_Upload 함수 호출
+
+
+def FTP_Upload(Name, FTPPath, Local):
+    # FTP Server 로그인
+    FTP_host = "DataJunseo.ipdisk.co.kr"
+    FTP_user = "ZOSC"
+    FTP_password = "ZOSC"
+
+    #FTP Connect
+    FTP_Upload = ftplib.FTP(FTP_host, FTP_user, FTP_password)
+    FTP_Upload.cwd(FTPPath)    #FTP File Path
+
+    FTP_Open = open(Local, 'rb')    #Upload File Open
+    FTP_Upload.storbinary('STOR '+Name, FTP_Open)    #FTP File Upload
+    FTP_Open.close()    #FTP Close
+    FTP_Upload.close()    #File Close
 
 
 """ [ Function ] --------------------------------------------------------------------------------------------------- """
@@ -103,16 +136,13 @@ class Worker(QObject):
         
         def Run():
             self.sig_numbers.emit("서버 연결중")
-        
-            Grade = 2
-            ClassR = 9
-            Subject_1 = "https://zosc-server.run.goorm.io/" + str(Grade) + "_" + str(ClassR) + "_1_1"    # 서버 주소 지정
-            Subject_2 = "https://zosc-server.run.goorm.io/" + str(Grade) + "_" + str(ClassR) + "_1_2"
-            Subject_3 = "https://zosc-server.run.goorm.io/" + str(Grade) + "_" + str(ClassR) + "_1_3"
-            Subject_4 = "https://zosc-server.run.goorm.io/" + str(Grade) + "_" + str(ClassR) + "_1_4"
-            Subject_5 = "https://zosc-server.run.goorm.io/" + str(Grade) + "_" + str(ClassR) + "_1_5"
-            Subject_6 = "https://zosc-server.run.goorm.io/" + str(Grade) + "_" + str(ClassR) + "_1_6"
-            Subject_7 = "https://zosc-server.run.goorm.io/" + str(Grade) + "_" + str(ClassR) + "_1_7"
+            Subject_1 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_1"    # 서버 주소 지정
+            Subject_2 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_2"
+            Subject_3 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_3"
+            Subject_4 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_4"
+            Subject_5 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_5"
+            Subject_6 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_6"
+            Subject_7 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_7"
             ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
             ZOSCA_2 = requests.get(Subject_2)
             ZOSCA_3 = requests.get(Subject_3)
@@ -230,7 +260,7 @@ class Worker(QObject):
                 hour, minute, null = str(time_dif).split(":")
 
                 # 남은 시간, 분 모두 초로 변환
-                result_min = int(hour)*3600 + int(minute)*60
+                result_min = int(hour)*3600 + int(minute)*60 - 120
 
 
                 RunTime(result_min, Link)   # 런타임 호출
@@ -241,7 +271,7 @@ class Worker(QObject):
     
 
 
-
+            TimeK = input()
             # Time_Set() → RunTime() 함수 호출
             self.sig_numbers.emit("서버 연결 완료")
             self.sig_numbers.emit("시간표 불러오기 완료")
@@ -249,7 +279,7 @@ class Worker(QObject):
             Time_Set(Time2, Link2)
             Time_Set(Time3, Link3)
             Time_Set(Time4, Link4)
-            Time_Set(Time5, Link5)
+            Time_Set(TimeK, Link5)
             Time_Set(Time6, Link6)
             Time_Set(Time7, Link7)
             self.sig_numbers.emit("RunTime Ready")
@@ -484,8 +514,6 @@ class UI_MainWindow(QMainWindow):
 
   
 class UI_User(QMainWindow):
-    Name = "기본값"
-    ID = "00000"
 
     def __init__(self):
         super().__init__()
@@ -633,12 +661,51 @@ class Middle(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
-        
+        self.gui_Userset = UI_User()
+
     # 입력 처리 수정 필요
-    def UserCheck(self):
-        Setting_ini
-        
-        
+    def User_New(self):
+        Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
+
+        config_User = configparser.ConfigParser()
+        config_User['User'] = {}
+        config_User['User']['Grade'] = Middle.ID[0:1]
+        config_User['User']['Class'] = Middle.ID[1:3]
+        config_User['User']['Number'] = Middle.ID[3:5]
+        config_User['User']['Name'] = Middle.Name
+        Middle.Grade = Middle.ID[0:1]
+        Middle.Class = Middle.ID[1:3]
+        Middle.Number = Middle.ID[3:5]
+        Middle.ClassR = Middle.Class.strip("0")
+
+
+        with open(Setting_ini, 'w', encoding='utf-8') as configfile:
+            config_User.write(configfile)
+
+
+
+        # FTP Server Upload
+        User_Temp = "C:\\ZOOM SCHEDULER\\"+str(Middle.ID)+" "+str(Middle.Name)+".ini"
+
+        config_FTP = configparser.ConfigParser()
+        config_FTP['User'] = {}
+        config_FTP['Premium'] = {}
+        config_FTP['User']['Grade'] = Middle.ID[0:1]
+        config_FTP['User']['Class'] = Middle.ID[1:3]
+        config_FTP['User']['Number'] = Middle.ID[3:5]
+        config_FTP['User']['Name'] = Middle.Name
+        config_FTP['Premium']['Premium'] = "0"
+
+        with open(User_Temp, 'w', encoding='utf-8') as configfile:
+            config_FTP.write(configfile)
+
+
+        # FTP Upload
+        FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Middle.Grade)+"학년 "+str(Middle.Class)+"반/"    # FTP Path 지정
+        FTP_UpName = Middle.ID+" "+Middle.Name+".ini"    # User ini 파일 이름 지정
+        FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
+        os.remove(User_Temp)    # Upload Temp File Delete
+        Middle.Premium = "0"    # Premium = None       
         
 
 
@@ -668,10 +735,12 @@ class Connect(QObject):
 
 
         self._connectSignals()
+
         self.gui_main.tray_icon.show()
         self.gui_main.show()
         self.gui_main.hide()
-        self.gui_userset.show()
+        self.Check()
+
 
 
     
@@ -680,14 +749,52 @@ class Connect(QObject):
         self.gui_main.btn_notice.clicked.connect(self.gui_main.Notice_Check)
         self.gui_userset.btn_yes.clicked.connect(self.Bridge)
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)
+        
+
+
+    def Check(self):
+        Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
+
+        if os.path.isfile(Setting_ini):
+            config_User = configparser.ConfigParser()
+            config_User.read(Setting_ini, encoding='utf-8')    # ini 파일 설정
+            config_User.sections()    # Section 값 읽어오기
+
+            Middle.Grade = config_User['User']['Grade']    # Grade 값 읽기
+            Middle.Class = config_User['User']['Class']    # Class 값 읽기  :  [ 0n ] 으로 저장됨
+            Middle.Number = config_User['User']['Number']    # Number 값 읽기
+            Middle.Name = config_User['User']['Name']    # Name 값 읽기
+            Middle.ClassR = Middle.Class.strip("0")    # Class의 "0" 제거
+            Middle.ID = Middle.Grade+Middle.Class+Middle.Number    # 학번 조합
+
+            # [ Premium Tier Check ]
+            SCName = quote(Middle.Name)    # [ 중요 ] : 한글 → ASCII로 변환 필요!
+            User_Get = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/DATA/ZOSC/User/"+str(Middle.Grade)+"%ed%95%99%eb%85%84%20"+str(Middle.Class)+"%eb%b0%98/"+str(Middle.ID)+"%20"+SCName+".ini"
+             # 경로 지정
+            UserPrCheck = "C:\\ZOOM SCHEDULER\\PrCheck.ini"
+            # 서버 요청
+            urllib.request.urlretrieve(User_Get, UserPrCheck)
+            config_PrCheck = configparser.ConfigParser()
+            config_PrCheck.read(UserPrCheck, encoding='utf-8')
+            config_PrCheck.sections()
+            Middle.Premium = config_PrCheck['Premium']['Premium']
+            # 파일 제거
+            os.remove(UserPrCheck)
+            self.gui_main.show()
+
+        else:
+            self.gui_userset.show()
 
 
     def Bridge(self):
         Middle.ID = self.gui_userset.input_id.text()
         Middle.Name = self.gui_userset.input_name.text()
-        self.middle.UserCheck()
+
+        self.middle.User_New()
         self.gui_main.show()
         self.gui_userset.close()
+
+
 
 
 
