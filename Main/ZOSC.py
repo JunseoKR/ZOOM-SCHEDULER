@@ -25,18 +25,20 @@ from PyQt5.QtGui import *
 me = singleton.SingleInstance()    # 중복 실행 방지
 
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
-# ========================================================================================
-# =================================== [ ZOSC 버전 확인 ] ====================================
-# ========================================================================================
+
+# ======================================================================================== #
+# =================================== [ ZOSC 버전 확인 ] ==================================== #
+# ======================================================================================== #
 
 curVer = "2.2"
 
-# ========================================================================================
-# ==================================== [ 버전 꼭 확인! ] ======================================
-# ========================================================================================
+# ======================================================================================== #
+# ==================================== [ 버전 꼭 확인! ] ====================================== #
+# ======================================================================================== #
+
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
 
-
+# Method Section =========================================================================
 
 # 버전 체크
 def Version():
@@ -89,9 +91,29 @@ def Notice():
     return Notice
 
 
+# ========================================================================================
 
 # FTP Section =============================================================================
 
+def FTP_StatusCheck():    # FTP 서버 상태 확인
+    Checkurl = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Check/Status.txt"
+    CheckPath = "C:\\ZOOM SCHEDULER\\FTP Status.txt"
+    urllib.request.urlretrieve(Checkurl, CheckPath)
+    Checktxt = open(CheckPath, 'r')
+    Check = Checktxt.read()
+    Checktxt.close()
+    os.remove(CheckPath)
+
+    def Warn():
+        toaster = ToastNotifier()
+        toaster.show_toast("ZOOM SCHEDULER", "데이터 서버 오류\n개발자에게 문의하세요.", icon_path="C:\\ZOOM SCHEDULER\\Include\\Main.ico", duration=7, threaded=True)
+
+    if Check == "Running":
+        return
+    else:
+        Warn()
+        sys.exit()
+        
 def FTP_UserCheck(Name, FTPPath, Local):
     # FTP Server 로그인
     FTP_host = "DataJunseo.ipdisk.co.kr"
@@ -123,11 +145,11 @@ def FTP_Upload(Name, FTPPath, Local):
     FTP_Open.close()    #FTP Close
     FTP_Upload.close()    #File Close
 
-# ========================================================================================
-
-""" [ Function ] --------------------------------------------------------------------------------------------------------------------"""
 
 
+""" [ Method ] --------------------------------------------------------------------------------------------------------------------"""
+
+FTP_StatusCheck()
 
 Version()
 
@@ -151,12 +173,11 @@ class Worker(QObject):
 
         def alert():
             toaster = ToastNotifier()
-            toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path=None, duration=2, threaded=False)
+            toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\ZOOM SCHEDULER\\Include\\Main.ico", duration=2, threaded=False)
 
         def today():
             today = datetime.today().weekday()
-            today = today - 1
-            today = 3
+            today = today + 1
             return today
 
 
@@ -304,7 +325,7 @@ class Worker(QObject):
 
                 def Notification(): # win10toast 수업시간 알림
                     toaster = ToastNotifier()
-                    toaster.show_toast("ZOOM SCHEDULER", "수업이 5초 후에 켜집니다.", icon_path=None, duration=5, threaded=True)
+                    toaster.show_toast("ZOOM SCHEDULER", "수업이 5초 후에 켜집니다.", icon_path="C:\\ZOOM SCHEDULER\\Include\\Main.ico", duration=5, threaded=True)
 
                 def Start_Check():  # 줌 LINK 실행(OS)
                     Notification()
@@ -313,7 +334,7 @@ class Worker(QObject):
 
 
                 threading.Timer(result, Start_Check).start()
-                print("타이머 설정 완료")
+                print("Timer Ready")
 
             def Time_Set(Time, Link):   # 시간 판별 - 타이머
 
@@ -380,7 +401,7 @@ class Worker(QObject):
 """ [ UI ] --------------------------------------------------------------------------------------------------------------------------- """
 
 
-class UI_MainWindow(QMainWindow):
+class UI_MainWindow(QMainWindow):    # Main UI
 
 
     def __init__(self):
@@ -600,7 +621,7 @@ class UI_MainWindow(QMainWindow):
             self.Tray()
 
   
-class UI_User(QMainWindow):
+class UI_User(QMainWindow):    # User Setting UI
 
     def __init__(self):
         super().__init__()
@@ -789,7 +810,7 @@ class Middle(QObject):
         FTP_UpName = Middle.ID+" "+Middle.Name+".ini"    # User ini 파일 이름 지정
         FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
         os.remove(User_Temp)    # Upload Temp File Delete
-        Middle.Premium = "0"    # Premium = None       
+        Middle.Premium = "0"    # Premium = None
         
 
 
