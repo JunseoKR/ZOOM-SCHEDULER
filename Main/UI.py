@@ -134,95 +134,167 @@ class Worker(QObject):
     @pyqtSlot()
     def Server_Connect(self, parent=None):
         
+        def day_check():
+            check_day = datetime.today().weekday()
+            return check_day
+
+        def alert():
+            toaster = ToastNotifier()
+            toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path=None, duration=2, threaded=False)
+
+        def today():
+            today = datetime.today().weekday()
+            today = today - 1
+            today = 3
+            return today
+
+
         def Run():
             self.sig_numbers.emit("서버 연결중")
-            Subject_1 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_1"    # 서버 주소 지정
-            Subject_2 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_2"
-            Subject_3 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_3"
-            Subject_4 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_4"
-            Subject_5 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_5"
-            Subject_6 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_6"
-            Subject_7 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_1_7"
-            ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
-            ZOSCA_2 = requests.get(Subject_2)
-            ZOSCA_3 = requests.get(Subject_3)
-            ZOSCA_4 = requests.get(Subject_4)
-            ZOSCA_5 = requests.get(Subject_5)
-            ZOSCA_6 = requests.get(Subject_6)
-            ZOSCA_7 = requests.get(Subject_7)
-            ZOSC_1 = ''.join(filter(str.isalnum, ZOSCA_1.text))    # 모든 특수문자 제거
-            ZOSC_2 = ''.join(filter(str.isalnum, ZOSCA_2.text))
-            ZOSC_3 = ''.join(filter(str.isalnum, ZOSCA_3.text))
-            ZOSC_4 = ''.join(filter(str.isalnum, ZOSCA_4.text))
-            ZOSC_5 = ''.join(filter(str.isalnum, ZOSCA_5.text))
-            ZOSC_6 = ''.join(filter(str.isalnum, ZOSCA_6.text))
-            ZOSC_7 = ''.join(filter(str.isalnum, ZOSCA_7.text))
-            Z1_TrA = ZOSC_1[13:15]    # 문자열 처리
-            Z1_SjA = ZOSC_1[22:32]
-            Z2_TrA = ZOSC_2[13:15]
-            Z2_SjA = ZOSC_2[22:32]
-            Z3_TrA = ZOSC_3[13:15]
-            Z3_SjA = ZOSC_3[22:32]
-            Z4_TrA = ZOSC_4[13:15]
-            Z4_SjA = ZOSC_4[22:32]
-            Z5_TrA = ZOSC_5[13:15]
-            Z5_SjA = ZOSC_5[22:32]
-            Z6_TrA = ZOSC_6[13:15]
-            Z6_SjA = ZOSC_6[22:32]
-            Z7_TrA = ZOSC_7[13:15]
-            Z7_SjA = ZOSC_7[22:32]
+            if today() == 3:
+                Subject_1 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
+                Subject_2 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
+                Subject_3 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_3"
+                Subject_4 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_4"
+                ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
+                ZOSCA_2 = requests.get(Subject_2)
+                ZOSCA_3 = requests.get(Subject_3)
+                ZOSCA_4 = requests.get(Subject_4)
+                ZOSC_1 = ''.join(filter(str.isalnum, ZOSCA_1.text))    # 모든 특수문자 제거
+                ZOSC_2 = ''.join(filter(str.isalnum, ZOSCA_2.text))
+                ZOSC_3 = ''.join(filter(str.isalnum, ZOSCA_3.text))
+                ZOSC_4 = ''.join(filter(str.isalnum, ZOSCA_4.text))
+                Z1_TrA = ZOSC_1[13:15]    # 문자열 처리
+                Z1_SjA = ZOSC_1[22:32]
+                Z2_TrA = ZOSC_2[13:15]
+                Z2_SjA = ZOSC_2[22:32]
+                Z3_TrA = ZOSC_3[13:15]
+                Z3_SjA = ZOSC_3[22:32]
+                Z4_TrA = ZOSC_4[13:15]
+                Z4_SjA = ZOSC_4[22:32]
 
-
-
-            # Read Class Information ini
-            configread = configparser.ConfigParser()
-            configread.read('C:\\ZOOM SCHEDULER\\SEXY.ini', encoding='utf-8')
-            configread.sections()
-            # 선생님 성함 읽어오기
-            Z1_Tr = configread['TrName'][Z1_TrA]
-            Z2_Tr = configread['TrName'][Z2_TrA]
-            Z3_Tr = configread['TrName'][Z3_TrA]
-            Z4_Tr = configread['TrName'][Z4_TrA]
-            Z5_Tr = configread['TrName'][Z5_TrA]
-            Z6_Tr = configread['TrName'][Z6_TrA]
-            Z7_Tr = configread['TrName'][Z7_TrA]
-            # 과목명 읽어오기
-            Z1_Sj = configread['Subject'][Z1_SjA]
-            Z2_Sj = configread['Subject'][Z2_SjA]
-            Z3_Sj = configread['Subject'][Z3_SjA]
-            Z4_Sj = configread['Subject'][Z4_SjA]
-            Z5_Sj = configread['Subject'][Z5_SjA]
-            Z6_Sj = configread['Subject'][Z6_SjA]
-            Z7_Sj = configread['Subject'][Z7_SjA]
-            # 링크 변수 처리
-            Z1_Link = Z1_Sj + "_" + Z1_Tr
-            Z2_Link = Z2_Sj + "_" + Z2_Tr
-            Z3_Link = Z3_Sj + "_" + Z3_Tr
-            Z4_Link = Z4_Sj + "_" + Z4_Tr
-            Z5_Link = Z5_Sj + "_" + Z5_Tr
-            Z6_Link = Z6_Sj + "_" + Z6_Tr
-            Z7_Link = Z7_Sj + "_" + Z7_Tr
-            # 링크 읽어오기
-            Link1 = configread['Link'][Z1_Link]
-            Link2 = configread['Link'][Z2_Link]
-            Link3 = configread['Link'][Z3_Link]
-            Link4 = configread['Link'][Z4_Link]
-            Link5 = configread['Link'][Z5_Link]
-            Link6 = configread['Link'][Z6_Link]
-            Link7 = configread['Link'][Z7_Link]
+                configread = configparser.ConfigParser()
+                configread.read('C:\\ZOOM SCHEDULER\\SEXY.ini', encoding='utf-8')
+                configread.sections()
+                # 선생님 성함 읽어오기
+                Z1_Tr = configread['TrName'][Z1_TrA]
+                Z2_Tr = configread['TrName'][Z2_TrA]
+                Z3_Tr = configread['TrName'][Z3_TrA]
+                Z4_Tr = configread['TrName'][Z4_TrA]
+                Z1_Sj = configread['Subject'][Z1_SjA]
+                Z2_Sj = configread['Subject'][Z2_SjA]
+                Z3_Sj = configread['Subject'][Z3_SjA]
+                Z4_Sj = configread['Subject'][Z4_SjA]
+                # 링크 변수 처리
+                Z1_Link = Z1_Sj + "_" + Z1_Tr
+                Z2_Link = Z2_Sj + "_" + Z2_Tr
+                Z3_Link = Z3_Sj + "_" + Z3_Tr
+                Z4_Link = Z4_Sj + "_" + Z4_Tr
+                # 링크 읽어오기
+                Link1 = configread['Link'][Z1_Link]
+                Link2 = configread['Link'][Z2_Link]
+                Link3 = configread['Link'][Z3_Link]
+                Link4 = configread['Link'][Z4_Link]
 
 
 
 
-            # Time Information Scraping
-            Time = requests.get('https://zosc-server.run.goorm.io/Time')
-            Time1 = Time.text[4:9]
-            Time2 = Time.text[15:20]
-            Time3 = Time.text[26:31]
-            Time4 = Time.text[37:42]
-            Time5 = Time.text[48:53]
-            Time6 = Time.text[59:64]
-            Time7 = Time.text[70:75]
+                # Time Information Scraping
+                Time = requests.get('https://zosc-server.run.goorm.io/Time')
+                Time1 = Time.text[4:9]
+                Time2 = Time.text[15:20]
+                Time3 = Time.text[26:31]
+                Time4 = Time.text[37:42]
+
+            else:
+                Subject_1 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
+                Subject_2 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
+                Subject_3 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_3"
+                Subject_4 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_4"
+                Subject_5 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_5"
+                Subject_6 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_6"
+                Subject_7 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_7"
+
+                ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
+                ZOSCA_2 = requests.get(Subject_2)
+                ZOSCA_3 = requests.get(Subject_3)
+                ZOSCA_4 = requests.get(Subject_4)
+                ZOSCA_5 = requests.get(Subject_5)
+                ZOSCA_6 = requests.get(Subject_6)
+                ZOSCA_7 = requests.get(Subject_7)
+                ZOSC_1 = ''.join(filter(str.isalnum, ZOSCA_1.text))    # 모든 특수문자 제거
+                ZOSC_2 = ''.join(filter(str.isalnum, ZOSCA_2.text))
+                ZOSC_3 = ''.join(filter(str.isalnum, ZOSCA_3.text))
+                ZOSC_4 = ''.join(filter(str.isalnum, ZOSCA_4.text))
+                ZOSC_5 = ''.join(filter(str.isalnum, ZOSCA_5.text))
+                ZOSC_6 = ''.join(filter(str.isalnum, ZOSCA_6.text))
+                ZOSC_7 = ''.join(filter(str.isalnum, ZOSCA_7.text))
+                Z1_TrA = ZOSC_1[13:15]    # 문자열 처리
+                Z1_SjA = ZOSC_1[22:32]
+                Z2_TrA = ZOSC_2[13:15]
+                Z2_SjA = ZOSC_2[22:32]
+                Z3_TrA = ZOSC_3[13:15]
+                Z3_SjA = ZOSC_3[22:32]
+                Z4_TrA = ZOSC_4[13:15]
+                Z4_SjA = ZOSC_4[22:32]
+                Z5_TrA = ZOSC_5[13:15]
+                Z5_SjA = ZOSC_5[22:32]
+                Z6_TrA = ZOSC_6[13:15]
+                Z6_SjA = ZOSC_6[22:32]
+                Z7_TrA = ZOSC_7[13:15]
+                Z7_SjA = ZOSC_7[22:32]
+
+
+
+                # Read Class Information ini
+                configread = configparser.ConfigParser()
+                configread.read('C:\\ZOOM SCHEDULER\\SEXY.ini', encoding='utf-8')
+                configread.sections()
+                # 선생님 성함 읽어오기
+                Z1_Tr = configread['TrName'][Z1_TrA]
+                Z2_Tr = configread['TrName'][Z2_TrA]
+                Z3_Tr = configread['TrName'][Z3_TrA]
+                Z4_Tr = configread['TrName'][Z4_TrA]
+                Z5_Tr = configread['TrName'][Z5_TrA]
+                Z6_Tr = configread['TrName'][Z6_TrA]
+                Z7_Tr = configread['TrName'][Z7_TrA]
+                # 과목명 읽어오기
+                Z1_Sj = configread['Subject'][Z1_SjA]
+                Z2_Sj = configread['Subject'][Z2_SjA]
+                Z3_Sj = configread['Subject'][Z3_SjA]
+                Z4_Sj = configread['Subject'][Z4_SjA]
+                Z5_Sj = configread['Subject'][Z5_SjA]
+                Z6_Sj = configread['Subject'][Z6_SjA]
+                Z7_Sj = configread['Subject'][Z7_SjA]
+                # 링크 변수 처리
+                Z1_Link = Z1_Sj + "_" + Z1_Tr
+                Z2_Link = Z2_Sj + "_" + Z2_Tr
+                Z3_Link = Z3_Sj + "_" + Z3_Tr
+                Z4_Link = Z4_Sj + "_" + Z4_Tr
+                Z5_Link = Z5_Sj + "_" + Z5_Tr
+                Z6_Link = Z6_Sj + "_" + Z6_Tr
+                Z7_Link = Z7_Sj + "_" + Z7_Tr
+                # 링크 읽어오기
+                Link1 = configread['Link'][Z1_Link]
+                Link2 = configread['Link'][Z2_Link]
+                Link3 = configread['Link'][Z3_Link]
+                Link4 = configread['Link'][Z4_Link]
+                Link5 = configread['Link'][Z5_Link]
+                Link6 = configread['Link'][Z6_Link]
+                Link7 = configread['Link'][Z7_Link]
+
+
+
+
+                # Time Information Scraping
+                Time = requests.get('https://zosc-server.run.goorm.io/Time')
+                Time1 = Time.text[4:9]
+                Time2 = Time.text[15:20]
+                Time3 = Time.text[26:31]
+                Time4 = Time.text[37:42]
+                Time5 = Time.text[48:53]
+                Time6 = Time.text[59:64]
+                Time7 = Time.text[70:75]
 
 
             def RunTime(result, Link):  # 메인 런타임
@@ -267,26 +339,37 @@ class Worker(QObject):
 
 
 
-
-    
-
-
-            TimeK = input()
             # Time_Set() → RunTime() 함수 호출
             self.sig_numbers.emit("서버 연결 완료")
             self.sig_numbers.emit("시간표 불러오기 완료")
-            Time_Set(Time1, Link1)
-            Time_Set(Time2, Link2)
-            Time_Set(Time3, Link3)
-            Time_Set(Time4, Link4)
-            Time_Set(TimeK, Link5)
-            Time_Set(Time6, Link6)
-            Time_Set(Time7, Link7)
+            if today() == 3:
+                Time_Set(Time1, Link1)
+                Time_Set(Time2, Link2)
+                Time_Set(Time3, Link3)
+                Time_Set(Time4, Link4)
+
+            else:
+                Time_Set(Time1, Link1)
+                Time_Set(Time2, Link2)
+                Time_Set(Time3, Link3)
+                Time_Set(Time4, Link4)
+                Time_Set(Time5, Link5)
+                Time_Set(Time6, Link6)
+                Time_Set(Time7, Link7)
+
             self.sig_numbers.emit("RunTime Ready")
             time.sleep(2)
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
 
-        Run()
+        if day_check() == 0:
+            alert()
+            print(quit)
+        elif day_check() == 6:
+            alert()
+            print(quit)
+
+        else:
+            Run()
 
 
 
@@ -750,7 +833,7 @@ class Connect(QObject):
         self.gui_userset.btn_yes.clicked.connect(self.Bridge)
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)
         
-
+        
 
     def Check(self):
         Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
