@@ -22,15 +22,23 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-
-
-""" [ Function ] --------------------------------------------------------------------------------------------------- """
 me = singleton.SingleInstance()    # 중복 실행 방지
-# ZOSC 버전 확인
+
+""" -----------------------------------------------------------------------------------------------------------------------------------"""
+# ========================================================================================
+# =================================== [ ZOSC 버전 확인 ] ====================================
+# ========================================================================================
+
 curVer = "2.2"
 
+# ========================================================================================
+# ==================================== [ 버전 꼭 확인! ] ======================================
+# ========================================================================================
+""" -----------------------------------------------------------------------------------------------------------------------------------"""
 
 
+
+# 버전 체크
 def Version():
 
     # 경로 지정
@@ -53,7 +61,7 @@ def Version():
     else:
         print("업데이트가 있습니다.\n")
 
-
+# 공지 로딩
 def Notice():
     NoticeLink = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Notice/Notice_Ex.txt"
     NoticePath = "C:\\ZOOM SCHEDULER\\Notice.txt"
@@ -81,6 +89,9 @@ def Notice():
     return Notice
 
 
+
+# FTP Section =============================================================================
+
 def FTP_UserCheck(Name, FTPPath, Local):
     # FTP Server 로그인
     FTP_host = "DataJunseo.ipdisk.co.kr"
@@ -97,7 +108,6 @@ def FTP_UserCheck(Name, FTPPath, Local):
     else:
         FTP_Upload(Name, FTPPath, Local)    # FTP_Upload 함수 호출
 
-
 def FTP_Upload(Name, FTPPath, Local):
     # FTP Server 로그인
     FTP_host = "DataJunseo.ipdisk.co.kr"
@@ -113,8 +123,9 @@ def FTP_Upload(Name, FTPPath, Local):
     FTP_Open.close()    #FTP Close
     FTP_Upload.close()    #File Close
 
+# ========================================================================================
 
-""" [ Function ] --------------------------------------------------------------------------------------------------- """
+""" [ Function ] --------------------------------------------------------------------------------------------------------------------"""
 
 
 
@@ -123,7 +134,7 @@ Version()
 
 
 
-""" [ RunTime ] --------------------------------------------------------------------------------------------------- """
+""" [ RunTime ] ------------------------------------------------------------------------------------------------------------------- """
 
 class Worker(QObject):
     sig_numbers = pyqtSignal(str)
@@ -196,15 +207,13 @@ class Worker(QObject):
                 Link3 = configread['Link'][Z3_Link]
                 Link4 = configread['Link'][Z4_Link]
 
-
-
-
                 # Time Information Scraping
                 Time = requests.get('https://zosc-server.run.goorm.io/Time')
                 Time1 = Time.text[4:9]
                 Time2 = Time.text[15:20]
                 Time3 = Time.text[26:31]
                 Time4 = Time.text[37:42]
+
 
             else:
                 Subject_1 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
@@ -214,7 +223,6 @@ class Worker(QObject):
                 Subject_5 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_5"
                 Subject_6 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_6"
                 Subject_7 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_7"
-
                 ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
                 ZOSCA_2 = requests.get(Subject_2)
                 ZOSCA_3 = requests.get(Subject_3)
@@ -243,8 +251,6 @@ class Worker(QObject):
                 Z6_SjA = ZOSC_6[22:32]
                 Z7_TrA = ZOSC_7[13:15]
                 Z7_SjA = ZOSC_7[22:32]
-
-
 
                 # Read Class Information ini
                 configread = configparser.ConfigParser()
@@ -282,9 +288,6 @@ class Worker(QObject):
                 Link5 = configread['Link'][Z5_Link]
                 Link6 = configread['Link'][Z6_Link]
                 Link7 = configread['Link'][Z7_Link]
-
-
-
 
                 # Time Information Scraping
                 Time = requests.get('https://zosc-server.run.goorm.io/Time')
@@ -364,6 +367,7 @@ class Worker(QObject):
         if day_check() == 0:
             alert()
             print(quit)
+
         elif day_check() == 6:
             alert()
             print(quit)
@@ -373,8 +377,9 @@ class Worker(QObject):
 
 
 
-        
-""" [ UI ] --------------------------------------------------------------------------------------------------- """
+        """ -----------------------------------------------------------------------------------------------------------------------------------"""
+""" [ UI ] --------------------------------------------------------------------------------------------------------------------------- """
+
 
 class UI_MainWindow(QMainWindow):
 
@@ -731,9 +736,11 @@ class UI_User(QMainWindow):
 
 
 # import zosc_resource_rc
-""" [ Connect ] --------------------------------------------------------------------------------------------------- """
+
+""" [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
 class Middle(QObject):
 
+    # Class 변수 선언
     Grade = 0
     Class = 00
     ClassR = 0
@@ -749,7 +756,6 @@ class Middle(QObject):
     # 입력 처리 수정 필요
     def User_New(self):
         Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
-
         config_User = configparser.ConfigParser()
         config_User['User'] = {}
         config_User['User']['Grade'] = Middle.ID[0:1]
@@ -761,11 +767,8 @@ class Middle(QObject):
         Middle.Number = Middle.ID[3:5]
         Middle.ClassR = Middle.Class.strip("0")
 
-
         with open(Setting_ini, 'w', encoding='utf-8') as configfile:
             config_User.write(configfile)
-
-
 
         # FTP Server Upload
         User_Temp = "C:\\ZOOM SCHEDULER\\"+str(Middle.ID)+" "+str(Middle.Name)+".ini"
@@ -782,7 +785,6 @@ class Middle(QObject):
         with open(User_Temp, 'w', encoding='utf-8') as configfile:
             config_FTP.write(configfile)
 
-
         # FTP Upload
         FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Middle.Grade)+"학년 "+str(Middle.Class)+"반/"    # FTP Path 지정
         FTP_UpName = Middle.ID+" "+Middle.Name+".ini"    # User ini 파일 이름 지정
@@ -792,14 +794,14 @@ class Middle(QObject):
         
 
 
-
 class Connect(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
         self.gui_main = UI_MainWindow()
         self.gui_userset = UI_User()
-        
+
+        # 창 setupUi
         self.gui_main.setupUi(MainWindow)
         self.gui_userset.setupUi(MainWindow)
         
@@ -809,19 +811,20 @@ class Connect(QObject):
         self.worker_thread = QThread()
         self.worker.moveToThread(self.worker_thread)
         self.worker_thread.start()
-
+        # Middle() 쓰레드
         self.middle = Middle()
         self.middle_thread = QThread()
         self.middle.moveToThread(self.middle_thread)
         self.middle_thread.start()
 
-
-
+        # 신호 연결
         self._connectSignals()
 
+        # 시스템 트레이
         self.gui_main.tray_icon.show()
-        self.gui_main.show()
-        self.gui_main.hide()
+        self.gui_main.show()   # |  → 메인 창 로딩
+        self.gui_main.hide()     # |
+        # 사용자 체크
         self.Check()
 
 
@@ -878,7 +881,7 @@ class Connect(QObject):
         self.gui_userset.close()
 
 
-
+""" -----------------------------------------------------------------------------------------------------------------------------------"""
 
 
 if __name__ == "__main__":
