@@ -903,7 +903,7 @@ class Connect(QObject):
                 QSystemTrayIcon.Warning,
                 2000
             )
-        time.sleep(2)
+        time.sleep(4)
         sys.exit()
 
     def Hello(self):
