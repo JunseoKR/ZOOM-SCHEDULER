@@ -673,7 +673,6 @@ class UI_User(QMainWindow):    # User Setting UI
             '''
         )
 
-        self.btn_close.clicked.connect(self.close)
         """end"""
 
 
@@ -723,12 +722,6 @@ class UI_User(QMainWindow):    # User Setting UI
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "사용자 설정"))
-
-
-    def line_value(self):
-        print(self.input_id.text())
-        return UI_User.ID
-
 
     def center(self):
         qr = self.frameGeometry()
@@ -854,6 +847,7 @@ class Connect(QObject):
         self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)
         self.gui_main.btn_notice.clicked.connect(self.gui_main.Notice_Check)
         self.gui_userset.btn_yes.clicked.connect(self.Bridge)
+        self.gui_userset.btn_close.clicked.connect(self.CloseA)
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)
         
         
@@ -890,6 +884,7 @@ class Connect(QObject):
 
         else:
             self.gui_userset.show()
+            self.Hello()
 
 
     def Bridge(self):
@@ -899,6 +894,40 @@ class Connect(QObject):
         self.middle.User_New()
         self.gui_main.show()
         self.gui_userset.close()
+        self.Inf()
+
+    def CloseA(self):
+        self.gui_main.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "학번, 이름을 입력하지 않으시면 ZOSC 사용이 불가합니다.",
+                QSystemTrayIcon.Warning,
+                2000
+            )
+        time.sleep(2)
+        sys.exit()
+
+    def Hello(self):
+        self.gui_main.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "만나서 반가워요!\n학번과 이름을 입력해 주세요.",
+                QSystemTrayIcon.Information,
+                2000
+            )
+
+    def Inf(self):
+        self.gui_main.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "ZOSC를 사용해주셔서 감사합니다!",
+                QSystemTrayIcon.Information,
+                2000
+            )
+
+        self.gui_main.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "ZOSC 사용 방법은 개발자 페이지에서 확인 가능합니다.",
+                QSystemTrayIcon.Information,
+                2000
+            )
 
 
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
