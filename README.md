@@ -26,7 +26,6 @@
 
 * JunseoKR<br/>
 * Zerix
-* forestcoldbrew
 
 
 ---------------------------------------
@@ -48,4 +47,3 @@
 
 * JunseoKR<br/>
 * Zerix
-* forestcoldbrew
