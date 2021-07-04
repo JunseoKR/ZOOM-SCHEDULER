@@ -752,7 +752,7 @@ class UI_Setting(QMainWindow):
         super().__init__()
         self.setupUi(self)
 
-        def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow):
 
             MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
             self.offset = None
@@ -764,6 +764,7 @@ class UI_Setting(QMainWindow):
 
             self.centralwidget = QtWidgets.QWidget(MainWindow)
             self.centralwidget.setObjectName("centralwidget")
+            self.center()
 
             self.background = QtWidgets.QLabel(self.centralwidget)
             self.background.setGeometry(QtCore.QRect(0, 0, 600, 500))
@@ -820,8 +821,31 @@ class UI_Setting(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
 
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
-# import zosc_resource_rc
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.m_flag = True
+            self.m_Position=event.globalPos()-self.pos()
+            event.accept()
+            self.setCursor(QCursor(Qt.OpenHandCursor))
+
+    def mouseMoveEvent(self, QMouseEvent):
+        if Qt.LeftButton and self.m_flag:
+            self.move(QMouseEvent.globalPos()-self.m_Position)
+            QMouseEvent.accept()
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.m_flag = False
+        self.setCursor(QCursor(Qt.ArrowCursor))
+
+
+
+
 
 """ [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
 class Middle(QObject):
@@ -886,6 +910,7 @@ class Connect(QObject):
         super(self.__class__, self).__init__(parent)
         self.gui_main = UI_MainWindow()
         self.gui_userset = UI_User()
+        self.gui_setting = UI_Setting()
 
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
@@ -919,6 +944,7 @@ class Connect(QObject):
     def _connectSignals(self):
         self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)
         self.gui_main.btn_notice.clicked.connect(self.gui_main.Notice_Check)
+        self.gui_main.btn_setting.clicked.connect(self.Bridge_Setting)
         self.gui_userset.btn_yes.clicked.connect(self.Bridge)
         self.gui_userset.btn_close.clicked.connect(self.CloseA)
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)
@@ -958,6 +984,11 @@ class Connect(QObject):
         else:
             self.gui_userset.show()
             self.Hello()
+
+
+
+    def Bridge_Setting(self):
+        self.gui_setting.show()
 
 
     def Bridge(self):
