@@ -746,6 +746,79 @@ class UI_User(QMainWindow):    # User Setting UI
         self.setCursor(QCursor(Qt.ArrowCursor))
 
 
+class UI_Setting(QMainWindow):
+    
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+        def setupUi(self, MainWindow):
+
+            MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+            self.offset = None
+
+            MainWindow.setObjectName("MainWindow")
+            MainWindow.resize(600, 500)
+            MainWindow.setMinimumSize(QtCore.QSize(600, 500))
+            MainWindow.setMaximumSize(QtCore.QSize(600, 500))
+
+            self.centralwidget = QtWidgets.QWidget(MainWindow)
+            self.centralwidget.setObjectName("centralwidget")
+
+            self.background = QtWidgets.QLabel(self.centralwidget)
+            self.background.setGeometry(QtCore.QRect(0, 0, 600, 500))
+            self.background.setText("")
+            self.background.setPixmap(QtGui.QPixmap("D:/AdobePJ/XD/ZOSC UI/exclude/Setting.png"))
+            self.background.setObjectName("background")
+
+            self.dot = QtWidgets.QLabel(self.centralwidget)
+            self.dot.setGeometry(QtCore.QRect(70, 130, 21, 61))
+            self.dot.setText("")
+            self.dot.setPixmap(QtGui.QPixmap("D:/AdobePJ/XD/ZOSC UI/elements/•.png"))
+            self.dot.setObjectName("dot")
+
+            """close button"""
+            self.btn_close = QtWidgets.QPushButton(self.centralwidget)
+            self.btn_close.setGeometry(QtCore.QRect(535, 7, 55, 25))
+            self.btn_close.setObjectName("btn_close")
+            self.btn_close.setStyleSheet(
+                '''
+                QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/btn.close.png); border:0px;}
+                QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/btn.close.active.png); border:0px;}
+                '''
+            )
+
+            self.btn_close.clicked.connect(QCoreApplication.instance().quit)
+            """end"""
+
+            self.btn_info = QtWidgets.QPushButton(self.centralwidget)
+            self.btn_info.setGeometry(QtCore.QRect(500, 440, 41, 23))
+            self.btn_info.setObjectName("btn_info")
+            self.btn_info.setStyleSheet(
+                '''
+                QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/info.png); border:0px;}
+                QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/info.active.png); border:0px;}
+                '''
+            )
+
+            self.btn_reset = QtWidgets.QPushButton(self.centralwidget)
+            self.btn_reset.setGeometry(QtCore.QRect(70, 143, 170, 40))
+            self.btn_reset.setObjectName("btn_reset")
+            self.btn_reset.setStyleSheet(
+                '''
+                QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/user.reset.png); border:0px;}
+                QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/user.reset.active.png); border:0px;}
+                '''
+            )
+
+            MainWindow.setCentralWidget(self.centralwidget)
+
+            self.retranslateUi(MainWindow)
+            QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
 
 
 # import zosc_resource_rc
