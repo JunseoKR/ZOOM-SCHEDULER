@@ -45,5 +45,4 @@
 <br/>
 [ 개발자 ]<br/>
 
-* JunseoKR<br/>
-* Zerix
+* JunseoKR
