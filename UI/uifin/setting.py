@@ -11,9 +11,8 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QRect, QCoreApplication, QEvent
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QPushButton, QMainWindow
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QPushButton, QMainWindow, QDialog
 from PyQt5.QtGui import QMouseEvent, QCursor
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -84,116 +83,14 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
 
+#import setting_rc
+
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
+    settingWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    ui.setupUi(settingWindow)
+    settingWindow.show()
     sys.exit(app.exec_())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def setupUi(self, MainWindow):
-
-        MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.setWindowIcon(icon)
-
-        self.setObjectName("사용자 설정")
-        self.resize(800, 500)
-        self.setMinimumSize(QtCore.QSize(800, 500))
-        self.center()
-
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-
-        self.background = QtWidgets.QLabel(self.centralwidget)
-        self.background.setGeometry(QtCore.QRect(0, 0, 800, 500))
-        self.background.setText("")
-        self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/ID-Name.png"))
-        self.background.setObjectName("background")
-
-        self.setting_title = QtWidgets.QLabel(self.centralwidget)
-        self.setting_title.setGeometry(QtCore.QRect(-10, 0, 811, 41))
-        self.setting_title.setText("")
-        self.setting_title.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/userset.title.png"))
-        self.setting_title.setObjectName("setting_title")
-
-        self.title = QtWidgets.QLabel(self.centralwidget)
-        self.title.setGeometry(QtCore.QRect(-10, 35, 811, 141))
-        self.title.setText("")
-        self.title.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/welcome.png"))
-        self.title.setObjectName("title")
-
-        """close button"""
-        self.btn_close = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_close.setGeometry(QtCore.QRect(745, 10, 40, 20))
-        self.btn_close.setObjectName("btn_close")
-        self.btn_close.setStyleSheet(
-            '''
-            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
-            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
-            '''
-        )
-
-        """end"""
-
-
-        self.userid_input = QtWidgets.QLabel(self.centralwidget)
-        self.userid_input.setGeometry(QtCore.QRect(170, 210, 461, 181))
-        self.userid_input.setText("")
-        self.userid_input.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/get.id.name.png"))
-        self.userid_input.setObjectName("userid_input")
-
-
-        
-
-        """input: student id"""
-        self.input_id = QtWidgets.QLineEdit(self.centralwidget)
-        self.input_id.setGeometry(QtCore.QRect(312, 218, 307, 40))
-        self.input_id.setObjectName("input_id")
-        font = QtGui.QFont()
-        font.setFamily("AppleSDGothicNeoL00")
-        font.setPointSize(25)
-        self.input_id.setFont(font)
-
-        """input: student name"""
-        self.input_name = QtWidgets.QLineEdit(self.centralwidget)
-        self.input_name.setGeometry(QtCore.QRect(312, 342, 307, 40))
-        self.input_name.setObjectName("input_name")
-        font = QtGui.QFont()
-        font.setFamily("AppleSDGothicNeoL00")
-        font.setPointSize(25)               
-        self.input_name.setFont(font)
-
-        """yes button"""
-        self.btn_yes = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_yes.setGeometry(QtCore.QRect(550, 430, 135, 55))
-        self.btn_yes.setObjectName("btn_yes")
-        self.btn_yes.setStyleSheet(
-            '''
-            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.yes.png); border:0px;}
-            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.yes.active.png); border:0px;}
-            '''
-        )
-        """end"""
-
-        self.setCentralWidget(self.centralwidget)
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)

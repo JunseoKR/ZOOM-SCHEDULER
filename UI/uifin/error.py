@@ -48,6 +48,8 @@ class Ui_MainWindow(object):
             QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/btn.yes.active.png); border:0px;}
             '''
         )
+
+        self.btn_yes.clicked.connect(QCoreApplication.instance().quit)
         """end"""
 
         MainWindow.setCentralWidget(self.centralwidget)
