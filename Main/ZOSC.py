@@ -557,9 +557,6 @@ class UI_MainWindow(QMainWindow):    # Main UI
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def Notice_Check(self):
-        self.label.setText(Notice())
-
 
     def Tray(self):
         self.hide()
@@ -769,13 +766,13 @@ class UI_Setting(QMainWindow):
             self.background = QtWidgets.QLabel(self.centralwidget)
             self.background.setGeometry(QtCore.QRect(0, 0, 600, 500))
             self.background.setText("")
-            self.background.setPixmap(QtGui.QPixmap("D:/AdobePJ/XD/ZOSC UI/exclude/Setting.png"))
+            self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/Setting.png"))
             self.background.setObjectName("background")
 
             self.dot = QtWidgets.QLabel(self.centralwidget)
             self.dot.setGeometry(QtCore.QRect(70, 130, 21, 61))
             self.dot.setText("")
-            self.dot.setPixmap(QtGui.QPixmap("D:/AdobePJ/XD/ZOSC UI/elements/•.png"))
+            self.dot.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/•.png"))
             self.dot.setObjectName("dot")
 
             """close button"""
@@ -784,12 +781,11 @@ class UI_Setting(QMainWindow):
             self.btn_close.setObjectName("btn_close")
             self.btn_close.setStyleSheet(
                 '''
-                QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/btn.close.png); border:0px;}
-                QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/btn.close.active.png); border:0px;}
+                QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
+                QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
                 '''
             )
 
-            self.btn_close.clicked.connect(QCoreApplication.instance().quit)
             """end"""
 
             self.btn_info = QtWidgets.QPushButton(self.centralwidget)
@@ -797,8 +793,8 @@ class UI_Setting(QMainWindow):
             self.btn_info.setObjectName("btn_info")
             self.btn_info.setStyleSheet(
                 '''
-                QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/info.png); border:0px;}
-                QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/info.active.png); border:0px;}
+                QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/info.png); border:0px;}
+                QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/info.active.png); border:0px;}
                 '''
             )
 
@@ -807,8 +803,8 @@ class UI_Setting(QMainWindow):
             self.btn_reset.setObjectName("btn_reset")
             self.btn_reset.setStyleSheet(
                 '''
-                QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/user.reset.png); border:0px;}
-                QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/user.reset.active.png); border:0px;}
+                QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/user.reset.png); border:0px;}
+                QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/user.reset.active.png); border:0px;}
                 '''
             )
 
@@ -933,8 +929,7 @@ class Connect(QObject):
 
         # 시스템 트레이
         self.gui_main.tray_icon.show()
-        self.gui_main.show()   # |  → 메인 창 로딩
-        self.gui_main.hide()     # |
+
         # 사용자 체크
         self.Check()
 
@@ -943,10 +938,11 @@ class Connect(QObject):
     
     def _connectSignals(self):
         self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)
-        self.gui_main.btn_notice.clicked.connect(self.gui_main.Notice_Check)
+        self.gui_main.btn_notice.clicked.connect(self.Notice_Set)
         self.gui_main.btn_setting.clicked.connect(self.Bridge_Setting)
         self.gui_userset.btn_yes.clicked.connect(self.Bridge)
         self.gui_userset.btn_close.clicked.connect(self.CloseA)
+        self.gui_setting.btn_close.clicked.connect(self.gui_setting.hide)
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)
         
         
@@ -985,11 +981,17 @@ class Connect(QObject):
             self.gui_userset.show()
             self.Hello()
 
-
+    def Notice_Set(self):
+        self.gui_main.label.setText(Notice())
+        self.gui_main.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "공지사항이 새로고침되었습니다.",
+                QSystemTrayIcon.Information,
+                2000
+            )
 
     def Bridge_Setting(self):
         self.gui_setting.show()
-
 
     def Bridge(self):
         Middle.ID = self.gui_userset.input_id.text()
@@ -999,7 +1001,7 @@ class Connect(QObject):
         self.gui_main.show()
         self.gui_userset.close()
         self.Inf()
-
+        
     def CloseA(self):
         self.gui_main.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
