@@ -385,17 +385,16 @@ class Worker(QObject):
             time.sleep(2)
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
 
-        if day_check() == 0:
+        if today() == 0:
             alert()
             print(quit)
 
-        elif day_check() == 6:
+        elif today() == 6:
             alert()
             print(quit)
 
         else:
             Run()
-
 
 
 """ [ UI ] --------------------------------------------------------------------------------------------------------------------------- """
@@ -617,7 +616,7 @@ class UI_MainWindow(QMainWindow):    # Main UI
         if status == "ZOSC 백그라운드 실행중":
             self.Tray()
 
-  
+
 class UI_User(QMainWindow):    # User Setting UI
 
     def __init__(self):
@@ -848,7 +847,6 @@ class UI_UserReSetting(QMainWindow):
 
 
     def setupUi(self, MainWindow):
-
         MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         MainWindow.setObjectName("MainWindow")
@@ -929,7 +927,7 @@ class UI_UserReSetting(QMainWindow):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(-9, -6, 811, 231))
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/reset.welcome.png"))
+        self.label.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/elements/reset.welcome.png"))
         self.label.setObjectName("label")
 
         MainWindow.setCentralWidget(self.centralwidget)
@@ -962,8 +960,6 @@ class UI_UserReSetting(QMainWindow):
     def mouseReleaseEvent(self, QMouseEvent):
         self.m_flag = False
         self.setCursor(QCursor(Qt.ArrowCursor))
-
-
 
 
 """ [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
@@ -1020,7 +1016,6 @@ class Middle(QObject):
         FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
         os.remove(User_Temp)    # Upload Temp File Delete
         Middle.Premium = "0"    # Premium = None
-        
 
 
 class Connect(QObject):
