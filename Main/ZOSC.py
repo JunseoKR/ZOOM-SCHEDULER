@@ -24,6 +24,12 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 me = singleton.SingleInstance()    # 중복 실행 방지
 
+
+from UI import Main
+
+
+
+
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
 
 # ======================================================================================== #
@@ -839,7 +845,7 @@ class UI_Setting(QMainWindow):
         self.setCursor(QCursor(Qt.ArrowCursor))
 
 
-class UI_UserReSetting(QMainWindow):
+class UI_UserReSet(QMainWindow):
 
     def __init__(self):
         super().__init__()
@@ -1025,7 +1031,7 @@ class Connect(QObject):
         self.gui_main = UI_MainWindow()
         self.gui_userset = UI_User()
         self.gui_setting = UI_Setting()
-        self.gui_UserReset = UI_UserReSetting()
+        self.gui_UserReset = UI_UserReSet()
 
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
