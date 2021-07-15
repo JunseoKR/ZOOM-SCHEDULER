@@ -1,4 +1,24 @@
-class UI_UserReSet(QMainWindow):
+import PyQt5    # PyQt5 / PyQt5-tools
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+
+# -*- conding: utf-8 -*-
+
+import PyQt5    # PyQt5 / PyQt5-tools
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+
+from ZOSC import *
+from Main import *
+from Setting import *
+from UserReset import *
+
+
+class UI_User(QMainWindow):    # User Setting UI
 
     def __init__(self):
         super().__init__()
@@ -6,19 +26,25 @@ class UI_UserReSet(QMainWindow):
 
 
     def setupUi(self, MainWindow):
+
         MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 500)
-        MainWindow.setMinimumSize(QtCore.QSize(800, 500))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.setWindowIcon(icon)
+
+        self.setObjectName("사용자 설정")
+        self.resize(800, 500)
+        self.setMinimumSize(QtCore.QSize(800, 500))
         self.center()
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.background = QtWidgets.QLabel(self.centralwidget)
         self.background.setGeometry(QtCore.QRect(0, 0, 800, 500))
         self.background.setText("")
-        self.background.setPixmap(QtGui.QPixmap(""))
+        self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/ID-Name.png"))
         self.background.setObjectName("background")
 
         self.setting_title = QtWidgets.QLabel(self.centralwidget)
@@ -30,8 +56,22 @@ class UI_UserReSet(QMainWindow):
         self.title = QtWidgets.QLabel(self.centralwidget)
         self.title.setGeometry(QtCore.QRect(-10, 35, 811, 141))
         self.title.setText("")
-        self.title.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/reset.welcome.png"))
+        self.title.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/welcome.png"))
         self.title.setObjectName("title")
+
+        """close button"""
+        self.btn_close = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_close.setGeometry(QtCore.QRect(745, 10, 40, 20))
+        self.btn_close.setObjectName("btn_close")
+        self.btn_close.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
+            '''
+        )
+
+        """end"""
+
 
         self.userid_input = QtWidgets.QLabel(self.centralwidget)
         self.userid_input.setGeometry(QtCore.QRect(170, 210, 461, 181))
@@ -39,13 +79,16 @@ class UI_UserReSet(QMainWindow):
         self.userid_input.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/get.id.name.png"))
         self.userid_input.setObjectName("userid_input")
 
+
+        
+
         """input: student id"""
         self.input_id = QtWidgets.QLineEdit(self.centralwidget)
         self.input_id.setGeometry(QtCore.QRect(312, 218, 307, 40))
         self.input_id.setObjectName("input_id")
         font = QtGui.QFont()
         font.setFamily("AppleSDGothicNeoL00")
-        font.setPointSize(25)               
+        font.setPointSize(25)
         self.input_id.setFont(font)
 
         """input: student name"""
@@ -69,34 +112,13 @@ class UI_UserReSet(QMainWindow):
         )
         """end"""
 
-        """close button"""
-        self.btn_close = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_close.setGeometry(QtCore.QRect(745, 10, 40, 20))
-        self.btn_close.setObjectName("btn_close")
-        self.btn_close.setStyleSheet(
-            '''
-            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
-            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
-            '''
-        )
-
-        self.btn_close.clicked.connect(QCoreApplication.instance().quit)
-        """end"""
-
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(-9, -6, 811, 231))
-        self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/elements/reset.welcome.png"))
-        self.label.setObjectName("label")
-
-        MainWindow.setCentralWidget(self.centralwidget)
-
+        self.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "사용자 설정"))
 
     def center(self):
         qr = self.frameGeometry()

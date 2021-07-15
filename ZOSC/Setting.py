@@ -1,3 +1,17 @@
+# -*- conding: utf-8 -*-
+
+import PyQt5    # PyQt5 / PyQt5-tools
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+
+from ZOSC import *
+from Main import *
+from UserSet import *
+from UserReset import *
+
+
 class UI_Setting(QMainWindow):
     
     def __init__(self):
