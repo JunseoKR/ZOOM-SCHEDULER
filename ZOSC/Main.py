@@ -14,7 +14,6 @@ from UserReset import *
 
 class UI_MainWindow(QMainWindow):    # Main UI
 
-
     def __init__(self):
         super().__init__()
         self.setupUi(self)

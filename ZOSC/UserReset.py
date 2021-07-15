@@ -26,6 +26,10 @@ class UI_UserReSet(QMainWindow):
     def setupUi(self, MainWindow):
         MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.setWindowIcon(icon)
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 500)
         MainWindow.setMinimumSize(QtCore.QSize(800, 500))
@@ -114,7 +118,7 @@ class UI_UserReSet(QMainWindow):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "사용자 재설정"))
 
     def center(self):
         qr = self.frameGeometry()

@@ -13,7 +13,7 @@ from UserReset import *
 
 
 class UI_Setting(QMainWindow):
-    
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -22,6 +22,10 @@ class UI_Setting(QMainWindow):
 
             MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
             self.offset = None
+
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.setWindowIcon(icon)
 
             MainWindow.setObjectName("MainWindow")
             MainWindow.resize(600, 500)
@@ -84,7 +88,7 @@ class UI_Setting(QMainWindow):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "설정"))
 
     def center(self):
         qr = self.frameGeometry()
