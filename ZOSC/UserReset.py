@@ -1,6 +1,3 @@
-import PyQt5    # PyQt5 / PyQt5-tools
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import *
 # -*- conding: utf-8 -*-
 
 import PyQt5    # PyQt5 / PyQt5-tools
@@ -8,11 +5,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-
-from ZOSC import *
-from Main import *
-from UserSet import *
-from Setting import *
 
 
 
@@ -23,7 +15,9 @@ class UI_UserReSet(QMainWindow):
         self.setupUi(self)
 
 
+
     def setupUi(self, MainWindow):
+
         MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         icon = QtGui.QIcon()
@@ -37,6 +31,7 @@ class UI_UserReSet(QMainWindow):
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.background = QtWidgets.QLabel(self.centralwidget)
         self.background.setGeometry(QtCore.QRect(0, 0, 800, 500))
         self.background.setText("")
@@ -93,7 +88,7 @@ class UI_UserReSet(QMainWindow):
 
         """close button"""
         self.btn_close = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_close.setGeometry(QtCore.QRect(745, 10, 40, 20))
+        self.btn_close.setGeometry(QtCore.QRect(745, 7, 40, 25))
         self.btn_close.setObjectName("btn_close")
         self.btn_close.setStyleSheet(
             '''
@@ -102,7 +97,6 @@ class UI_UserReSet(QMainWindow):
             '''
         )
 
-        self.btn_close.clicked.connect(QCoreApplication.instance().quit)
         """end"""
 
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -116,9 +110,17 @@ class UI_UserReSet(QMainWindow):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+
+
+    # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "사용자 재설정"))
+
+
+
+    # UI Interactions ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
     def center(self):
         qr = self.frameGeometry()

@@ -7,9 +7,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
 from ZOSC import *
-from UserSet import *
-from Setting import *
-from UserReset import *
+
 
 
 class UI_MainWindow(QMainWindow):    # Main UI
@@ -154,19 +152,11 @@ class UI_MainWindow(QMainWindow):    # Main UI
 
     # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
-
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
 
-
-    def center(self):
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
+        
 
     def Tray(self):
         self.hide()
@@ -176,7 +166,6 @@ class UI_MainWindow(QMainWindow):    # Main UI
                 QSystemTrayIcon.Information,
                 2000
             )
-
 
     def quit(self):
         self.tray_icon.showMessage(
@@ -198,11 +187,18 @@ class UI_MainWindow(QMainWindow):    # Main UI
         self.hide()
 
 
-    # App Interactions ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+    # App/UI Interactions ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
     def Activation_Reason(self, reason):
         if  reason == QSystemTrayIcon.DoubleClick:
             self.show()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:

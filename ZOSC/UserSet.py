@@ -1,9 +1,3 @@
-import PyQt5    # PyQt5 / PyQt5-tools
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-
 # -*- conding: utf-8 -*-
 
 import PyQt5    # PyQt5 / PyQt5-tools
@@ -12,10 +6,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
-from ZOSC import *
-from Main import *
-from Setting import *
-from UserReset import *
 
 
 class UI_User(QMainWindow):    # User Setting UI
@@ -23,6 +13,7 @@ class UI_User(QMainWindow):    # User Setting UI
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
 
 
     def setupUi(self, MainWindow):
@@ -116,9 +107,17 @@ class UI_User(QMainWindow):    # User Setting UI
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+
+
+    # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "사용자 설정"))
+
+
+
+    # UI Interactions ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
     def center(self):
         qr = self.frameGeometry()

@@ -1,28 +1,28 @@
 # -*- conding: utf-8 -*-
 
 
+import os
+import os.path
 import sys
 import time
-import os
+import threading
+import datetime
+from datetime import datetime
+from datetime import timedelta
+import webbrowser
 import ftplib
+import requests    # requests
 import urllib.request
 from urllib.parse import quote
 import configparser    # configparser
-import os.path
-import requests    # requests
-import threading
-import datetime
 from tendo import singleton    # tendo
 from win10toast import ToastNotifier    # win10toast
-from datetime import datetime
-from datetime import timedelta
 
 import PyQt5    # PyQt5 / PyQt5-tools
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-
 
 from Main import *
 from UserSet import *
@@ -99,7 +99,7 @@ def Notice():
     return Notice
 
 
-# ========================================================================================
+
 
 # FTP Section =============================================================================
 
@@ -179,8 +179,6 @@ class Worker(QObject):
             check_day = datetime.today().weekday()
             return check_day
 
-        
-
         def today():
             today = datetime.today().weekday()
             today = today + 1
@@ -189,7 +187,16 @@ class Worker(QObject):
         # RunTime ===============================================================================
 
         def Run():
+
             self.sig_numbers.emit("서버 연결중")
+
+            # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            def Server_Warn():
+                toaster = ToastNotifier()
+                toaster.show_toast("서버 연결 오류", "개발자에게 문의하세요.\nAWS ERROR", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=5, threaded=True)
+
+            
+            # Time Function ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             if today() == 3:
                 Subject_1 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
                 Subject_2 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
@@ -216,14 +223,20 @@ class Worker(QObject):
                 configread.read('C:\\ZOOM SCHEDULER\\SEXY.ini', encoding='utf-8')
                 configread.sections()
                 # 선생님 성함 읽어오기
-                Z1_Tr = configread['TrName'][Z1_TrA]
-                Z2_Tr = configread['TrName'][Z2_TrA]
-                Z3_Tr = configread['TrName'][Z3_TrA]
-                Z4_Tr = configread['TrName'][Z4_TrA]
-                Z1_Sj = configread['Subject'][Z1_SjA]
-                Z2_Sj = configread['Subject'][Z2_SjA]
-                Z3_Sj = configread['Subject'][Z3_SjA]
-                Z4_Sj = configread['Subject'][Z4_SjA]
+                try:
+                    Z1_Tr = configread['TrName'][Z1_TrA]
+                    Z2_Tr = configread['TrName'][Z2_TrA]
+                    Z3_Tr = configread['TrName'][Z3_TrA]
+                    Z4_Tr = configread['TrName'][Z4_TrA]
+                    Z1_Sj = configread['Subject'][Z1_SjA]
+                    Z2_Sj = configread['Subject'][Z2_SjA]
+                    Z3_Sj = configread['Subject'][Z3_SjA]
+                    Z4_Sj = configread['Subject'][Z4_SjA]
+
+                except KeyError:
+                    Server_Warn()
+                    return
+
                 # 링크 변수 처리
                 Z1_Link = Z1_Sj + "_" + Z1_Tr
                 Z2_Link = Z2_Sj + "_" + Z2_Tr
@@ -285,13 +298,19 @@ class Worker(QObject):
                 configread.read('C:\\ZOOM SCHEDULER\\SEXY.ini', encoding='utf-8')
                 configread.sections()
                 # 선생님 성함 읽어오기
-                Z1_Tr = configread['TrName'][Z1_TrA]
-                Z2_Tr = configread['TrName'][Z2_TrA]
-                Z3_Tr = configread['TrName'][Z3_TrA]
-                Z4_Tr = configread['TrName'][Z4_TrA]
-                Z5_Tr = configread['TrName'][Z5_TrA]
-                Z6_Tr = configread['TrName'][Z6_TrA]
-                Z7_Tr = configread['TrName'][Z7_TrA]
+                try:
+                    Z1_Tr = configread['TrName'][Z1_TrA]
+                    Z2_Tr = configread['TrName'][Z2_TrA]
+                    Z3_Tr = configread['TrName'][Z3_TrA]
+                    Z4_Tr = configread['TrName'][Z4_TrA]
+                    Z5_Tr = configread['TrName'][Z5_TrA]
+                    Z6_Tr = configread['TrName'][Z6_TrA]
+                    Z7_Tr = configread['TrName'][Z7_TrA]
+
+                except KeyError:
+                    Server_Warn()
+                    return
+
                 # 과목명 읽어오기
                 Z1_Sj = configread['Subject'][Z1_SjA]
                 Z2_Sj = configread['Subject'][Z2_SjA]
@@ -327,12 +346,14 @@ class Worker(QObject):
                 Time6 = Time.text[59:64]
                 Time7 = Time.text[70:75]
 
+            
+            # Main ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             def RunTime(result, Link):  # 메인 런타임
 
                 def Notification(): # win10toast 수업시간 알림
                     toaster = ToastNotifier()
-                    toaster.show_toast("ZOOM SCHEDULER", "수업이 5초 후에 켜집니다.", icon_path="C:\\ZOOM SCHEDULER\\Include\\Main.ico", duration=5, threaded=True)
+                    toaster.show_toast("ZOOM SCHEDULER", "수업이 5초 후에 켜집니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=5, threaded=True)
 
                 def Start_Check():  # 줌 LINK 실행(OS)
                     Notification()
@@ -369,10 +390,10 @@ class Worker(QObject):
                 RunTime(result_min, Link)   # 런타임 호출
 
 
-
             # Time_Set() → RunTime() 함수 호출
             self.sig_numbers.emit("서버 연결 완료")
             self.sig_numbers.emit("시간표 불러오기 완료")
+
             if today() == 3:
                 Time_Set(Time1, Link1)
                 Time_Set(Time2, Link2)
@@ -392,11 +413,12 @@ class Worker(QObject):
             time.sleep(2)
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
 
+
         # DayCheck ==============================================================================
         
         def alert():
             toaster = ToastNotifier()
-            toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\ZOOM SCHEDULER\\Include\\Main.ico", duration=2, threaded=False)
+            toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=2, threaded=False)
 
         if today() == 0:
             alert()
@@ -478,7 +500,6 @@ class Connect(QObject):
 
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
-        self.gui_userset.setupUi(MainWindow)
         
 
         # Worker() 쓰레드
@@ -505,16 +526,27 @@ class Connect(QObject):
 
     
     def _connectSignals(self):
-        self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)
-        self.gui_main.btn_notice.clicked.connect(self.Notice_Set)
-        self.gui_main.btn_setting.clicked.connect(self.Bridge_Setting)
-        self.gui_userset.btn_yes.clicked.connect(self.Bridge)
-        self.gui_userset.btn_close.clicked.connect(self.CloseA)
-        self.gui_setting.btn_reset.clicked.connect(self.gui_UserReset.show)
-        self.gui_setting.btn_close.clicked.connect(self.gui_setting.hide)
-        self.worker.sig_numbers.connect(self.gui_main.updateStatus)
+        # Main GUI
+        self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)     # Runtime
+        self.gui_main.btn_notice.clicked.connect(self.Notice_Refresh)     # Notice
+        self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
+
+        # Setting GUI
+        self.gui_setting.btn_reset.clicked.connect(self.gui_UserReset.show)     # UserReset UI
+        self.gui_setting.btn_info.clicked.connect(self.Information)
+        self.gui_setting.btn_close.clicked.connect(self.gui_setting.hide)     # Setting UI Close
         
+        # UserSetting GUI
+        self.gui_userset.btn_yes.clicked.connect(self.User_Save)     # UserSetting
+        self.gui_userset.btn_close.clicked.connect(self.User_Cancel)     # UserSet Cancel
         
+        # UserReset GUI
+        # self.gui_UserReset.btn_yes.clicked.connect()     # User Resetting
+
+        # PyqtSlot
+        self.worker.sig_numbers.connect(self.gui_main.updateStatus)     # PyqtSlot Connect
+        
+
 
     def Check(self):
         Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
@@ -550,7 +582,7 @@ class Connect(QObject):
             self.gui_userset.show()
             self.Hello()
 
-    def Notice_Set(self):
+    def Notice_Refresh(self):
         self.gui_main.label.setText(Notice())
         self.gui_main.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
@@ -559,19 +591,20 @@ class Connect(QObject):
                 2000
             )
 
-    def Bridge_Setting(self):
-        self.gui_setting.show()
+    def Information(self):
+        InfoURL = 'https://develop-junseo.tistory.com'
+        webbrowser.open(InfoURL)
 
-    def Bridge(self):
+    def User_Save(self):
         Middle.ID = self.gui_userset.input_id.text()
         Middle.Name = self.gui_userset.input_name.text()
 
         self.middle.User_New()
         self.gui_main.show()
         self.gui_userset.close()
-        self.Inf()
+        self.Awesome()
         
-    def CloseA(self):
+    def User_Cancel(self):
         self.gui_main.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
                 "학번, 이름을 입력하지 않으시면 ZOSC 사용이 불가합니다.",
@@ -589,7 +622,7 @@ class Connect(QObject):
                 2000
             )
 
-    def Inf(self):
+    def Awesome(self):
         self.gui_main.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
                 "ZOSC를 사용해주셔서 감사합니다!",
@@ -599,7 +632,7 @@ class Connect(QObject):
 
         self.gui_main.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
-                "ZOSC 사용 방법은 개발자 페이지에서 확인 가능합니다.",
+                "ZOSC 사용 방법은 ZOSC 웹페이지에서 확인 가능합니다.",
                 QSystemTrayIcon.Information,
                 2000
             )

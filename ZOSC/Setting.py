@@ -6,10 +6,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
-from ZOSC import *
-from Main import *
-from UserSet import *
-from UserReset import *
 
 
 class UI_Setting(QMainWindow):
@@ -18,10 +14,11 @@ class UI_Setting(QMainWindow):
         super().__init__()
         self.setupUi(self)
 
+
+
     def setupUi(self, MainWindow):
 
             MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-            self.offset = None
 
             icon = QtGui.QIcon()
             icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -30,12 +27,11 @@ class UI_Setting(QMainWindow):
             MainWindow.setObjectName("MainWindow")
             MainWindow.resize(600, 500)
             MainWindow.setMinimumSize(QtCore.QSize(600, 500))
-            MainWindow.setMaximumSize(QtCore.QSize(600, 500))
+            self.center()
 
             self.centralwidget = QtWidgets.QWidget(MainWindow)
             self.centralwidget.setObjectName("centralwidget")
-            self.center()
-
+            
             self.background = QtWidgets.QLabel(self.centralwidget)
             self.background.setGeometry(QtCore.QRect(0, 0, 600, 500))
             self.background.setText("")
@@ -50,7 +46,7 @@ class UI_Setting(QMainWindow):
 
             """close button"""
             self.btn_close = QtWidgets.QPushButton(self.centralwidget)
-            self.btn_close.setGeometry(QtCore.QRect(535, 7, 55, 25))
+            self.btn_close.setGeometry(QtCore.QRect(540, 10, 40, 20))
             self.btn_close.setObjectName("btn_close")
             self.btn_close.setStyleSheet(
                 '''
@@ -86,9 +82,17 @@ class UI_Setting(QMainWindow):
             self.retranslateUi(MainWindow)
             QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+
+
+    # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "설정"))
+
+
+
+    # UI Interactions ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
     def center(self):
         qr = self.frameGeometry()
