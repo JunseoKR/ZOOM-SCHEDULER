@@ -25,7 +25,7 @@ from PyQt5.QtGui import *
 me = singleton.SingleInstance()    # 중복 실행 방지
 
 
-from UI import Main
+
 
 
 
