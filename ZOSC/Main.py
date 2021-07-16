@@ -47,9 +47,10 @@ class UI_MainWindow(QMainWindow):    # Main UI
         self.label.setText(Notice())
 
         self.RunState = QtWidgets.QLabel(self.centralwidget)
-        self.RunState.setGeometry(QtCore.QRect(740, 515, 320, 40)) # (x, y, w, h)
+        self.RunState.setGeometry(QtCore.QRect(765, 515, 280, 40)) # (x, y, w, h)
         self.RunState.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15))
         self.RunState.setStyleSheet("Color : Black")
+        self.RunState.setAlignment(Qt.AlignHCenter)
         self.RunState.setStyleSheet("color: #5E56FF; border-style: solid; border-width: 3px; border-color: #9EA9FF; border-radius: 10px; ")
 
         self.tray_icon = QSystemTrayIcon(self)

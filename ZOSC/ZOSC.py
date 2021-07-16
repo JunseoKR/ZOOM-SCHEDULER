@@ -447,9 +447,9 @@ class Middle(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
-        self.gui_Userset = UI_User()
+        
 
-    # 입력 처리 수정 필요
+    # 입력 처리 과정 필요
     def User_New(self):
         Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
         config_User = configparser.ConfigParser()
@@ -488,6 +488,10 @@ class Middle(QObject):
         os.remove(User_Temp)    # Upload Temp File Delete
         Middle.Premium = "0"    # Premium = None
 
+    def User_Reset(self):
+        Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
+        os.remove(Setting_ini)
+
 
 class Connect(QObject):
 
@@ -501,7 +505,6 @@ class Connect(QObject):
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
         
-
         # Worker() 쓰레드
         self.worker = Worker()
         self.worker_thread = QThread()
@@ -523,7 +526,6 @@ class Connect(QObject):
         self.Check()
 
 
-
     
     def _connectSignals(self):
         # Main GUI
@@ -533,15 +535,15 @@ class Connect(QObject):
 
         # Setting GUI
         self.gui_setting.btn_reset.clicked.connect(self.gui_UserReset.show)     # UserReset UI
-        self.gui_setting.btn_info.clicked.connect(self.Information)
-        self.gui_setting.btn_close.clicked.connect(self.gui_setting.hide)     # Setting UI Close
+        self.gui_setting.btn_info.clicked.connect(self.Information)     # Information Webpage
+        self.gui_setting.btn_close.clicked.connect(self.Setting_Close)     # Setting UI Close
         
         # UserSetting GUI
         self.gui_userset.btn_yes.clicked.connect(self.User_Save)     # UserSetting
         self.gui_userset.btn_close.clicked.connect(self.User_Cancel)     # UserSet Cancel
         
         # UserReset GUI
-        # self.gui_UserReset.btn_yes.clicked.connect()     # User Resetting
+        self.gui_UserReset.btn_yes.clicked.connect(self.Resetting)     # User Resetting
 
         # PyqtSlot
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)     # PyqtSlot Connect
@@ -569,7 +571,12 @@ class Connect(QObject):
              # 경로 지정
             UserPrCheck = "C:\\ZOOM SCHEDULER\\PrCheck.ini"
             # 서버 요청
-            urllib.request.urlretrieve(User_Get, UserPrCheck)
+            try:
+                urllib.request.urlretrieve(User_Get, UserPrCheck)
+                
+            except urllib.error.HTTPError:
+                self.ERROR_User()
+                
             config_PrCheck = configparser.ConfigParser()
             config_PrCheck.read(UserPrCheck, encoding='utf-8')
             config_PrCheck.sections()
@@ -577,6 +584,7 @@ class Connect(QObject):
             # 파일 제거
             os.remove(UserPrCheck)
             self.gui_main.show()
+            self.Welcome()
 
         else:
             self.gui_userset.show()
@@ -590,6 +598,10 @@ class Connect(QObject):
                 QSystemTrayIcon.Information,
                 2000
             )
+
+    def Setting_Close(self):
+        self.gui_UserReset.hide()
+        self.gui_setting.hide()
 
     def Information(self):
         InfoURL = 'https://develop-junseo.tistory.com'
@@ -611,8 +623,24 @@ class Connect(QObject):
                 QSystemTrayIcon.Warning,
                 2000
             )
-        time.sleep(4)
+        time.sleep(2)
         sys.exit()
+
+    def Resetting(self):
+        Middle.ID = self.gui_UserReset.input_id.text()
+        Middle.Name = self.gui_UserReset.input_name.text()
+
+        self.middle.User_Reset()
+        self.gui_UserReset.hide()
+        self.Reset_Complete()
+
+    def Welcome(self):
+        self.gui_main.tray_icon.showMessage(
+                "또 만났네요!",
+                "{}님 안녕하세요!".format(Middle.Name),
+                QSystemTrayIcon.Information,
+                2000
+            )
 
     def Hello(self):
         self.gui_main.tray_icon.showMessage(
@@ -629,13 +657,32 @@ class Connect(QObject):
                 QSystemTrayIcon.Information,
                 2000
             )
-
+        
         self.gui_main.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
-                "ZOSC 사용 방법은 ZOSC 웹페이지에서 확인 가능합니다.",
+                "ZOSC 사용 방법은 공식 페이지에서 확인 가능합니다.",
                 QSystemTrayIcon.Information,
                 2000
             )
+
+    def Reset_Complete(self):
+        self.gui_main.tray_icon.showMessage(
+                "사용자 재설정 완료",
+                "사용자가 재설정 되었습니다.\n{} {}".format(Middle.ID, Middle.Name),
+                QSystemTrayIcon.Information,
+                2000
+            )
+
+    def ERROR_User(self):
+        os.remove("C:\\ZOOM SCHEDULER\\Setting.ini")
+        self.gui_main.tray_icon.showMessage(
+                "사용자 정보 오류",
+                "문제를 해결했습니다.\nZOSC를 다시 실행하세요.",
+                QSystemTrayIcon.Information,
+                2000
+            )
+        time.sleep(3)
+        sys.exit()
 
 
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
