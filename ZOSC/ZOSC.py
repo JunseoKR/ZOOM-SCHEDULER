@@ -17,6 +17,7 @@ from urllib.parse import quote
 import configparser    # configparser
 from tendo import singleton    # tendo
 from win10toast import ToastNotifier    # win10toast
+from win10toast_click import ToastNotifier    # win10toast-click
 
 import PyQt5    # PyQt5 / PyQt5-tools
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -98,7 +99,9 @@ def Notice():
     os.remove(NoticePath)
     return Notice
 
-
+def Support():
+    SupportChat = "https://open.kakao.com/o/s2HyPjpc"
+    webbrowser.open(SupportChat)
 
 
 # FTP Section =============================================================================
@@ -155,14 +158,6 @@ def FTP_Upload(Name, FTPPath, Local):
 
 
 
-""" [ Method ] --------------------------------------------------------------------------------------------------------------------"""
-
-FTP_StatusCheck()
-
-Version()
-
-
-
 
 """ [ RunTime ] ------------------------------------------------------------------------------------------------------------------- """
 
@@ -189,11 +184,11 @@ class Worker(QObject):
         def Run():
 
             self.sig_numbers.emit("서버 연결중")
-
+            
             # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             def Server_Warn():
                 toaster = ToastNotifier()
-                toaster.show_toast("서버 연결 오류", "개발자에게 문의하세요.\nAWS ERROR", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=5, threaded=True)
+                toaster.show_toast("서버 연결 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=5, threaded=True, callback_on_click=Support)
 
             
             # Time Function ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -433,6 +428,7 @@ class Worker(QObject):
         
 
 
+
 """ [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
 class Middle(QObject):
 
@@ -491,6 +487,41 @@ class Middle(QObject):
     def User_Reset(self):
         Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
         os.remove(Setting_ini)
+        config_User = configparser.ConfigParser()
+        config_User['User'] = {}
+        config_User['User']['Grade'] = Middle.ID[0:1]
+        config_User['User']['Class'] = Middle.ID[1:3]
+        config_User['User']['Number'] = Middle.ID[3:5]
+        config_User['User']['Name'] = Middle.Name
+        Middle.Grade = Middle.ID[0:1]
+        Middle.Class = Middle.ID[1:3]
+        Middle.Number = Middle.ID[3:5]
+        Middle.ClassR = Middle.Class.strip("0")
+
+        with open(Setting_ini, 'w', encoding='utf-8') as configfile:
+            config_User.write(configfile)
+
+        # FTP Server Upload
+        User_Temp = "C:\\ZOOM SCHEDULER\\"+str(Middle.ID)+" "+str(Middle.Name)+".ini"
+
+        config_FTP = configparser.ConfigParser()
+        config_FTP['User'] = {}
+        config_FTP['Premium'] = {}
+        config_FTP['User']['Grade'] = Middle.ID[0:1]
+        config_FTP['User']['Class'] = Middle.ID[1:3]
+        config_FTP['User']['Number'] = Middle.ID[3:5]
+        config_FTP['User']['Name'] = Middle.Name
+        config_FTP['Premium']['Premium'] = "0"
+
+        with open(User_Temp, 'w', encoding='utf-8') as configfile:
+            config_FTP.write(configfile)
+
+        # FTP Upload
+        FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Middle.Grade)+"학년 "+str(Middle.Class)+"반/"    # FTP Path 지정
+        FTP_UpName = Middle.ID+" "+Middle.Name+".ini"    # User ini 파일 이름 지정
+        FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
+        os.remove(User_Temp)    # Upload Temp File Delete
+        Middle.Premium = "0"    # Premium = None
 
 
 class Connect(QObject):
@@ -501,6 +532,10 @@ class Connect(QObject):
         self.gui_userset = UI_User()
         self.gui_setting = UI_Setting()
         self.gui_UserReset = UI_UserReSet()
+
+        FTP_StatusCheck()
+
+        Version()
 
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
@@ -544,6 +579,7 @@ class Connect(QObject):
         
         # UserReset GUI
         self.gui_UserReset.btn_yes.clicked.connect(self.Resetting)     # User Resetting
+        self.gui_UserReset.btn_close.clicked.connect(self.gui_UserReset.hide)
 
         # PyqtSlot
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)     # PyqtSlot Connect
@@ -678,15 +714,16 @@ class Connect(QObject):
         self.gui_main.tray_icon.showMessage(
                 "사용자 정보 오류",
                 "문제를 해결했습니다.\nZOSC를 다시 실행하세요.",
-                QSystemTrayIcon.Information,
+                QSystemTrayIcon.Warning,
                 2000
             )
         time.sleep(3)
         sys.exit()
 
 
-""" -----------------------------------------------------------------------------------------------------------------------------------"""
 
+
+""" -----------------------------------------------------------------------------------------------------------------------------------"""
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

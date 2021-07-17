@@ -24,9 +24,9 @@ class UI_UserReSet(QMainWindow):
         icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
 
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 500)
-        MainWindow.setMinimumSize(QtCore.QSize(800, 500))
+        self.setObjectName("사용자 재설정")
+        self.resize(800, 500)
+        self.setMinimumSize(QtCore.QSize(800, 500))
         self.center()
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -35,7 +35,7 @@ class UI_UserReSet(QMainWindow):
         self.background = QtWidgets.QLabel(self.centralwidget)
         self.background.setGeometry(QtCore.QRect(0, 0, 800, 500))
         self.background.setText("")
-        self.background.setPixmap(QtGui.QPixmap(""))
+        self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/ID-Name.png"))
         self.background.setObjectName("background")
 
         self.setting_title = QtWidgets.QLabel(self.centralwidget)
@@ -99,14 +99,8 @@ class UI_UserReSet(QMainWindow):
 
         """end"""
 
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(-9, -6, 811, 231))
-        self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/elements/reset.welcome.png"))
-        self.label.setObjectName("label")
 
-        MainWindow.setCentralWidget(self.centralwidget)
-
+        self.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 

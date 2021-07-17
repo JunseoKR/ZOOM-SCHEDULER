@@ -24,9 +24,9 @@ class UI_Setting(QMainWindow):
             icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.setWindowIcon(icon)
 
-            MainWindow.setObjectName("MainWindow")
-            MainWindow.resize(600, 500)
-            MainWindow.setMinimumSize(QtCore.QSize(600, 500))
+            self.setObjectName("설정")
+            self.resize(600, 500)
+            self.setMinimumSize(QtCore.QSize(600, 500))
             self.center()
 
             self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -37,12 +37,6 @@ class UI_Setting(QMainWindow):
             self.background.setText("")
             self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/Setting.png"))
             self.background.setObjectName("background")
-
-            self.dot = QtWidgets.QLabel(self.centralwidget)
-            self.dot.setGeometry(QtCore.QRect(70, 130, 21, 61))
-            self.dot.setText("")
-            self.dot.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/•.png"))
-            self.dot.setObjectName("dot")
 
             """close button"""
             self.btn_close = QtWidgets.QPushButton(self.centralwidget)
@@ -58,7 +52,7 @@ class UI_Setting(QMainWindow):
             """end"""
 
             self.btn_info = QtWidgets.QPushButton(self.centralwidget)
-            self.btn_info.setGeometry(QtCore.QRect(500, 440, 41, 23))
+            self.btn_info.setGeometry(QtCore.QRect(515, 440, 41, 23))
             self.btn_info.setObjectName("btn_info")
             self.btn_info.setStyleSheet(
                 '''
@@ -68,14 +62,14 @@ class UI_Setting(QMainWindow):
             )
 
             self.btn_reset = QtWidgets.QPushButton(self.centralwidget)
-            self.btn_reset.setGeometry(QtCore.QRect(70, 143, 170, 40))
+            self.btn_reset.setGeometry(QtCore.QRect(40, 150, 140, 61))
             self.btn_reset.setObjectName("btn_reset")
             self.btn_reset.setStyleSheet(
                 '''
-                QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/user.reset.png); border:0px;}
-                QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/user.reset.active.png); border:0px;}
+                QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.reset.png); border:0px;}
+                QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.reset.active.png); border:0px;}
                 '''
-            )
+        )
 
             MainWindow.setCentralWidget(self.centralwidget)
 
