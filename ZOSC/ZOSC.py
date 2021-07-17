@@ -166,6 +166,7 @@ class Worker(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
+        self.gui_main = UI_MainWindow()
 
     @pyqtSlot()
     def Server_Connect(self, parent=None):
@@ -569,7 +570,7 @@ class Connect(QObject):
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
 
         # Setting GUI
-        self.gui_setting.btn_reset.clicked.connect(self.gui_UserReset.show)     # UserReset UI
+        self.gui_setting.btn_reset.clicked.connect(self.Reset_show)     # UserReset UI
         self.gui_setting.btn_info.clicked.connect(self.Information)     # Information Webpage
         self.gui_setting.btn_close.clicked.connect(self.Setting_Close)     # Setting UI Close
         
@@ -642,6 +643,15 @@ class Connect(QObject):
     def Information(self):
         InfoURL = 'https://develop-junseo.tistory.com'
         webbrowser.open(InfoURL)
+
+    def Reset_show(self):
+        self.gui_UserReset.show()
+        self.gui_main.tray_icon.showMessage(
+                "사용자 재설정 주의",
+                "사용자를 잘못 등록한 경우에만\n재설정하시기 바랍니다.",
+                QSystemTrayIcon.Warning,
+                2000
+            )
 
     def User_Save(self):
         Middle.ID = self.gui_userset.input_id.text()
