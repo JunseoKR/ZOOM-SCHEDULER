@@ -32,8 +32,6 @@ from UserSet import *
 from Setting import *
 from UserReset import *
 
-from Analysis import *
-
 
 
 
@@ -162,7 +160,50 @@ def FTP_Upload(Name, FTPPath, Local):
 
 
 
-        
+
+""" [ ZOSC RunTime ] ------------------------------------------------------------------------------------------------------------------- """
+
+class Analysis(QObject):
+
+    def __init__(self, parent=None):
+        super(self.__class__, self).__init__(parent)
+
+
+
+    def NowTime(self):
+        now = time.localtime()
+        today = ("%04d.%02d.%02d" % (now.tm_year, now.tm_mon, now.tm_mday))
+        return today
+
+    def Analysis_Class(self):
+        Analysis_Result = "C:\\ZOOM SCHEDULER\\Analysis\\Analysis Result.txt"
+
+        def RunTime():
+            Time = 0
+            Process_List = []
+            while Time != 50:
+                WMI = GetObject('winmgmts:')
+                Processes = WMI.InstancesOf('Win32_Process')
+
+                for Process in Processes:
+                    Process_List.append(Process.Properties_('Name').Value)
+                print(Process_List)
+                time.sleep(5)
+                break
+                
+
+
+        if os.path.isfile(Analysis_Result):
+            RunTime()
+
+        else:
+            New = open(Analysis_Result, 'w')
+            New.close()
+            RunTime()
+
+
+
+
 """ [ ZOSC RunTime ] ------------------------------------------------------------------------------------------------------------------- """
 
 class Worker(QObject):
@@ -547,6 +588,11 @@ class Connect(QObject):
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
         
+
+        self.analysis = Analysis()
+        self.analysis_thread = QThread()
+        self.analysis.moveToThread(self.analysis_thread)
+        self.analysis_thread.start()
         # Worker() 쓰레드
         self.worker = Worker()
         self.worker_thread = QThread()
@@ -558,6 +604,7 @@ class Connect(QObject):
         self.middle.moveToThread(self.middle_thread)
         self.middle_thread.start()
 
+
         # 신호 연결
         self._connectSignals()
 
@@ -566,7 +613,6 @@ class Connect(QObject):
 
         # 사용자 체크
         self.Check()
-        self.Analysis.Analysis_Class()
 
 
     
