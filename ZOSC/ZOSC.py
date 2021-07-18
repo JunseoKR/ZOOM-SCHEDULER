@@ -170,10 +170,6 @@ class Worker(QObject):
 
     @pyqtSlot()
     def Server_Connect(self, parent=None):
-        
-        def day_check():
-            check_day = datetime.today().weekday()
-            return check_day
 
         def today():
             today = datetime.today().weekday()
@@ -189,7 +185,11 @@ class Worker(QObject):
             # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             def Server_Warn():
                 toaster = ToastNotifier()
-                toaster.show_toast("서버 연결 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=5, threaded=True, callback_on_click=Support)
+                toaster.show_toast("서버 연결 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
+                self.sig_numbers.emit("AWS 서버 연결 오류")
+                time.sleep(5)
+                self.sig_numbers.emit("")
+
 
             
             # Time Function ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -414,15 +414,15 @@ class Worker(QObject):
         
         def alert():
             toaster = ToastNotifier()
-            toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=2, threaded=False)
+            toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
 
-        if today() == 0:
+        if today() == 6:
             alert()
-            print(quit)
+            return
 
-        elif today() == 6:
+        elif today() == 7:
             alert()
-            print(quit)
+            return
 
         else:
             Run()
@@ -565,6 +565,7 @@ class Connect(QObject):
     
     def _connectSignals(self):
         # Main GUI
+        self.gui_main.btn_hide.clicked.connect(self.Tray)     # Tray
         self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)     # Runtime
         self.gui_main.btn_notice.clicked.connect(self.Notice_Refresh)     # Notice
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
@@ -586,6 +587,17 @@ class Connect(QObject):
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)     # PyqtSlot Connect
         
 
+
+    def Tray(self):
+        self.gui_UserReset.hide()
+        self.gui_setting.hide()
+        self.gui_main.hide()
+        self.gui_main.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "ZOSC가 백그라운드에서 실행됩니다.",
+                QSystemTrayIcon.Information,
+                2000
+            )
 
     def Check(self):
         Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'

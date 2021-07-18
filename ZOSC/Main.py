@@ -7,6 +7,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
 from ZOSC import *
+from Setting import *
+from UserReset import *
 
 
 
@@ -125,7 +127,6 @@ class UI_MainWindow(QMainWindow):    # Main UI
             QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/line.hide.active.png); border:0px;}
             ''')
 
-        self.btn_hide.clicked.connect(self.Tray)
 
         """end"""
 
@@ -158,15 +159,6 @@ class UI_MainWindow(QMainWindow):    # Main UI
         MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
 
         
-
-    def Tray(self):
-        self.hide()
-        self.tray_icon.showMessage(
-                "ZOOM SCHEDULER",
-                "ZOSC가 백그라운드에서 실행됩니다.",
-                QSystemTrayIcon.Information,
-                2000
-            )
 
     def quit(self):
         self.tray_icon.showMessage(
