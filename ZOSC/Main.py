@@ -17,6 +17,8 @@ class UI_MainWindow(QMainWindow):    # Main UI
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.gui_setting = UI_Setting()
+        self.gui_UserReset = UI_UserReSet()
 
 
 
@@ -158,7 +160,18 @@ class UI_MainWindow(QMainWindow):    # Main UI
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ZOOM SCHEDULER"))
 
-        
+
+
+    def Tray(self):
+        self.gui_UserReset.hide()
+        self.gui_setting.hide()
+        self.hide()
+        self.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "ZOSC가 백그라운드에서 실행됩니다.",
+                QSystemTrayIcon.Information,
+                2000
+            )
 
     def quit(self):
         self.tray_icon.showMessage(

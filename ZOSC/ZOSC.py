@@ -6,6 +6,7 @@ import os.path
 import sys
 import time
 import threading
+import wmi
 import datetime
 from datetime import datetime
 from datetime import timedelta
@@ -15,6 +16,7 @@ import requests    # requests
 import urllib.request
 from urllib.parse import quote
 import configparser    # configparser
+from win32com.client import GetObject
 from tendo import singleton    # tendo
 from win10toast import ToastNotifier    # win10toast
 from win10toast_click import ToastNotifier    # win10toast-click
@@ -29,6 +31,8 @@ from Main import *
 from UserSet import *
 from Setting import *
 from UserReset import *
+
+from Analysis import *
 
 
 
@@ -158,8 +162,8 @@ def FTP_Upload(Name, FTPPath, Local):
 
 
 
-
-""" [ RunTime ] ------------------------------------------------------------------------------------------------------------------- """
+        
+""" [ ZOSC RunTime ] ------------------------------------------------------------------------------------------------------------------- """
 
 class Worker(QObject):
     sig_numbers = pyqtSignal(str)
@@ -408,6 +412,7 @@ class Worker(QObject):
             self.sig_numbers.emit("RunTime Ready")
             time.sleep(2)
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
+            
 
 
         # DayCheck ==============================================================================
@@ -418,6 +423,7 @@ class Worker(QObject):
 
         if today() == 6:
             alert()
+
             return
 
         elif today() == 7:
@@ -426,7 +432,7 @@ class Worker(QObject):
 
         else:
             Run()
-        
+
 
 
 
@@ -446,7 +452,6 @@ class Middle(QObject):
         super(self.__class__, self).__init__(parent)
         
 
-    # 입력 처리 과정 필요
     def User_New(self):
         Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
         config_User = configparser.ConfigParser()
@@ -484,6 +489,7 @@ class Middle(QObject):
         FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
         os.remove(User_Temp)    # Upload Temp File Delete
         Middle.Premium = "0"    # Premium = None
+        return
 
     def User_Reset(self):
         Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
@@ -560,12 +566,13 @@ class Connect(QObject):
 
         # 사용자 체크
         self.Check()
+        self.Analysis.Analysis_Class()
 
 
     
     def _connectSignals(self):
         # Main GUI
-        self.gui_main.btn_hide.clicked.connect(self.Tray)     # Tray
+        self.gui_main.btn_hide.clicked.connect(self.gui_main.Tray)     # Tray
         self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)     # Runtime
         self.gui_main.btn_notice.clicked.connect(self.Notice_Refresh)     # Notice
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
@@ -588,16 +595,7 @@ class Connect(QObject):
         
 
 
-    def Tray(self):
-        self.gui_UserReset.hide()
-        self.gui_setting.hide()
-        self.gui_main.hide()
-        self.gui_main.tray_icon.showMessage(
-                "ZOOM SCHEDULER",
-                "ZOSC가 백그라운드에서 실행됩니다.",
-                QSystemTrayIcon.Information,
-                2000
-            )
+    
 
     def Check(self):
         Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
