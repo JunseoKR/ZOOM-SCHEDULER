@@ -101,6 +101,7 @@ def Notice():
     os.remove(NoticePath)
     return Notice
 
+# 지원
 def Support():
     SupportChat = "https://open.kakao.com/o/s2HyPjpc"
     webbrowser.open(SupportChat)
@@ -169,28 +170,33 @@ class Analysis(QObject):
         super(self.__class__, self).__init__(parent)
 
 
-
     def NowTime(self):
         now = time.localtime()
         today = ("%04d.%02d.%02d" % (now.tm_year, now.tm_mon, now.tm_mday))
         return today
 
-    def Analysis_Class(self):
+
+    def Analysis(self):
         Analysis_Result = "C:\\ZOOM SCHEDULER\\Analysis\\Analysis Result.txt"
 
-        def RunTime():
-            Time = 0
-            Process_List = []
-            while Time != 50:
-                WMI = GetObject('winmgmts:')
-                Processes = WMI.InstancesOf('Win32_Process')
+        def String(String):
+            String = String.replace(" ", "")
+            return String
 
-                for Process in Processes:
-                    Process_List.append(Process.Properties_('Name').Value)
-                print(Process_List)
-                time.sleep(5)
-                break
-                
+
+        def RunTime():
+            with open("C:\\ZOOM SCHEDULER\\Analysis_Process.txt", 'w') as PL:
+                Process = os.popen('wmic process get description').read().split()
+                PL.write(str(Process))
+            i = 0
+            with open("C:\\ZOOM SCHEDULER\\Analysis_Process.txt", 'r') as PL:
+                for i, line in enumerate(PL):
+                    Process_List = String(line)
+                    i += 2
+            os.remove("C:\\ZOOM SCHEDULER\\Analysis_Process.txt")
+            if "chrome.exe" in Process_List:
+                print("Chrome Running")
+
 
 
         if os.path.isfile(Analysis_Result):
@@ -212,6 +218,7 @@ class Worker(QObject):
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
         self.gui_main = UI_MainWindow()
+        self.analysis = Analysis()
 
     @pyqtSlot()
     def Server_Connect(self, parent=None):
@@ -224,6 +231,8 @@ class Worker(QObject):
         # RunTime ===============================================================================
 
         def Run():
+
+            self.analysis.Analysis()
 
             self.sig_numbers.emit("서버 연결중")
             
@@ -451,6 +460,7 @@ class Worker(QObject):
                 Time_Set(Time7, Link7)
 
             self.sig_numbers.emit("RunTime Ready")
+            self.analysis.Analysis()
             time.sleep(2)
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
             
@@ -570,6 +580,9 @@ class Middle(QObject):
         FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
         os.remove(User_Temp)    # Upload Temp File Delete
         Middle.Premium = "0"    # Premium = None
+        return
+
+
 
 
 class Connect(QObject):
@@ -589,10 +602,7 @@ class Connect(QObject):
         self.gui_main.setupUi(MainWindow)
         
 
-        self.analysis = Analysis()
-        self.analysis_thread = QThread()
-        self.analysis.moveToThread(self.analysis_thread)
-        self.analysis_thread.start()
+        
         # Worker() 쓰레드
         self.worker = Worker()
         self.worker_thread = QThread()
@@ -603,7 +613,11 @@ class Connect(QObject):
         self.middle_thread = QThread()
         self.middle.moveToThread(self.middle_thread)
         self.middle_thread.start()
-
+        # Worker() 쓰레드
+        self.analysis = Analysis()
+        self.analysis_thread = QThread()
+        self.analysis.moveToThread(self.analysis_thread)
+        self.analysis_thread.start()
 
         # 신호 연결
         self._connectSignals()
