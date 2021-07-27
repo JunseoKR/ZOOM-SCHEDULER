@@ -41,7 +41,7 @@ from UserReset import *
 # =================================== [ ZOSC 버전 확인 ] ====================================== #
 # ======================================================================================== #
 
-curVer = "2.2"
+curVer = "3.0"
 
 # ======================================================================================== #
 # ==================================== [ 버전 꼭 확인! ] ======================================= #
@@ -76,7 +76,7 @@ def Version():
 
 # 공지 로딩
 def Notice():
-    NoticeLink = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Notice/Notice_Ex.txt"
+    NoticeLink = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Notice/Notice.txt"
     NoticePath = "C:\\ZOOM SCHEDULER\\Notice.txt"
     urllib.request.urlretrieve(NoticeLink, NoticePath)
     # 파일 읽기
