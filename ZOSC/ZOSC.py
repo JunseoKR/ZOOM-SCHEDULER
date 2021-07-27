@@ -193,7 +193,7 @@ class Analysis(QObject):
                 for i, line in enumerate(PL):
                     Process_List = String(line)
                     i += 2
-            os.remove("C:\\ZOOM SCHEDULER\\Analysis_Process.txt")
+            #os.remove("C:\\ZOOM SCHEDULER\\Analysis_Process.txt")
             if "chrome.exe" in Process_List:
                 print("Chrome Running")
 
