@@ -247,6 +247,10 @@ class Worker(QObject):
 
             
             # Time Function ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            Inf_Request = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Data/SEXY.ini"
+            Inf_Save = "C:\\ZOOM SCHEDULER\\SEXY.ini"
+            urllib.request.urlretrieve(Inf_Request, Inf_Save)
+
             if today() == 3:
                 Subject_1 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
                 Subject_2 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
@@ -284,6 +288,7 @@ class Worker(QObject):
                     Z4_Sj = configread['Subject'][Z4_SjA]
 
                 except KeyError:
+                    os.remove(Inf_Save)
                     Server_Warn()
                     return
 
@@ -304,6 +309,7 @@ class Worker(QObject):
                 Time2 = Time.text[15:20]
                 Time3 = Time.text[26:31]
                 Time4 = Time.text[37:42]
+                os.remove(Inf_Save)
 
 
             else:
@@ -358,6 +364,7 @@ class Worker(QObject):
                     Z7_Tr = configread['TrName'][Z7_TrA]
 
                 except KeyError:
+                    os.remove(Inf_Save)
                     Server_Warn()
                     return
 
@@ -395,6 +402,7 @@ class Worker(QObject):
                 Time5 = Time.text[48:53]
                 Time6 = Time.text[59:64]
                 Time7 = Time.text[70:75]
+                os.remove(Inf_Save)
 
             
             # Main ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
