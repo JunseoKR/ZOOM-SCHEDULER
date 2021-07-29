@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
     "",
+    "\\UI\\resource\\elements",
+    "\\Updater",
     "\\ZOSC"
   ],
   "SelectedNode": "\\ZOSC\\ZOSC.py",

@@ -120,7 +120,7 @@ def FTP_StatusCheck():    # FTP 서버 상태 확인
 
     def Warn():
         toaster = ToastNotifier()
-        toaster.show_toast("ZOOM SCHEDULER", "데이터 서버 오류\n개발자에게 문의하세요.", icon_path="C:\\ZOOM SCHEDULER\\Include\\Main.ico", duration=7, threaded=True)
+        toaster.show_toast("ZOSC 데이터 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
 
     if Check == "Running":
         return
