@@ -232,7 +232,7 @@ class Worker(QObject):
 
         def Run():
 
-            self.analysis.Analysis()
+            #self.analysis.Analysis()
 
             self.sig_numbers.emit("서버 연결중")
             
@@ -252,10 +252,10 @@ class Worker(QObject):
             urllib.request.urlretrieve(Inf_Request, Inf_Save)
 
             if today() == 3:
-                Subject_1 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
-                Subject_2 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
-                Subject_3 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_3"
-                Subject_4 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_4"
+                Subject_1 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
+                Subject_2 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
+                Subject_3 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_3"
+                Subject_4 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_4"
                 ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
                 ZOSCA_2 = requests.get(Subject_2)
                 ZOSCA_3 = requests.get(Subject_3)
@@ -304,7 +304,7 @@ class Worker(QObject):
                 Link4 = configread['Link'][Z4_Link]
 
                 # Time Information Scraping
-                Time = requests.get('https://zosc-server.run.goorm.io/Time')
+                Time = requests.get('http://3.34.135.142:3000/Time')
                 Time1 = Time.text[4:9]
                 Time2 = Time.text[15:20]
                 Time3 = Time.text[26:31]
@@ -313,13 +313,13 @@ class Worker(QObject):
 
 
             else:
-                Subject_1 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
-                Subject_2 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
-                Subject_3 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_3"
-                Subject_4 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_4"
-                Subject_5 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_5"
-                Subject_6 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_6"
-                Subject_7 = "https://zosc-server.run.goorm.io/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_7"
+                Subject_1 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
+                Subject_2 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
+                Subject_3 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_3"
+                Subject_4 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_4"
+                Subject_5 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_5"
+                Subject_6 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_6"
+                Subject_7 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_7"
                 ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
                 ZOSCA_2 = requests.get(Subject_2)
                 ZOSCA_3 = requests.get(Subject_3)
@@ -394,7 +394,7 @@ class Worker(QObject):
                 Link7 = configread['Link'][Z7_Link]
 
                 # Time Information Scraping
-                Time = requests.get('https://zosc-server.run.goorm.io/Time')
+                Time = requests.get('http://3.34.135.142:3000/Time')
                 Time1 = Time.text[4:9]
                 Time2 = Time.text[15:20]
                 Time3 = Time.text[26:31]
@@ -468,7 +468,6 @@ class Worker(QObject):
                 Time_Set(Time7, Link7)
 
             self.sig_numbers.emit("RunTime Ready")
-            self.analysis.Analysis()
             time.sleep(2)
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
             
