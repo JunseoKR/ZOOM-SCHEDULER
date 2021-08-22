@@ -33,7 +33,9 @@ def FTP_StatusCheck():    # FTP 서버 상태 확인
         return
     else:
         Warn()
+        time.sleep(8)
         sys.exit()
+
 
 FTP_StatusCheck()
 
