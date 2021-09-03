@@ -47,6 +47,12 @@ curVer = "3.0"
 # ==================================== [ 버전 꼭 확인! ] ======================================= #
 # ======================================================================================== #
 
+# [ JSON ]
+# 버전 / 공지 / 
+
+
+
+
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
 
 # Method Section =========================================================================
@@ -72,7 +78,7 @@ def Version():
         pass
 
     else:
-        print("업데이트가 있습니다.\n")
+        print("업데이트가 있습니다.\n")    # 서버에서 받아오기
 
 # 공지 로딩
 def Notice():
@@ -108,25 +114,51 @@ def Support():
 
 
 # FTP Section =============================================================================
+# MySQL 수정 필요
+# FTP → MySQL
 
-def FTP_StatusCheck():    # FTP 서버 상태 확인
-    Checkurl = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Check/Status.txt"
-    CheckPath = "C:\\ZOOM SCHEDULER\\FTP Status.txt"
-    urllib.request.urlretrieve(Checkurl, CheckPath)
-    Checktxt = open(CheckPath, 'r')
-    Check = Checktxt.read()
-    Checktxt.close()
-    os.remove(CheckPath)
+def Server_Check():
 
-    def Warn():
+    def FTP_Warn():
         toaster = ToastNotifier()
-        toaster.show_toast("ZOSC 데이터 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
+        toaster.show_toast("ZOSC FTP 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
 
-    if Check == "Running":
-        return
-    else:
-        Warn()
+    def SERVER_Warn():
+        toaster = ToastNotifier()
+        toaster.show_toast("ZOSC 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
+
+    # FTP Check
+    FTPURL = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Check/Status.txt"
+    FTPPATH = "C:\\ZOOM SCHEDULER\\FTP Status.txt"
+    urllib.request.urlretrieve(FTPURL, FTPPATH)
+    FTPTXT = open(FTPPATH, 'r')
+    FTPCHECK = FTPTXT.read()
+    FTPTXT.close()
+    os.remove(FTPPATH)
+
+    # SERVER Check
+    SERVERURL = 'http://zosc.iptime.org/ZOSC'
+    try:
+        RES = requests.head(url=SERVERURL, timeout=10)
+        CHECK = RES.status_code
+        pass
+
+    except requests.exceptions.Timeout:
+        FTP_Warn()
         sys.exit()
+    except requests.exceptions.TooManyRedirects:
+        FTP_Warn()
+        sys.exit()
+    except requests.exceptions.RequestException as e:
+        FTP_Warn()
+        sys.exit()
+
+    if FTPCHECK == "Running":
+        return
+
+    else:
+        FTP_Warn()
+        sys.exit()    # SERVER 상태 확인 [ 완료 ]
         
 def FTP_UserCheck(Name, FTPPath, Local):
     # FTP Server 로그인
@@ -142,7 +174,7 @@ def FTP_UserCheck(Name, FTPPath, Local):
         return
 
     else:
-        FTP_Upload(Name, FTPPath, Local)    # FTP_Upload 함수 호출
+        FTP_Upload(Name, FTPPath, Local)    # FTP 미사용 예정
 
 def FTP_Upload(Name, FTPPath, Local):
     # FTP Server 로그인
@@ -157,9 +189,9 @@ def FTP_Upload(Name, FTPPath, Local):
     FTP_Open = open(Local, 'rb')    #Upload File Open
     FTP_Upload.storbinary('STOR '+Name, FTP_Open)    #FTP File Upload
     FTP_Open.close()    #FTP Close
-    FTP_Upload.close()    #File Close
+    FTP_Upload.close()    # FTP 미사용 예정
 
-
+# MySQL 수정 필요
 
 
 """ [ ZOSC RunTime ] ------------------------------------------------------------------------------------------------------------------- """
@@ -601,7 +633,7 @@ class Connect(QObject):
         self.gui_setting = UI_Setting()
         self.gui_UserReset = UI_UserReSet()
 
-        FTP_StatusCheck()
+        Server_Check()
 
         Version()
 
@@ -718,7 +750,7 @@ class Connect(QObject):
         self.gui_setting.hide()
 
     def Information(self):
-        InfoURL = 'https://develop-junseo.tistory.com'
+        InfoURL = 'http://nwjun.com'
         webbrowser.open(InfoURL)
 
     def Reset_show(self):
