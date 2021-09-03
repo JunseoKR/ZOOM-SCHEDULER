@@ -7,6 +7,7 @@ import sys
 import time
 import threading
 import wmi
+import json
 import datetime
 from datetime import datetime
 from datetime import timedelta
@@ -61,16 +62,14 @@ curVer = "3.0"
 def Version():
 
     # 경로 지정
-    FTP_version = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Version/Version.txt"    # Version Check 파일 경로 ( FTP 서버 )
-    FTP_verPath = "C:\\ZOOM SCHEDULER\\version.txt"    # Version.txt 저장 경로
-    # 서버 요청
-    urllib.request.urlretrieve(FTP_version, FTP_verPath)
-    # 파일 읽기
-    FTPread = open(FTP_verPath, 'r')
-    UpdateVer = FTPread.read()
-    FTPread.close()
-    # 파일 제거
-    os.remove(FTP_verPath)
+    VERSIONURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( FTP 서버 )
+    VERSIONPATH = "C:\\ZOOM SCHEDULER\\REQ.json"
+    urllib.request.urlretrieve(VERSIONURL, VERSIONPATH)
+    
+    with open(VERSIONPATH, 'r') as JSOP:
+        VerJSON = json.load(JSOP)
+    UpdateVer = VerJSON['zosc']['version']
+    os.remove(VERSIONPATH)
 
     # 버전 판별
     if curVer == UpdateVer:
@@ -78,7 +77,7 @@ def Version():
         pass
 
     else:
-        print("업데이트가 있습니다.\n")    # 서버에서 받아오기
+        print("업데이트가 있습니다.\n")    # 서버에서 받아오기 [ 완료 ]
 
 # 공지 로딩
 def Notice():
@@ -284,10 +283,10 @@ class Worker(QObject):
             urllib.request.urlretrieve(Inf_Request, Inf_Save)
 
             if today() == 3:
-                Subject_1 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
-                Subject_2 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
-                Subject_3 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_3"
-                Subject_4 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_4"
+                Subject_1 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/1"    # 서버 주소 지정
+                Subject_2 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/2"
+                Subject_3 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/3"
+                Subject_4 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/4"
                 ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
                 ZOSCA_2 = requests.get(Subject_2)
                 ZOSCA_3 = requests.get(Subject_3)
@@ -336,7 +335,7 @@ class Worker(QObject):
                 Link4 = configread['Link'][Z4_Link]
 
                 # Time Information Scraping
-                Time = requests.get('http://3.34.135.142:3000/Time')
+                Time = requests.get('http://zosc.iptime.org/ZOSC/Data/Time')
                 Time1 = Time.text[4:9]
                 Time2 = Time.text[15:20]
                 Time3 = Time.text[26:31]
@@ -345,13 +344,13 @@ class Worker(QObject):
 
 
             else:
-                Subject_1 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_1"    # 서버 주소 지정
-                Subject_2 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_2"
-                Subject_3 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) + "_"+str(today())+"_3"
-                Subject_4 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_4"
-                Subject_5 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_5"
-                Subject_6 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_6"
-                Subject_7 = "http://3.34.135.142:3000/" + str(Middle.Grade) + "_" + str(Middle.ClassR) +  "_"+str(today())+"_7"
+                Subject_1 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/1"    # 서버 주소 지정
+                Subject_2 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/2"
+                Subject_3 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/3"
+                Subject_4 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/4"
+                Subject_5 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/5"
+                Subject_6 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/6"
+                Subject_7 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/7"
                 ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
                 ZOSCA_2 = requests.get(Subject_2)
                 ZOSCA_3 = requests.get(Subject_3)
@@ -426,7 +425,7 @@ class Worker(QObject):
                 Link7 = configread['Link'][Z7_Link]
 
                 # Time Information Scraping
-                Time = requests.get('http://3.34.135.142:3000/Time')
+                Time = requests.get('http://zosc.iptime.org/ZOSC/Data/Time')
                 Time1 = Time.text[4:9]
                 Time2 = Time.text[15:20]
                 Time3 = Time.text[26:31]
