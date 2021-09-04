@@ -62,14 +62,15 @@ curVer = "3.0"
 def Version():
 
     # 경로 지정
-    VERSIONURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( FTP 서버 )
-    VERSIONPATH = "C:\\ZOOM SCHEDULER\\REQ.json"
-    urllib.request.urlretrieve(VERSIONURL, VERSIONPATH)
+    REQURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( NodeJS 서버 )
+    REQPATH = "C:\\ZOOM SCHEDULER\\REQUEST.json"
+    urllib.request.urlretrieve(REQURL, REQPATH)
     
-    with open(VERSIONPATH, 'r') as JSOP:
-        VerJSON = json.load(JSOP)
-    UpdateVer = VerJSON['zosc']['version']
-    os.remove(VERSIONPATH)
+    with open(REQPATH, 'r') as J:
+        JSON_VERSION = json.load(J)
+    UpdateVer = JSON_VERSION['zosc']['version']
+    J.close()
+    os.remove(REQPATH)
 
     # 버전 판별
     if curVer == UpdateVer:
@@ -77,34 +78,19 @@ def Version():
         pass
 
     else:
-        print("업데이트가 있습니다.\n")    # 서버에서 받아오기 [ 완료 ]
+        print("업데이트가 있습니다.\n")    # NodeJS 서버
 
 # 공지 로딩
 def Notice():
-    NoticeLink = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Notice/Notice.txt"
-    NoticePath = "C:\\ZOOM SCHEDULER\\Notice.txt"
-    urllib.request.urlretrieve(NoticeLink, NoticePath)
+    REQURL = "http://zosc.iptime.org/ZOSC/Data/Notice"
+    REQPATH = "C:\\ZOOM SCHEDULER\\Notice.txt"
+    urllib.request.urlretrieve(REQURL, REQPATH)
     # 파일 읽기
-    NoticeRead = open(NoticePath, 'r', encoding='UTF8')
-    Read = NoticeRead.readlines()
-
-    NoticeA = Read[0]
-    NoticeB = Read[1]
-    NoticeC = Read[2]
-    NoticeD = Read[3]
-    NoticeE = Read[4]
-    NoticeF = Read[5]
-    NoticeG = Read[6]
-    NoticeH = Read[7]
-    NoticeI = Read[8]
-    NoticeJ = Read[9]
-    NoticeK = Read[10]
-    NoticeL =  Read[11]
-    NoticeM = Read[12]
+    NoticeRead = open(REQPATH, 'r', encoding='UTF8')
+    Notice = NoticeRead.read()
     NoticeRead.close()
-    Notice = NoticeA+NoticeB+NoticeC+NoticeD+NoticeE+NoticeF+NoticeG+NoticeH+NoticeI+NoticeJ+NoticeK+NoticeL+NoticeM
-    os.remove(NoticePath)
-    return Notice
+    os.remove(REQPATH)
+    return Notice    # NodeJS 서버
 
 # 지원
 def Support():
@@ -157,7 +143,7 @@ def Server_Check():
 
     else:
         FTP_Warn()
-        sys.exit()    # SERVER 상태 확인 [ 완료 ]
+        sys.exit()    # SERVER 상태 확인 [ 완료 ] / 이전 후 FTP 상태 확인 코드 제거 필요
         
 def FTP_UserCheck(Name, FTPPath, Local):
     # FTP Server 로그인
@@ -173,7 +159,7 @@ def FTP_UserCheck(Name, FTPPath, Local):
         return
 
     else:
-        FTP_Upload(Name, FTPPath, Local)    # FTP 미사용 예정
+        FTP_Upload(Name, FTPPath, Local)    # FTP 미사용 예정 → MySQL
 
 def FTP_Upload(Name, FTPPath, Local):
     # FTP Server 로그인
@@ -188,7 +174,7 @@ def FTP_Upload(Name, FTPPath, Local):
     FTP_Open = open(Local, 'rb')    #Upload File Open
     FTP_Upload.storbinary('STOR '+Name, FTP_Open)    #FTP File Upload
     FTP_Open.close()    #FTP Close
-    FTP_Upload.close()    # FTP 미사용 예정
+    FTP_Upload.close()    # FTP 미사용 예정 → MySQL
 
 # MySQL 수정 필요
 
