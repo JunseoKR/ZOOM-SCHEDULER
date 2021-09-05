@@ -12,7 +12,8 @@ import datetime
 from datetime import datetime
 from datetime import timedelta
 import webbrowser
-import ftplib
+import pymysql
+import ftplib    # ftplib 제거 필요!
 import requests    # requests
 import urllib.request
 from urllib.parse import quote
@@ -98,7 +99,19 @@ def Support():
     webbrowser.open(SupportChat)
 
 
-# FTP Section =============================================================================
+
+# DB CONNECT ==========================================================================
+
+# DB Connection
+DB = pymysql.connect(
+    user='root',
+    passwd='???',
+    host='???',
+    db='ZOSC',
+    charset='utf8'
+)
+
+# FTP Section ============================================================================
 # MySQL 수정 필요
 # FTP → MySQL
 
@@ -512,6 +525,9 @@ class Worker(QObject):
 
 
 """ [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
+# 사용자 회원가입 웹 이동 필요
+# 수정 중지 / 수정 필요
+
 class Middle(QObject):
 
     # Class 변수 선언
@@ -519,8 +535,8 @@ class Middle(QObject):
     Class = 00
     ClassR = 0
     Number = 00
-    Name = "기본값"
-    ID = 00000
+    Name = "NULL"
+    URID = "NULL"
     Premium = 0
 
     def __init__(self, parent=None):
@@ -528,13 +544,10 @@ class Middle(QObject):
         
 
     def User_New(self):
-        Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
-        config_User = configparser.ConfigParser()
-        config_User['User'] = {}
-        config_User['User']['Grade'] = Middle.ID[0:1]
-        config_User['User']['Class'] = Middle.ID[1:3]
-        config_User['User']['Number'] = Middle.ID[3:5]
-        config_User['User']['Name'] = Middle.Name
+        Setting_ini = 'C:\\ZOOM SCHEDULER\\Cache_User.json'
+        JSON_USER = dict()
+        User = dict()
+        User[""]
         Middle.Grade = Middle.ID[0:1]
         Middle.Class = Middle.ID[1:3]
         Middle.Number = Middle.ID[3:5]
@@ -543,26 +556,6 @@ class Middle(QObject):
         with open(Setting_ini, 'w', encoding='utf-8') as configfile:
             config_User.write(configfile)
 
-        # FTP Server Upload
-        User_Temp = "C:\\ZOOM SCHEDULER\\"+str(Middle.ID)+" "+str(Middle.Name)+".ini"
-
-        config_FTP = configparser.ConfigParser()
-        config_FTP['User'] = {}
-        config_FTP['Premium'] = {}
-        config_FTP['User']['Grade'] = Middle.ID[0:1]
-        config_FTP['User']['Class'] = Middle.ID[1:3]
-        config_FTP['User']['Number'] = Middle.ID[3:5]
-        config_FTP['User']['Name'] = Middle.Name
-        config_FTP['Premium']['Premium'] = "0"
-
-        with open(User_Temp, 'w', encoding='utf-8') as configfile:
-            config_FTP.write(configfile)
-
-        # FTP Upload
-        FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Middle.Grade)+"학년 "+str(Middle.Class)+"반/"    # FTP Path 지정
-        FTP_UpName = Middle.ID+" "+Middle.Name+".ini"    # User ini 파일 이름 지정
-        FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
-        os.remove(User_Temp)    # Upload Temp File Delete
         Middle.Premium = "0"    # Premium = None
         return
 
@@ -682,36 +675,19 @@ class Connect(QObject):
     
 
     def Check(self):
-        Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
+        CACHE = 'C:\\ZOOM SCHEDULER\\CACHE.json'
 
-        if os.path.isfile(Setting_ini):
-            config_User = configparser.ConfigParser()
-            config_User.read(Setting_ini, encoding='utf-8')    # ini 파일 설정
-            config_User.sections()    # Section 값 읽어오기
+        if os.path.isfile(CACHE):
+            with open(CACHE, 'r', encoding='UTF8') as J:
+                JSON_USER = json.load(J)
+            Middle.Grade = JSON_USER['USER']['Grade']
+            Middle.Class = JSON_USER['USER']['Class']
+            Middle.Number = JSON_USER['USER']['Number']
+            Middle.Name = JSON_USER['USER']['Name']
+            Middle.URID = JSON_USER['USER']['URID']
+            Middle.ID = Middle.Grade+Middle.Class+Middle.Number
 
-            Middle.Grade = config_User['User']['Grade']    # Grade 값 읽기
-            Middle.Class = config_User['User']['Class']    # Class 값 읽기  :  [ 0n ] 으로 저장됨
-            Middle.Number = config_User['User']['Number']    # Number 값 읽기
-            Middle.Name = config_User['User']['Name']    # Name 값 읽기
-            Middle.ClassR = Middle.Class.strip("0")    # Class의 "0" 제거
-            Middle.ID = Middle.Grade+Middle.Class+Middle.Number    # 학번 조합
 
-            # [ Premium Tier Check ]
-            SCName = quote(Middle.Name)    # [ 중요 ] : 한글 → ASCII로 변환 필요!
-            User_Get = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/DATA/ZOSC/User/"+str(Middle.Grade)+"%ed%95%99%eb%85%84%20"+str(Middle.Class)+"%eb%b0%98/"+str(Middle.ID)+"%20"+SCName+".ini"
-             # 경로 지정
-            UserPrCheck = "C:\\ZOOM SCHEDULER\\PrCheck.ini"
-            # 서버 요청
-            try:
-                urllib.request.urlretrieve(User_Get, UserPrCheck)
-                
-            except urllib.error.HTTPError:
-                self.ERROR_User()
-                
-            config_PrCheck = configparser.ConfigParser()
-            config_PrCheck.read(UserPrCheck, encoding='utf-8')
-            config_PrCheck.sections()
-            Middle.Premium = config_PrCheck['Premium']['Premium']
             # 파일 제거
             os.remove(UserPrCheck)
             self.gui_main.show()
