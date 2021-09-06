@@ -50,7 +50,7 @@ curVer = "3.0"
 # ======================================================================================== #
 
 # [ JSON ]
-# 버전 / 공지 / 
+# 버전 / 공지 / Request Data
 
 
 
@@ -104,35 +104,32 @@ def Support():
 
 # DB Connection
 DB = pymysql.connect(
-    user='root',
-    passwd='???',
-    host='???',
+    host='175.114.208.102',
+    user='ZOSC',
+    passwd='JunseoKR',
     db='ZOSC',
-    charset='utf8'
+    charset='utf8',
+    autocommit=True,
+    cursorclass=pymysql.cursors.DictCursor
 )
+
+cursor = DB.cursor()
+
+cursor.execute("SHOW DATABASES")
+cursor.execute("SELECT * FROM USER")
+result = cursor.fetchall()
+
+
+
 
 # FTP Section ============================================================================
 # MySQL 수정 필요
 # FTP → MySQL
 
 def Server_Check():
-
-    def FTP_Warn():
-        toaster = ToastNotifier()
-        toaster.show_toast("ZOSC FTP 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
-
     def SERVER_Warn():
         toaster = ToastNotifier()
         toaster.show_toast("ZOSC 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
-
-    # FTP Check
-    FTPURL = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Check/Status.txt"
-    FTPPATH = "C:\\ZOOM SCHEDULER\\FTP Status.txt"
-    urllib.request.urlretrieve(FTPURL, FTPPATH)
-    FTPTXT = open(FTPPATH, 'r')
-    FTPCHECK = FTPTXT.read()
-    FTPTXT.close()
-    os.remove(FTPPATH)
 
     # SERVER Check
     SERVERURL = 'http://zosc.iptime.org/ZOSC'
@@ -150,13 +147,6 @@ def Server_Check():
     except requests.exceptions.RequestException as e:
         FTP_Warn()
         sys.exit()
-
-    if FTPCHECK == "Running":
-        return
-
-    else:
-        FTP_Warn()
-        sys.exit()    # SERVER 상태 확인 [ 완료 ] / 이전 후 FTP 상태 확인 코드 제거 필요
         
 def FTP_UserCheck(Name, FTPPath, Local):
     # FTP Server 로그인
@@ -172,7 +162,7 @@ def FTP_UserCheck(Name, FTPPath, Local):
         return
 
     else:
-        FTP_Upload(Name, FTPPath, Local)    # FTP 미사용 예정 → MySQL
+        FTP_Upload(Name, FTPPath, Local)    # FTP 미사용
 
 def FTP_Upload(Name, FTPPath, Local):
     # FTP Server 로그인
@@ -187,7 +177,7 @@ def FTP_Upload(Name, FTPPath, Local):
     FTP_Open = open(Local, 'rb')    #Upload File Open
     FTP_Upload.storbinary('STOR '+Name, FTP_Open)    #FTP File Upload
     FTP_Open.close()    #FTP Close
-    FTP_Upload.close()    # FTP 미사용 예정 → MySQL
+    FTP_Upload.close()    # FTP 미사용
 
 # MySQL 수정 필요
 
@@ -686,6 +676,11 @@ class Connect(QObject):
             Middle.Name = JSON_USER['USER']['Name']
             Middle.URID = JSON_USER['USER']['URID']
             Middle.ID = Middle.Grade+Middle.Class+Middle.Number
+            
+            #SELECT = "SELECT * FROM USER"
+            #cursor.excute(SELECT)
+            #USER = cursor.fetchall()
+            #print(USER)
 
 
             # 파일 제거
