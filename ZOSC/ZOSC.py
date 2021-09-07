@@ -13,6 +13,7 @@ from datetime import datetime
 from datetime import timedelta
 import webbrowser
 import pymysql
+import pandas
 import ftplib    # ftplib 제거 필요!
 import requests    # requests
 import urllib.request
@@ -113,11 +114,7 @@ DB = pymysql.connect(
     cursorclass=pymysql.cursors.DictCursor
 )
 
-cursor = DB.cursor()
 
-cursor.execute("SHOW DATABASES")
-cursor.execute("SELECT * FROM USER")
-result = cursor.fetchall()
 
 
 
@@ -605,6 +602,7 @@ class Connect(QObject):
 
         Version()
 
+        
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
         
@@ -632,6 +630,7 @@ class Connect(QObject):
         # 시스템 트레이
         self.gui_main.tray_icon.show()
 
+        
         # 사용자 체크
         self.Check()
 
@@ -677,10 +676,13 @@ class Connect(QObject):
             Middle.URID = JSON_USER['USER']['URID']
             Middle.ID = Middle.Grade+Middle.Class+Middle.Number
             
-            #SELECT = "SELECT * FROM USER"
-            #cursor.excute(SELECT)
-            #USER = cursor.fetchall()
-            #print(USER)
+            self.cursor = DB.cursor()
+
+            self.cursor.execute("SHOW DATABASES")
+            self.cursor.execute("SELECT * FROM USER")
+            result = self.cursor.fetchall()
+            RES = pandas.DataFrame(result)
+            print(RES)
 
 
             # 파일 제거
