@@ -60,6 +60,29 @@ curVer = "3.0"
 
 # Method Section =========================================================================
 
+# 서버 상태 확인
+def Server_Check():
+    def SERVER_Warn():
+        toaster = ToastNotifier()
+        toaster.show_toast("ZOSC 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
+
+    # SERVER Check
+    SERVERURL = 'http://zosc.iptime.org/ZOSC'
+    try:
+        RES = requests.head(url=SERVERURL, timeout=10)
+        CHECK = RES.status_code
+        pass
+
+    except requests.exceptions.Timeout:
+        Server_Warn()
+        sys.exit()
+    except requests.exceptions.TooManyRedirects:
+        Server_Warn()
+        sys.exit()
+    except requests.exceptions.RequestException as e:
+        Server_Warn()
+        sys.exit()
+
 # 버전 체크
 def Version():
 
@@ -76,11 +99,10 @@ def Version():
 
     # 버전 판별
     if curVer == UpdateVer:
-        print("최신 버전입니다.\n")
         pass
 
     else:
-        print("업데이트가 있습니다.\n")    # NodeJS 서버
+        sys.exit()
 
 # 공지 로딩
 def Notice():
@@ -100,51 +122,21 @@ def Support():
     webbrowser.open(SupportChat)
 
 
+# DB SECTION ===========================================================================
 
-# DB CONNECT ==========================================================================
-
-# DB Connection
-DB = pymysql.connect(
-    host='175.114.208.102',
-    user='ZOSC',
-    passwd='JunseoKR',
-    db='ZOSC',
-    charset='utf8',
-    autocommit=True,
-    cursorclass=pymysql.cursors.DictCursor
-)
-
-
-
-
+try:
+    DB = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ZOSC', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
+    pass
+except:
+    print("MySQL SERVER ERROR")
+    toaster = ToastNotifier()
+    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
+    sys.exit()
 
 
 # FTP Section ============================================================================
 # MySQL 수정 필요
-# FTP → MySQL
 
-def Server_Check():
-    def SERVER_Warn():
-        toaster = ToastNotifier()
-        toaster.show_toast("ZOSC 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
-
-    # SERVER Check
-    SERVERURL = 'http://zosc.iptime.org/ZOSC'
-    try:
-        RES = requests.head(url=SERVERURL, timeout=10)
-        CHECK = RES.status_code
-        pass
-
-    except requests.exceptions.Timeout:
-        FTP_Warn()
-        sys.exit()
-    except requests.exceptions.TooManyRedirects:
-        FTP_Warn()
-        sys.exit()
-    except requests.exceptions.RequestException as e:
-        FTP_Warn()
-        sys.exit()
-        
 def FTP_UserCheck(Name, FTPPath, Local):
     # FTP Server 로그인
     FTP_host = "DataJunseo.ipdisk.co.kr"
@@ -179,7 +171,7 @@ def FTP_Upload(Name, FTPPath, Local):
 # MySQL 수정 필요
 
 
-""" [ ZOSC RunTime ] ------------------------------------------------------------------------------------------------------------------- """
+""" [ ZOSC Analysis ] -------------------------------------------------------------------------------------------------------------------- """
 
 class Analysis(QObject):
 
@@ -518,12 +510,13 @@ class Worker(QObject):
 class Middle(QObject):
 
     # Class 변수 선언
+    School = "NULL"
     Grade = 0
     Class = 00
-    ClassR = 0
     Number = 00
     Name = "NULL"
     URID = "NULL"
+    PW = "NULL"
     Premium = 0
 
     def __init__(self, parent=None):
@@ -669,30 +662,42 @@ class Connect(QObject):
         if os.path.isfile(CACHE):
             with open(CACHE, 'r', encoding='UTF8') as J:
                 JSON_USER = json.load(J)
+            Middle.School = JSON_USER['USER']['School']
             Middle.Grade = JSON_USER['USER']['Grade']
             Middle.Class = JSON_USER['USER']['Class']
             Middle.Number = JSON_USER['USER']['Number']
             Middle.Name = JSON_USER['USER']['Name']
             Middle.URID = JSON_USER['USER']['URID']
+            Middle.PW = JSON_USER['USER']['PW']
             Middle.ID = Middle.Grade+Middle.Class+Middle.Number
-            
-            self.cursor = DB.cursor()
+            J.close()
 
-            self.cursor.execute("SHOW DATABASES")
-            self.cursor.execute("SELECT * FROM USER")
-            result = self.cursor.fetchall()
-            RES = pandas.DataFrame(result)
-            print(RES)
+            try:
+                with DB.cursor() as self.cursor:
+                    self.cursor.execute("SHOW DATABASES")
+                    query = "SELECT * FROM USER WHERE SCHOOL = '{}' AND Grade = {} AND Class = {} AND Number = {} AND Name = '{}' AND URID = '{}' AND PW = '{}'".format(Middle.School, Middle.Grade, Middle.Class, Middle.Number, Middle.Name, Middle.URID, Middle.PW)
+                    CHECK = self.cursor.execute(query)
+
+                if CHECK == 1:
+                    self.gui_main.show()
+                    self.Welcome()
+                if CHECK == 0:
+                    print("[DATA ERROR] MySQL DATA NOT FOUND!")
+                    sys.exit()
+
+            except:
+                print("DATA SERVER ERROR!")
+
+            finally:
+                DB.close()
 
 
             # 파일 제거
-            os.remove(UserPrCheck)
-            self.gui_main.show()
-            self.Welcome()
+
 
         else:
             self.gui_userset.show()
-            self.Hello()
+            self.Hello()    # MySQL Connect
 
     def Notice_Refresh(self):
         self.gui_main.label.setText(Notice())
