@@ -60,16 +60,21 @@ curVer = "3.0"
 
 # Method Section =========================================================================
 
+# 지원
+def Support():
+    SupportChat = "https://open.kakao.com/o/s2HyPjpc"
+    webbrowser.open(SupportChat)
+
 # 서버 상태 확인
 def Server_Check():
-    def SERVER_Warn():
+    def Server_Warn():
         toaster = ToastNotifier()
         toaster.show_toast("ZOSC 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
 
     # SERVER Check
-    SERVERURL = 'http://zosc.iptime.org/ZOSC'
+    SERVERURL = 'http://zosc.iptime.org/'
     try:
-        RES = requests.head(url=SERVERURL, timeout=10)
+        RES = requests.head(url=SERVERURL, timeout=3)
         CHECK = RES.status_code
         pass
 
@@ -82,6 +87,8 @@ def Server_Check():
     except requests.exceptions.RequestException as e:
         Server_Warn()
         sys.exit()
+
+Server_Check()
 
 # 버전 체크
 def Version():
@@ -116,10 +123,6 @@ def Notice():
     os.remove(REQPATH)
     return Notice    # NodeJS 서버
 
-# 지원
-def Support():
-    SupportChat = "https://open.kakao.com/o/s2HyPjpc"
-    webbrowser.open(SupportChat)
 
 
 # DB SECTION ===========================================================================
@@ -137,36 +140,7 @@ except:
 # FTP Section ============================================================================
 # MySQL 수정 필요
 
-def FTP_UserCheck(Name, FTPPath, Local):
-    # FTP Server 로그인
-    FTP_host = "DataJunseo.ipdisk.co.kr"
-    FTP_user = "ZOSC"
-    FTP_password = "ZOSC"
 
-    FTP_Check = ftplib.FTP(FTP_host, FTP_user, FTP_password)
-    FTP_Check.cwd(FTPPath)    # FTP File Path
-    FTP_List = FTP_Check.nlst()    # FTP 목록 불러옴
-
-    if Name in FTP_List:    # 사용자 판단
-        return
-
-    else:
-        FTP_Upload(Name, FTPPath, Local)    # FTP 미사용
-
-def FTP_Upload(Name, FTPPath, Local):
-    # FTP Server 로그인
-    FTP_host = "DataJunseo.ipdisk.co.kr"
-    FTP_user = "ZOSC"
-    FTP_password = "ZOSC"
-
-    #FTP Connect
-    FTP_Upload = ftplib.FTP(FTP_host, FTP_user, FTP_password)
-    FTP_Upload.cwd(FTPPath)    #FTP File Path
-
-    FTP_Open = open(Local, 'rb')    #Upload File Open
-    FTP_Upload.storbinary('STOR '+Name, FTP_Open)    #FTP File Upload
-    FTP_Open.close()    #FTP Close
-    FTP_Upload.close()    # FTP 미사용
 
 # MySQL 수정 필요
 
@@ -517,7 +491,6 @@ class Middle(QObject):
     Name = "NULL"
     URID = "NULL"
     PW = "NULL"
-    Premium = 0
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
@@ -535,8 +508,6 @@ class Middle(QObject):
 
         with open(Setting_ini, 'w', encoding='utf-8') as configfile:
             config_User.write(configfile)
-
-        Middle.Premium = "0"    # Premium = None
         return
 
     def User_Reset(self):
@@ -561,12 +532,10 @@ class Middle(QObject):
 
         config_FTP = configparser.ConfigParser()
         config_FTP['User'] = {}
-        config_FTP['Premium'] = {}
         config_FTP['User']['Grade'] = Middle.ID[0:1]
         config_FTP['User']['Class'] = Middle.ID[1:3]
         config_FTP['User']['Number'] = Middle.ID[3:5]
         config_FTP['User']['Name'] = Middle.Name
-        config_FTP['Premium']['Premium'] = "0"
 
         with open(User_Temp, 'w', encoding='utf-8') as configfile:
             config_FTP.write(configfile)
@@ -576,7 +545,6 @@ class Middle(QObject):
         FTP_UpName = Middle.ID+" "+Middle.Name+".ini"    # User ini 파일 이름 지정
         FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
         os.remove(User_Temp)    # Upload Temp File Delete
-        Middle.Premium = "0"    # Premium = None
         return
 
 
@@ -590,8 +558,6 @@ class Connect(QObject):
         self.gui_userset = UI_User()
         self.gui_setting = UI_Setting()
         self.gui_UserReset = UI_UserReSet()
-
-        Server_Check()
 
         Version()
 
