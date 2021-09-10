@@ -206,6 +206,9 @@ class Worker(QObject):
     @pyqtSlot()
     def Server_Connect(self, parent=None):
 
+        def Get_DB():
+            pass
+
         def today():
             today = datetime.today().weekday()
             today = today + 1
@@ -230,162 +233,38 @@ class Worker(QObject):
 
             
             # Time Function ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            Inf_Request = "http://datajunseo.ipdisk.co.kr:8000/list/HDD1/Server/ZOSC/Data/SEXY.ini"
-            Inf_Save = "C:\\ZOOM SCHEDULER\\SEXY.ini"
-            urllib.request.urlretrieve(Inf_Request, Inf_Save)
-
-            if today() == 3:
-                Subject_1 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/1"    # 서버 주소 지정
-                Subject_2 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/2"
-                Subject_3 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/3"
-                Subject_4 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/4"
-                ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
-                ZOSCA_2 = requests.get(Subject_2)
-                ZOSCA_3 = requests.get(Subject_3)
-                ZOSCA_4 = requests.get(Subject_4)
-                ZOSC_1 = ''.join(filter(str.isalnum, ZOSCA_1.text))    # 모든 특수문자 제거
-                ZOSC_2 = ''.join(filter(str.isalnum, ZOSCA_2.text))
-                ZOSC_3 = ''.join(filter(str.isalnum, ZOSCA_3.text))
-                ZOSC_4 = ''.join(filter(str.isalnum, ZOSCA_4.text))
-                Z1_TrA = ZOSC_1[13:15]    # 문자열 처리
-                Z1_SjA = ZOSC_1[22:32]
-                Z2_TrA = ZOSC_2[13:15]
-                Z2_SjA = ZOSC_2[22:32]
-                Z3_TrA = ZOSC_3[13:15]
-                Z3_SjA = ZOSC_3[22:32]
-                Z4_TrA = ZOSC_4[13:15]
-                Z4_SjA = ZOSC_4[22:32]
-
-                configread = configparser.ConfigParser()
-                configread.read('C:\\ZOOM SCHEDULER\\SEXY.ini', encoding='utf-8')
-                configread.sections()
-                # 선생님 성함 읽어오기
-                try:
-                    Z1_Tr = configread['TrName'][Z1_TrA]
-                    Z2_Tr = configread['TrName'][Z2_TrA]
-                    Z3_Tr = configread['TrName'][Z3_TrA]
-                    Z4_Tr = configread['TrName'][Z4_TrA]
-                    Z1_Sj = configread['Subject'][Z1_SjA]
-                    Z2_Sj = configread['Subject'][Z2_SjA]
-                    Z3_Sj = configread['Subject'][Z3_SjA]
-                    Z4_Sj = configread['Subject'][Z4_SjA]
-
-                except KeyError:
-                    os.remove(Inf_Save)
-                    Server_Warn()
-                    return
-
-                # 링크 변수 처리
-                Z1_Link = Z1_Sj + "_" + Z1_Tr
-                Z2_Link = Z2_Sj + "_" + Z2_Tr
-                Z3_Link = Z3_Sj + "_" + Z3_Tr
-                Z4_Link = Z4_Sj + "_" + Z4_Tr
-                # 링크 읽어오기
-                Link1 = configread['Link'][Z1_Link]
-                Link2 = configread['Link'][Z2_Link]
-                Link3 = configread['Link'][Z3_Link]
-                Link4 = configread['Link'][Z4_Link]
-
-                # Time Information Scraping
-                Time = requests.get('http://zosc.iptime.org/ZOSC/Data/Time')
-                Time1 = Time.text[4:9]
-                Time2 = Time.text[15:20]
-                Time3 = Time.text[26:31]
-                Time4 = Time.text[37:42]
-                os.remove(Inf_Save)
+            # 문제 : JSON 데이터에 Key가 없고 값만 반환됨 → 반복문 사용하여 일주일 링크 다 요청 하며 함수로 보냄 → 배열에 값 넣음
 
 
-            else:
-                Subject_1 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/1"    # 서버 주소 지정
-                Subject_2 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/2"
-                Subject_3 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) + "/"+str(today())+"/3"
-                Subject_4 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/4"
-                Subject_5 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/5"
-                Subject_6 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/6"
-                Subject_7 = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.ClassR) +  "/"+str(today())+"/7"
-                ZOSCA_1 = requests.get(Subject_1)    # 서버 요청
-                ZOSCA_2 = requests.get(Subject_2)
-                ZOSCA_3 = requests.get(Subject_3)
-                ZOSCA_4 = requests.get(Subject_4)
-                ZOSCA_5 = requests.get(Subject_5)
-                ZOSCA_6 = requests.get(Subject_6)
-                ZOSCA_7 = requests.get(Subject_7)
-                ZOSC_1 = ''.join(filter(str.isalnum, ZOSCA_1.text))    # 모든 특수문자 제거
-                ZOSC_2 = ''.join(filter(str.isalnum, ZOSCA_2.text))
-                ZOSC_3 = ''.join(filter(str.isalnum, ZOSCA_3.text))
-                ZOSC_4 = ''.join(filter(str.isalnum, ZOSCA_4.text))
-                ZOSC_5 = ''.join(filter(str.isalnum, ZOSCA_5.text))
-                ZOSC_6 = ''.join(filter(str.isalnum, ZOSCA_6.text))
-                ZOSC_7 = ''.join(filter(str.isalnum, ZOSCA_7.text))
-                Z1_TrA = ZOSC_1[13:15]    # 문자열 처리
-                Z1_SjA = ZOSC_1[22:32]
-                Z2_TrA = ZOSC_2[13:15]
-                Z2_SjA = ZOSC_2[22:32]
-                Z3_TrA = ZOSC_3[13:15]
-                Z3_SjA = ZOSC_3[22:32]
-                Z4_TrA = ZOSC_4[13:15]
-                Z4_SjA = ZOSC_4[22:32]
-                Z5_TrA = ZOSC_5[13:15]
-                Z5_SjA = ZOSC_5[22:32]
-                Z6_TrA = ZOSC_6[13:15]
-                Z6_SjA = ZOSC_6[22:32]
-                Z7_TrA = ZOSC_7[13:15]
-                Z7_SjA = ZOSC_7[22:32]
 
-                # Read Class Information ini
-                configread = configparser.ConfigParser()
-                configread.read('C:\\ZOOM SCHEDULER\\SEXY.ini', encoding='utf-8')
-                configread.sections()
-                # 선생님 성함 읽어오기
-                try:
-                    Z1_Tr = configread['TrName'][Z1_TrA]
-                    Z2_Tr = configread['TrName'][Z2_TrA]
-                    Z3_Tr = configread['TrName'][Z3_TrA]
-                    Z4_Tr = configread['TrName'][Z4_TrA]
-                    Z5_Tr = configread['TrName'][Z5_TrA]
-                    Z6_Tr = configread['TrName'][Z6_TrA]
-                    Z7_Tr = configread['TrName'][Z7_TrA]
+            for RE in range(1, 8):
+                DATA_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class) + "/" + str(RE)    # TimeTable Request URL
+                DATA_REQ = requests.get(DATA_URL).json()
+                print(DATA_REQ)
 
-                except KeyError:
-                    os.remove(Inf_Save)
-                    Server_Warn()
-                    return
 
-                # 과목명 읽어오기
-                Z1_Sj = configread['Subject'][Z1_SjA]
-                Z2_Sj = configread['Subject'][Z2_SjA]
-                Z3_Sj = configread['Subject'][Z3_SjA]
-                Z4_Sj = configread['Subject'][Z4_SjA]
-                Z5_Sj = configread['Subject'][Z5_SjA]
-                Z6_Sj = configread['Subject'][Z6_SjA]
-                Z7_Sj = configread['Subject'][Z7_SjA]
-                # 링크 변수 처리
-                Z1_Link = Z1_Sj + "_" + Z1_Tr
-                Z2_Link = Z2_Sj + "_" + Z2_Tr
-                Z3_Link = Z3_Sj + "_" + Z3_Tr
-                Z4_Link = Z4_Sj + "_" + Z4_Tr
-                Z5_Link = Z5_Sj + "_" + Z5_Tr
-                Z6_Link = Z6_Sj + "_" + Z6_Tr
-                Z7_Link = Z7_Sj + "_" + Z7_Tr
-                # 링크 읽어오기
-                Link1 = configread['Link'][Z1_Link]
-                Link2 = configread['Link'][Z2_Link]
-                Link3 = configread['Link'][Z3_Link]
-                Link4 = configread['Link'][Z4_Link]
-                Link5 = configread['Link'][Z5_Link]
-                Link6 = configread['Link'][Z6_Link]
-                Link7 = configread['Link'][Z7_Link]
 
-                # Time Information Scraping
-                Time = requests.get('http://zosc.iptime.org/ZOSC/Data/Time')
-                Time1 = Time.text[4:9]
-                Time2 = Time.text[15:20]
-                Time3 = Time.text[26:31]
-                Time4 = Time.text[37:42]
-                Time5 = Time.text[48:53]
-                Time6 = Time.text[59:64]
-                Time7 = Time.text[70:75]
-                os.remove(Inf_Save)
+            #urllib.request.urlretrieve(DATA_URL, DATA_PATH)    # Server Request
+
+            #with open(CACHE, 'r', encoding='UTF8') as D:
+                #JSON_USER = json.load(D)
+
+            #D.close()
+
+
+
+            
+
+            # Time Information Scraping
+            Time = requests.get('http://zosc.iptime.org/ZOSC/Data/Time')
+            Time1 = Time.text[4:9]
+            Time2 = Time.text[15:20]
+            Time3 = Time.text[26:31]
+            Time4 = Time.text[37:42]
+            Time5 = Time.text[48:53]
+            Time6 = Time.text[59:64]
+            Time7 = Time.text[70:75]
+            os.remove(Inf_Save)
 
             
             # Main ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -462,17 +341,8 @@ class Worker(QObject):
             toaster = ToastNotifier()
             toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
 
-        if today() == 6:
-            alert()
+        Run()
 
-            return
-
-        elif today() == 7:
-            alert()
-            return
-
-        else:
-            Run()
 
 
 
@@ -640,20 +510,17 @@ class Connect(QObject):
 
             try:
                 with DB.cursor() as self.cursor:
-                    self.cursor.execute("SHOW DATABASES")
                     query = "SELECT * FROM USER WHERE SCHOOL = '{}' AND Grade = {} AND Class = {} AND Number = {} AND Name = '{}' AND URID = '{}' AND PW = '{}'".format(Middle.School, Middle.Grade, Middle.Class, Middle.Number, Middle.Name, Middle.URID, Middle.PW)
-                    CHECK = self.cursor.execute(query)
+                    DB_RES = self.cursor.execute(query)
 
-                if CHECK == 1:
+                if DB_RES == 1:
                     self.gui_main.show()
                     self.Welcome()
-                if CHECK == 0:
+                if DB_RES == 0:
                     print("[DATA ERROR] MySQL DATA NOT FOUND!")
                     sys.exit()
-
             except:
                 print("DATA SERVER ERROR!")
-
             finally:
                 DB.close()
 

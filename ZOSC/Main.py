@@ -180,6 +180,7 @@ class UI_MainWindow(QMainWindow):    # Main UI
                 QSystemTrayIcon.Information,
                 2000
             )
+        self.hide()
         time.sleep(2)
         sys.exit()
 
