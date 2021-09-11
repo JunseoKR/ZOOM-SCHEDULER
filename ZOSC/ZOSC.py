@@ -92,17 +92,10 @@ Server_Check()
 
 # 버전 체크
 def Version():
-
     # 경로 지정
     REQURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( NodeJS 서버 )
-    REQPATH = "C:\\ZOOM SCHEDULER\\REQUEST.json"
-    urllib.request.urlretrieve(REQURL, REQPATH)
-    
-    with open(REQPATH, 'r') as J:
-        JSON_VERSION = json.load(J)
-    UpdateVer = JSON_VERSION['zosc']['version']
-    J.close()
-    os.remove(REQPATH)
+    JSON_SET = requests.get(REQURL).json()
+    UpdateVer = JSON_SET['zosc']['version']
 
     # 버전 판별
     if curVer == UpdateVer:
@@ -137,12 +130,7 @@ except:
     sys.exit()
 
 
-# FTP Section ============================================================================
-# MySQL 수정 필요
 
-
-
-# MySQL 수정 필요
 
 
 """ [ ZOSC Analysis ] -------------------------------------------------------------------------------------------------------------------- """
@@ -206,23 +194,21 @@ class Worker(QObject):
     @pyqtSlot()
     def Server_Connect(self, parent=None):
 
-        def Get_DB():
-            pass
-
+# ========================================================================================
         def today():
             today = datetime.today().weekday()
             today = today + 1
             return today
 
-        # RunTime ===============================================================================
 
+# RunTime ===============================================================================
         def Run():
-
-            #self.analysis.Analysis()
+            # Analysis 클래스
+            # self.analysis.Analysis()
 
             self.sig_numbers.emit("서버 연결중")
-            
-            # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+        # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
             def Server_Warn():
                 toaster = ToastNotifier()
                 toaster.show_toast("서버 연결 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
@@ -230,44 +216,33 @@ class Worker(QObject):
                 time.sleep(5)
                 self.sig_numbers.emit("")
 
+        # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+            def Select(School, Tr_Name, Subject):
+                print(School, Tr_Name, Subject)
+
+
+        # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            # TimeTable Data Request
+            DATA_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class)    # TimeTable Request URL
+            TimeTable = requests.get(DATA_URL).json()
+            for DAY_ in range(5):
+                for TIME_ in range(7):
+                    DATA = TimeTable[DAY_][TIME_]
+                    Select(Middle.School, DATA['teacher'], DATA['subject'])
+
+
+
+            # Time Data Request
+            REQ_TIME = requests.get('http://zosc.iptime.org/ZOSC/Data/Time').json()
+            Time = []
+            for i in range(1, 8):
+                INPUT = REQ_TIME[i]
+                Time.append(INPUT[2:7])
+
 
             
-            # Time Function ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            # 문제 : JSON 데이터에 Key가 없고 값만 반환됨 → 반복문 사용하여 일주일 링크 다 요청 하며 함수로 보냄 → 배열에 값 넣음
-
-
-
-            for RE in range(1, 8):
-                DATA_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class) + "/" + str(RE)    # TimeTable Request URL
-                DATA_REQ = requests.get(DATA_URL).json()
-                print(DATA_REQ)
-
-
-
-            #urllib.request.urlretrieve(DATA_URL, DATA_PATH)    # Server Request
-
-            #with open(CACHE, 'r', encoding='UTF8') as D:
-                #JSON_USER = json.load(D)
-
-            #D.close()
-
-
-
-            
-
-            # Time Information Scraping
-            Time = requests.get('http://zosc.iptime.org/ZOSC/Data/Time')
-            Time1 = Time.text[4:9]
-            Time2 = Time.text[15:20]
-            Time3 = Time.text[26:31]
-            Time4 = Time.text[37:42]
-            Time5 = Time.text[48:53]
-            Time6 = Time.text[59:64]
-            Time7 = Time.text[70:75]
-            os.remove(Inf_Save)
-
-            
-            # Main ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+        # RunTime ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             def RunTime(result, Link):  # 메인 런타임
 
@@ -284,6 +259,8 @@ class Worker(QObject):
                 threading.Timer(result, Start_Check).start()
                 print("Timer Ready")
 
+
+        # TimeSet ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             def Time_Set(Time, Link):   # 시간 판별 - 타이머
 
                 # 현재 시간 불러오기
@@ -309,7 +286,7 @@ class Worker(QObject):
 
                 RunTime(result_min, Link)   # 런타임 호출
 
-
+        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             # Time_Set() → RunTime() 함수 호출
             self.sig_numbers.emit("서버 연결 완료")
             self.sig_numbers.emit("시간표 불러오기 완료")
@@ -334,12 +311,13 @@ class Worker(QObject):
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
             
 
-
-        # DayCheck ==============================================================================
-        
+# ========================================================================================
         def alert():
             toaster = ToastNotifier()
             toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
+
+
+# ========================================================================================
 
         Run()
 
@@ -431,12 +409,10 @@ class Connect(QObject):
 
         Version()
 
-        
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
         
 
-        
         # Worker() 쓰레드
         self.worker = Worker()
         self.worker_thread = QThread()
@@ -645,3 +621,18 @@ if __name__ == "__main__":
     MainWindow = QMainWindow()
     ui = Connect(app)
     sys.exit(app.exec_())
+
+
+
+
+# 함수 저장
+
+def Save_Json():
+    REQURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( NodeJS 서버 )
+    REQPATH = "C:\\ZOOM SCHEDULER\\REQUEST.json"
+    urllib.request.urlretrieve(REQURL, REQPATH)
+    with open(REQPATH, 'r') as J:
+        JSON_VERSION = json.load(J)
+    UpdateVer = JSON_VERSION['zosc']['version']
+    J.close()
+    os.remove(REQPATH)
