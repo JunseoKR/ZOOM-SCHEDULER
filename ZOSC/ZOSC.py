@@ -217,7 +217,6 @@ class Worker(QObject):
                 toaster = ToastNotifier()
                 toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
 
-
             # RunTime ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             def RunTime(School, TN, Subject, DayString, ClassTime, TIMER):  # 메인 런타임
@@ -233,7 +232,6 @@ class Worker(QObject):
 
                 threading.Timer(TIMER, Start_Check).start()
                 print("Timer Ready")
-
 
             # TimeSet ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
@@ -261,24 +259,24 @@ class Worker(QObject):
 
                 RunTime(School, TN, Subject, DayString, ClassTime, TIMER)   # 런타임 호출
 
-
             # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             def Select(School, TN, Subject, DayString, ClassTime):
+                if Subject == '':
+                    return
+                else:
+                    try:
+                        with DB.cursor() as cursor:
+                            query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, TN)
+                            cursor.execute(query)
+                            DATA = cursor.fetchone()
+                            ZOOM.append(DATA['ZOOM'])
+                            MEET.append(DATA['GOOGLEMEET'])
+                            GOORM.append(DATA['GOORM'])
+                    finally:
+                        DB.close
 
-                try:
-                    with DB.cursor() as cursor:
-                        query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, TN)
-                        cursor.execute(query)
-                        DATA = cursor.fetchone()
-                        ZOOM.append(DATA['ZOOM'])
-                        MEET.append(DATA['GOOGLEMEET'])
-                        GOORM.append(DATA['GOORM'])
-                finally:
-                    DB.close
-
-                TIME_SET(School, TN, Subject, DayString, ClassTime)
-
+                    TIME_SET(School, TN, Subject, DayString, ClassTime)    # 오류 처리 메시지 필요
 
             # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             # TimeTable Data Request
@@ -287,7 +285,7 @@ class Worker(QObject):
             TimeTable = requests.get(DATA_URL).json()
 
             # SET
-            DAY_ = 0
+            DAY_ = 2
             ZOOM = []
             MEET = []
             GOORM = []
