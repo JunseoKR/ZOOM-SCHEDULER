@@ -204,7 +204,7 @@ class Worker(QObject):
             # self.analysis.Analysis()
 
             self.sig_numbers.emit("서버 연결중")
-        # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             def Server_Warn():
                 toaster = ToastNotifier()
@@ -217,26 +217,70 @@ class Worker(QObject):
                 toaster = ToastNotifier()
                 toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
 
-        # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
-            def Select(School, Tr_Name, Subject, DayString, ClassTime):
-                print(School, Tr_Name, Subject)
+            # RunTime ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+            def RunTime(School, TN, Subject, DayString, ClassTime, TIMER):  # 메인 런타임
+
+                def Notification(): # 수업시간 알림
+                    toaster = ToastNotifier()
+                    toaster.show_toast("ZOOM SCHEDULER", "[{}교시] {} {}* 선생님\n수업이 5초 후 시작됩니다.".format(ClassTime, Subject, TN), icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=5, threaded=True)
+
+                def Start_Check():  # 줌 LINK 실행(OS)
+                    Notification()
+                    time.sleep(5)
+                    os.system("start "+ZOOM[ClassTime-1])
+
+                threading.Timer(TIMER, Start_Check).start()
+                print("Timer Ready")
+
+
+            # TimeSet ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+            def TIME_SET(School, TN, Subject, DayString, ClassTime):   # 시간 판별 - 타이머
+
+                # 현재 시간 불러오기
+                now = time.localtime()
+                now_times = ("%02d:%02d" % (now.tm_hour, now.tm_min))
+
+                # 시간 값 형식 판별
+                HM = '%H:%M'
+
+                # 남은 시간 계산 ( 단위 | 시:분:초)
+                time_dif = datetime.strptime(TIME[ClassTime-1], HM) - datetime.strptime(now_times, HM)
+
+                # 시간 판별 ( 0 미만일 시 내일로 넘어감 ( 오류 처리 ) )
+                if time_dif.days < 0:
+                    time_dif = timedelta(days=0,seconds=time_dif.seconds, microseconds=time_dif.microseconds)
+
+                # 시:분:초 형식에서 시, 분 받아오기
+                hour, minute, null = str(time_dif).split(":")
+
+                # 남은 시간, 분 모두 초로 변환
+                TIMER = int(hour)*3600 + int(minute)*60 - 120
+
+                RunTime(School, TN, Subject, DayString, ClassTime, TIMER)   # 런타임 호출
+
+
+            # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+            def Select(School, TN, Subject, DayString, ClassTime):
 
                 try:
                     with DB.cursor() as cursor:
-                        query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, Tr_Name)
+                        query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, TN)
                         cursor.execute(query)
                         DATA = cursor.fetchone()
                         ZOOM.append(DATA['ZOOM'])
                         MEET.append(DATA['GOOGLEMEET'])
                         GOORM.append(DATA['GOORM'])
-                        print(ZOOM)
-
                 finally:
                     DB.close
 
+                TIME_SET(School, TN, Subject, DayString, ClassTime)
 
-        # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+            # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             # TimeTable Data Request
 
             DATA_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class)    # TimeTable Request URL
@@ -248,85 +292,31 @@ class Worker(QObject):
             MEET = []
             GOORM = []
 
-            for TIME_ in range(7):
-                DATA = TimeTable[DAY_][TIME_]
-                Select(Middle.School, DATA['teacher'], DATA['subject'], DATA['weekdayString'], DATA['classTime'])
-
-
-
             # Time Data Request
             REQ_TIME = requests.get('http://zosc.iptime.org/ZOSC/Data/Time').json()
-            Time = []
+            TIME = []
             for i in range(1, 8):
                 INPUT = REQ_TIME[i]
-                Time.append(INPUT[2:7])
+                TIME.append(INPUT[2:7])
 
-
+            for TIME_ in range(7):
+                            DATA = TimeTable[DAY_][TIME_]
+                            Select(Middle.School, DATA['teacher'], DATA['subject'], DATA['weekdayString'], DATA['classTime'])
             
-        # RunTime ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-
-            def RunTime(result, Link):  # 메인 런타임
-
-                def Notification(): # win10toast 수업시간 알림
-                    toaster = ToastNotifier()
-                    toaster.show_toast("ZOOM SCHEDULER", "수업이 5초 후에 켜집니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=5, threaded=True)
-
-                def Start_Check():  # 줌 LINK 실행(OS)
-                    Notification()
-                    time.sleep(5)
-                    os.system("start "+Link)
-
-
-                threading.Timer(result, Start_Check).start()
-                print("Timer Ready")
-
-
-        # TimeSet ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-
-            def Time_Set(Time, Link):   # 시간 판별 - 타이머
-
-                # 현재 시간 불러오기
-                now = time.localtime()
-                now_times = ("%02d:%02d" % (now.tm_hour, now.tm_min))
-
-                # 시간 값 형식 판별
-                HM = '%H:%M'
-
-                # 남은 시간 계산 ( 단위 | 시:분:초)
-                time_dif = datetime.strptime(Time, HM) - datetime.strptime(now_times, HM)
-
-                # 시간 판별 ( 0 미만일 시 내일로 넘어감 ( 오류 처리 ) )
-                if time_dif.days < 0:
-                    time_dif = timedelta(days=0,seconds=time_dif.seconds, microseconds=time_dif.microseconds)
-
-                # 시:분:초 형식에서 시, 분 받아오기
-                hour, minute, null = str(time_dif).split(":")
-
-                # 남은 시간, 분 모두 초로 변환
-                result_min = int(hour)*3600 + int(minute)*60 - 120
-
-
-                RunTime(result_min, Link)   # 런타임 호출
-
-
-        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            
+            # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             # Time_Set() → RunTime() 함수 호출
             self.sig_numbers.emit("서버 연결 완료")
             self.sig_numbers.emit("시간표 불러오기 완료")
 
-
-        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-        # [ RunTime 실행 완료 ]
+            # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            # [ RunTime 실행 완료 ]
 
             self.sig_numbers.emit("RunTime Ready")
-            time.sleep(2)
+            time.sleep(1)
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
             
-
-# ========================================================================================
-        
-
 
 # ========================================================================================
 
