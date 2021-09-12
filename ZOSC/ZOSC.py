@@ -14,7 +14,6 @@ from datetime import timedelta
 import webbrowser
 import pymysql
 import pandas
-import ftplib    # ftplib 제거 필요!
 import requests    # requests
 import urllib.request
 from urllib.parse import quote
