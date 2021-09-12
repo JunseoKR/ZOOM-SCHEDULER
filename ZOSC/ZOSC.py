@@ -39,13 +39,13 @@ from UserReset import *
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
 
 # ======================================================================================== #
-# =================================== [ ZOSC 버전 확인 ] ====================================== #
+# =================================== [ ZOSC 버전 확인 ] ===================================== #
 # ======================================================================================== #
 
 curVer = "3.0"
 
 # ======================================================================================== #
-# ==================================== [ 버전 꼭 확인! ] ======================================= #
+# ==================================== [ 버전 꼭 확인! ] ====================================== #
 # ======================================================================================== #
 
 # [ JSON ]
@@ -195,7 +195,6 @@ class Worker(QObject):
 # ========================================================================================
         def today():
             today = datetime.today().weekday()
-            today = today + 1
             return today
 
 
@@ -214,20 +213,44 @@ class Worker(QObject):
                 time.sleep(5)
                 self.sig_numbers.emit("")
 
+            def alert():
+                toaster = ToastNotifier()
+                toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
+
         # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
-            def Select(School, Tr_Name, Subject):
+            def Select(School, Tr_Name, Subject, DayString, ClassTime):
                 print(School, Tr_Name, Subject)
+
+                try:
+                    with DB.cursor() as cursor:
+                        query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, Tr_Name)
+                        cursor.execute(query)
+                        DATA = cursor.fetchone()
+                        ZOOM.append(DATA['ZOOM'])
+                        MEET.append(DATA['GOOGLEMEET'])
+                        GOORM.append(DATA['GOORM'])
+                        print(ZOOM)
+
+                finally:
+                    DB.close
 
 
         # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             # TimeTable Data Request
+
             DATA_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class)    # TimeTable Request URL
             TimeTable = requests.get(DATA_URL).json()
-            for DAY_ in range(5):
-                for TIME_ in range(7):
-                    DATA = TimeTable[DAY_][TIME_]
-                    Select(Middle.School, DATA['teacher'], DATA['subject'])
+
+            # SET
+            DAY_ = 0
+            ZOOM = []
+            MEET = []
+            GOORM = []
+
+            for TIME_ in range(7):
+                DATA = TimeTable[DAY_][TIME_]
+                Select(Middle.School, DATA['teacher'], DATA['subject'], DATA['weekdayString'], DATA['classTime'])
 
 
 
@@ -259,6 +282,7 @@ class Worker(QObject):
 
 
         # TimeSet ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
             def Time_Set(Time, Link):   # 시간 판별 - 타이머
 
                 # 현재 시간 불러오기
@@ -284,25 +308,16 @@ class Worker(QObject):
 
                 RunTime(result_min, Link)   # 런타임 호출
 
+
         # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
             # Time_Set() → RunTime() 함수 호출
             self.sig_numbers.emit("서버 연결 완료")
             self.sig_numbers.emit("시간표 불러오기 완료")
 
-            if today() == 3:
-                Time_Set(Time1, Link1)
-                Time_Set(Time2, Link2)
-                Time_Set(Time3, Link3)
-                Time_Set(Time4, Link4)
 
-            else:
-                Time_Set(Time1, Link1)
-                Time_Set(Time2, Link2)
-                Time_Set(Time3, Link3)
-                Time_Set(Time4, Link4)
-                Time_Set(Time5, Link5)
-                Time_Set(Time6, Link6)
-                Time_Set(Time7, Link7)
+        # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+        # [ RunTime 실행 완료 ]
 
             self.sig_numbers.emit("RunTime Ready")
             time.sleep(2)
@@ -310,9 +325,7 @@ class Worker(QObject):
             
 
 # ========================================================================================
-        def alert():
-            toaster = ToastNotifier()
-            toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
+        
 
 
 # ========================================================================================
@@ -496,7 +509,7 @@ class Connect(QObject):
             except:
                 print("DATA SERVER ERROR!")
             finally:
-                DB.close()
+                DB.close
 
 
             # 파일 제거
