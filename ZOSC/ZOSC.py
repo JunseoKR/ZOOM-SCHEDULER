@@ -13,7 +13,6 @@ from datetime import datetime
 from datetime import timedelta
 import webbrowser
 import pymysql
-import pandas
 import requests    # requests
 import urllib.request
 from urllib.parse import quote
