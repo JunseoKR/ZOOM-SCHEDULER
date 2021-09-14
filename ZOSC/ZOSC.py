@@ -262,7 +262,7 @@ class Worker(QObject):
             # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             def Select(School, TN, Subject, DayString, ClassTime):
-                if Subject == '':
+                if TN or Subject == " ":
                     return
                 else:
                     try:
@@ -276,7 +276,7 @@ class Worker(QObject):
                     finally:
                         DB.close
 
-                    TIME_SET(School, TN, Subject, DayString, ClassTime)    # 오류 처리 메시지 필요
+                    TIME_SET(School, TN, Subject, DayString, ClassTime)    # 오류 처리 필요
 
             # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             # TimeTable Data Request
