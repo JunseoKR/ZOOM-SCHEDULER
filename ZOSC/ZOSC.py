@@ -48,9 +48,6 @@ curVer = "3.0"
 # ==================================== [ 버전 꼭 확인! ] ====================================== #
 # ======================================================================================== #
 
-# [ JSON ]
-# 버전 / 공지 / Request Data
-
 
 
 
@@ -108,9 +105,9 @@ def Notice():
     REQPATH = "C:\\ZOOM SCHEDULER\\Notice.txt"
     urllib.request.urlretrieve(REQURL, REQPATH)
     # 파일 읽기
-    NoticeRead = open(REQPATH, 'r', encoding='UTF8')
-    Notice = NoticeRead.read()
-    NoticeRead.close()
+    NR = open(REQPATH, 'r', encoding='UTF8')
+    Notice = NR.read()
+    NR.close()
     os.remove(REQPATH)
     return Notice    # NodeJS 서버
 
@@ -141,40 +138,25 @@ class Analysis(QObject):
 
     def NowTime(self):
         now = time.localtime()
-        today = ("%04d.%02d.%02d" % (now.tm_year, now.tm_mon, now.tm_mday))
-        return today
+        NT = ("%04d.%02d.%02d" % (now.tm_year, now.tm_mon, now.tm_mday))
+        return NT
 
+    def Input():
+        pass
+
+    def Record():
+        pass
 
     def Analysis(self):
-        Analysis_Result = "C:\\ZOOM SCHEDULER\\Analysis\\Analysis Result.txt"
-
-        def String(String):
-            String = String.replace(" ", "")
-            return String
-
-
-        def RunTime():
-            with open("C:\\ZOOM SCHEDULER\\Analysis_Process.txt", 'w') as PL:
+        def Check():
+            while(True):
                 Process = os.popen('wmic process get description').read().split()
-                PL.write(str(Process))
-            i = 0
-            with open("C:\\ZOOM SCHEDULER\\Analysis_Process.txt", 'r') as PL:
-                for i, line in enumerate(PL):
-                    Process_List = String(line)
-                    i += 2
-            #os.remove("C:\\ZOOM SCHEDULER\\Analysis_Process.txt")
-            if "chrome.exe" in Process_List:
-                print("Chrome Running")
 
 
+        REQURL = ""
+        
 
-        if os.path.isfile(Analysis_Result):
-            RunTime()
-
-        else:
-            New = open(Analysis_Result, 'w')
-            New.close()
-            RunTime()
+    #if "chrome.exe" in Process:
 
 
 
@@ -201,7 +183,7 @@ class Worker(QObject):
 # RunTime ===============================================================================
         def Run():
             # Analysis 클래스
-            # self.analysis.Analysis()
+            self.analysis.Analysis()
 
             self.sig_numbers.emit("서버 연결중")
             # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -262,21 +244,25 @@ class Worker(QObject):
             # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             def Select(School, TN, Subject, DayString, ClassTime):
-                if TN or Subject == " ":
-                    return
-                else:
-                    try:
-                        with DB.cursor() as cursor:
-                            query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, TN)
-                            cursor.execute(query)
-                            DATA = cursor.fetchone()
+                print(School, TN, Subject, DayString, ClassTime)
+                try:
+                    with DB.cursor() as cursor:
+                        query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, TN)
+                        cursor.execute(query)
+                        DATA = cursor.fetchone()
+                        print(DATA)
+                        if DATA == None:
+                            print("Error")
+                            return
+
+                        else:
                             ZOOM.append(DATA['ZOOM'])
                             MEET.append(DATA['GOOGLEMEET'])
                             GOORM.append(DATA['GOORM'])
-                    finally:
-                        DB.close
-
-                    TIME_SET(School, TN, Subject, DayString, ClassTime)    # 오류 처리 필요
+                            TIME_SET(School, TN, Subject, DayString, ClassTime)    # 오류 처리 필요
+                finally:
+                    DB.close
+                    
 
             # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             # TimeTable Data Request
@@ -285,7 +271,7 @@ class Worker(QObject):
             TimeTable = requests.get(DATA_URL).json()
 
             # SET
-            DAY_ = 2
+            DAY_ = 3
             ZOOM = []
             MEET = []
             GOORM = []
