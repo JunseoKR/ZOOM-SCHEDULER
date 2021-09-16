@@ -24,7 +24,7 @@ class UI_User(QMainWindow):    # User Setting UI
         icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
 
-        self.setObjectName("사용자 설정")
+        self.setObjectName("로그인")
         self.resize(800, 500)
         self.setMinimumSize(QtCore.QSize(800, 500))
         self.center()
@@ -113,7 +113,7 @@ class UI_User(QMainWindow):    # User Setting UI
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "사용자 설정"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ZOSC 로그인"))
 
 
 
