@@ -65,7 +65,7 @@ class Ui_MainWindow(object):
         self.userid_input.setPixmap(QtGui.QPixmap("D:/AdobePJ/XD/ZOSC UI/elements/get.id.name.png"))
         self.userid_input.setObjectName("userid_input")
 
-        """input: student id"""
+        """input: userid"""
         self.input_id = QtWidgets.QLineEdit(self.centralwidget)
         self.input_id.setGeometry(QtCore.QRect(325, 218, 307, 40))
         self.input_id.setObjectName("input_id")
@@ -74,7 +74,7 @@ class Ui_MainWindow(object):
         font.setPointSize(25)               
         self.input_id.setFont(font)
 
-        """input: student name"""
+        """input: userpw"""
         self.input_name = QtWidgets.QLineEdit(self.centralwidget)
         self.input_name.setGeometry(QtCore.QRect(325, 342, 307, 40))
         self.input_name.setObjectName("input_name")
