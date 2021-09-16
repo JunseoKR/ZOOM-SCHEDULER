@@ -52,13 +52,19 @@ curVer = "3.0"
 
 
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
+# Support Section =========================================================================
+def Support():
+    SupportChat = "https://open.kakao.com/o/s2HyPjpc"
+    webbrowser.open(SupportChat)
+
+def P_Insert():
+    Link = "http://nwjun.com/ZOSC"
+    webbrowser.open(Link)
 
 # Method Section =========================================================================
 
 # 지원
-def Support():
-    SupportChat = "https://open.kakao.com/o/s2HyPjpc"
-    webbrowser.open(SupportChat)
+
 
 # 서버 상태 확인
 def Server_Check():
@@ -116,7 +122,16 @@ def Notice():
 # DB SECTION ===========================================================================
 
 try:
-    DB = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ZOSC', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
+    DB_ZOSC = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ZOSC', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
+    pass
+except:
+    print("MySQL SERVER ERROR")
+    toaster = ToastNotifier()
+    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
+    sys.exit()
+
+try:
+    DB_ANALYSIS = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ANALYSIS', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
 except:
     print("MySQL SERVER ERROR")
@@ -141,35 +156,41 @@ class Analysis(QObject):
         NT = ("%04d.%02d.%02d" % (now.tm_year, now.tm_mon, now.tm_mday))
         return NT
 
-    def Input():
+    def Input(self):
         pass
 
-    def Record():
+    def Record(self):
         pass
 
     def Analysis(self):
         def Check():
-            while(True):
-                Process = os.popen('wmic process get description').read().split()
+            Process = os.popen('wmic process get description').read().split()
 
+            for List in range(len(JSON_ANALYSIS['Analysis']['Process'])):
+                if DATA[List] in Process:
+                    print("Process : "+ DATA[List])
+                    pass
 
-        REQURL = ""
+                else:
+                    pass
+            threading.Timer(300, Check).start()
+
+            
+        REQURL = "http://zosc.iptime.org/ZOSC/Data/Analysis"
+        JSON_ANALYSIS = requests.get(REQURL).json()
+        DATA = JSON_ANALYSIS['Analysis']['Process']
+        threading.Timer(300, Check).start()
         
-
-    #if "chrome.exe" in Process:
-
-
 
 
 """ [ ZOSC RunTime ] ------------------------------------------------------------------------------------------------------------------- """
-
+# sig_numbers 문제 해결 필요 / 오류 처리 필요
 class Worker(QObject):
     sig_numbers = pyqtSignal(str)
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
         self.gui_main = UI_MainWindow()
-        self.analysis = Analysis()
 
     @pyqtSlot()
     def Server_Connect(self, parent=None):
@@ -182,9 +203,6 @@ class Worker(QObject):
 
 # RunTime ===============================================================================
         def Run():
-            # Analysis 클래스
-            self.analysis.Analysis()
-
             self.sig_numbers.emit("서버 연결중")
             # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
@@ -200,9 +218,7 @@ class Worker(QObject):
                 toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
 
             # RunTime ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-
             def RunTime(School, TN, Subject, DayString, ClassTime, TIMER):  # 메인 런타임
-
                 def Notification(): # 수업시간 알림
                     toaster = ToastNotifier()
                     toaster.show_toast("ZOOM SCHEDULER", "[{}교시] {} {}* 선생님\n수업이 5초 후 시작됩니다.".format(ClassTime, Subject, TN), icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\icon.ico", duration=5, threaded=True)
@@ -213,55 +229,55 @@ class Worker(QObject):
                     os.system("start "+ZOOM[ClassTime-1])
 
                 threading.Timer(TIMER, Start_Check).start()
-                print("Timer Ready")
+                print("Ready [{}교시]".format(ClassTime))
+
 
             # TimeSet ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-
             def TIME_SET(School, TN, Subject, DayString, ClassTime):   # 시간 판별 - 타이머
 
                 # 현재 시간 불러오기
                 now = time.localtime()
                 now_times = ("%02d:%02d" % (now.tm_hour, now.tm_min))
-
                 # 시간 값 형식 판별
                 HM = '%H:%M'
-
                 # 남은 시간 계산 ( 단위 | 시:분:초)
-                time_dif = datetime.strptime(TIME[ClassTime-1], HM) - datetime.strptime(now_times, HM)
-
+                time_dif = datetime.strptime(TIME[ClassTime-2], HM) - datetime.strptime(now_times, HM)
                 # 시간 판별 ( 0 미만일 시 내일로 넘어감 ( 오류 처리 ) )
                 if time_dif.days < 0:
                     time_dif = timedelta(days=0,seconds=time_dif.seconds, microseconds=time_dif.microseconds)
-
                 # 시:분:초 형식에서 시, 분 받아오기
                 hour, minute, null = str(time_dif).split(":")
-
                 # 남은 시간, 분 모두 초로 변환
                 TIMER = int(hour)*3600 + int(minute)*60 - 120
 
                 RunTime(School, TN, Subject, DayString, ClassTime, TIMER)   # 런타임 호출
 
+
             # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            def DB_Warn():
+                toaster = ToastNotifier()
+                toaster.show_toast("등록되지 않은 회의", "화상 회의 정보가 등록되지 않았습니다.\n회의 정보 등록 페이지로 이동하시려면 누르세요..", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=P_Insert)
+                self.sig_numbers.emit("회의 정보 등록이 필요합니다")
+                time.sleep(5)
+                self.sig_numbers.emit("")
 
             def Select(School, TN, Subject, DayString, ClassTime):
-                print(School, TN, Subject, DayString, ClassTime)
                 try:
-                    with DB.cursor() as cursor:
+                    with DB_ZOSC.cursor() as cursor:
                         query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, TN)
                         cursor.execute(query)
                         DATA = cursor.fetchone()
-                        print(DATA)
                         if DATA == None:
-                            print("Error")
+                            DB_Warn()
                             return
 
                         else:
                             ZOOM.append(DATA['ZOOM'])
                             MEET.append(DATA['GOOGLEMEET'])
                             GOORM.append(DATA['GOORM'])
-                            TIME_SET(School, TN, Subject, DayString, ClassTime)    # 오류 처리 필요
+                            TIME_SET(School, TN, Subject, DayString, ClassTime)
                 finally:
-                    DB.close
+                    DB_ZOSC.close
                     
 
             # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -271,11 +287,10 @@ class Worker(QObject):
             TimeTable = requests.get(DATA_URL).json()
 
             # SET
-            DAY_ = 3
+            DAY_ = today()
             ZOOM = []
             MEET = []
             GOORM = []
-
             # Time Data Request
             REQ_TIME = requests.get('http://zosc.iptime.org/ZOSC/Data/Time').json()
             TIME = []
@@ -312,7 +327,7 @@ class Worker(QObject):
 
 """ [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
 # 사용자 회원가입 웹 이동 필요
-# 수정 중지 / 수정 필요
+# 수정 필요
 
 class Middle(QObject):
 
@@ -409,10 +424,10 @@ class Connect(QObject):
         self.middle.moveToThread(self.middle_thread)
         self.middle_thread.start()
         # Worker() 쓰레드
-        self.analysis = Analysis()
-        self.analysis_thread = QThread()
-        self.analysis.moveToThread(self.analysis_thread)
-        self.analysis_thread.start()
+        self.ais = Analysis()
+        self.ais_thread = QThread()
+        self.ais.moveToThread(self.ais_thread)
+        self.ais_thread.start()
 
         # 신호 연결
         self._connectSignals()
@@ -429,7 +444,7 @@ class Connect(QObject):
     def _connectSignals(self):
         # Main GUI
         self.gui_main.btn_hide.clicked.connect(self.gui_main.Tray)     # Tray
-        self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)     # Runtime
+        self.gui_main.btn_run.clicked.connect(self.Run)     # Runtime
         self.gui_main.btn_notice.clicked.connect(self.Notice_Refresh)     # Notice
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
 
@@ -452,6 +467,9 @@ class Connect(QObject):
 
 
     
+    def Run(self):
+        self.worker.Server_Connect()
+        self.ais.Analysis()
 
     def Check(self):
         CACHE = 'C:\\ZOOM SCHEDULER\\CACHE.json'
@@ -470,7 +488,7 @@ class Connect(QObject):
             J.close()
 
             try:
-                with DB.cursor() as self.cursor:
+                with DB_ZOSC.cursor() as self.cursor:
                     query = "SELECT * FROM USER WHERE SCHOOL = '{}' AND Grade = {} AND Class = {} AND Number = {} AND Name = '{}' AND URID = '{}' AND PW = '{}'".format(Middle.School, Middle.Grade, Middle.Class, Middle.Number, Middle.Name, Middle.URID, Middle.PW)
                     DB_RES = self.cursor.execute(query)
 
@@ -483,7 +501,7 @@ class Connect(QObject):
             except:
                 print("DATA SERVER ERROR!")
             finally:
-                DB.close
+                DB_ZOSC.close
 
 
             # 파일 제거
