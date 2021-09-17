@@ -31,7 +31,7 @@ from PyQt5.QtGui import *
 from Main import *
 from UserSet import *
 from Setting import *
-from UserReset import *
+
 
 
 
@@ -151,35 +151,49 @@ class Analysis(QObject):
         super(self.__class__, self).__init__(parent)
 
 
-    def NowTime(self):
-        now = time.localtime()
-        NT = ("%04d.%02d.%02d" % (now.tm_year, now.tm_mon, now.tm_mday))
-        return NT
 
-    def Input(self):
-        pass
 
     def Record(self):
         pass
 
-    def Analysis(self):
-        def Check():
-            Process = os.popen('wmic process get description').read().split()
 
+
+    def Analysis(self):
+
+        def Input(NT, PROCESS):
+            try:
+                with DB_ANALYSIS.cursor() as cursor:
+                    query = "INSERT INTO `{}-{}-{}-{}` (DATE, TIME, PROCESS) VALUES (NOW(), '{}', '{}')".format(Middle.School, Middle.Grade, Middle.Class, Middle.Name, NT, PROCESS)
+                    print(query)
+                    cursor.execute(query)
+                    pass
+
+            finally:
+                DB_ANALYSIS.close
+
+
+        def Check():
+            def NowTime():
+                now = time.localtime()
+                NT = ("%02d:%02d" % (now.tm_hour, now.tm_min))
+                return NT
+
+            Process = os.popen('wmic process get description').read().split()
             for List in range(len(JSON_ANALYSIS['Analysis']['Process'])):
                 if DATA[List] in Process:
-                    print("Process : "+ DATA[List])
+                    BRIDGE = DATA[List]
+                    Input(NowTime(), BRIDGE)
                     pass
 
                 else:
                     pass
             threading.Timer(300, Check).start()
 
-            
+
         REQURL = "http://zosc.iptime.org/ZOSC/Data/Analysis"
         JSON_ANALYSIS = requests.get(REQURL).json()
         DATA = JSON_ANALYSIS['Analysis']['Process']
-        threading.Timer(300, Check).start()
+        threading.Timer(5, Check).start()
         
 
 
@@ -262,6 +276,7 @@ class Worker(QObject):
                 self.sig_numbers.emit("")
 
             def Select(School, TN, Subject, DayString, ClassTime):
+                print(School, TN, Subject, ClassTime)
                 try:
                     with DB_ZOSC.cursor() as cursor:
                         query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, TN)
@@ -342,58 +357,6 @@ class Middle(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
-        
-
-    def User_New(self):
-        Setting_ini = 'C:\\ZOOM SCHEDULER\\Cache_User.json'
-        JSON_USER = dict()
-        User = dict()
-        User[""]
-        Middle.Grade = Middle.ID[0:1]
-        Middle.Class = Middle.ID[1:3]
-        Middle.Number = Middle.ID[3:5]
-        Middle.ClassR = Middle.Class.strip("0")
-
-        with open(Setting_ini, 'w', encoding='utf-8') as configfile:
-            config_User.write(configfile)
-        return
-
-    def User_Reset(self):
-        Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
-        os.remove(Setting_ini)
-        config_User = configparser.ConfigParser()
-        config_User['User'] = {}
-        config_User['User']['Grade'] = Middle.ID[0:1]
-        config_User['User']['Class'] = Middle.ID[1:3]
-        config_User['User']['Number'] = Middle.ID[3:5]
-        config_User['User']['Name'] = Middle.Name
-        Middle.Grade = Middle.ID[0:1]
-        Middle.Class = Middle.ID[1:3]
-        Middle.Number = Middle.ID[3:5]
-        Middle.ClassR = Middle.Class.strip("0")
-
-        with open(Setting_ini, 'w', encoding='utf-8') as configfile:
-            config_User.write(configfile)
-
-        # FTP Server Upload
-        User_Temp = "C:\\ZOOM SCHEDULER\\"+str(Middle.ID)+" "+str(Middle.Name)+".ini"
-
-        config_FTP = configparser.ConfigParser()
-        config_FTP['User'] = {}
-        config_FTP['User']['Grade'] = Middle.ID[0:1]
-        config_FTP['User']['Class'] = Middle.ID[1:3]
-        config_FTP['User']['Number'] = Middle.ID[3:5]
-        config_FTP['User']['Name'] = Middle.Name
-
-        with open(User_Temp, 'w', encoding='utf-8') as configfile:
-            config_FTP.write(configfile)
-
-        # FTP Upload
-        FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Middle.Grade)+"학년 "+str(Middle.Class)+"반/"    # FTP Path 지정
-        FTP_UpName = Middle.ID+" "+Middle.Name+".ini"    # User ini 파일 이름 지정
-        FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
-        os.remove(User_Temp)    # Upload Temp File Delete
-        return
 
 
 
@@ -405,7 +368,6 @@ class Connect(QObject):
         self.gui_main = UI_MainWindow()
         self.gui_userset = UI_User()
         self.gui_setting = UI_Setting()
-        self.gui_UserReset = UI_UserReSet()
 
         Version()
 
@@ -449,24 +411,20 @@ class Connect(QObject):
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
 
         # Setting GUI
-        self.gui_setting.btn_reset.clicked.connect(self.Reset_show)     # UserReset UI
         self.gui_setting.btn_info.clicked.connect(self.Information)     # Information Webpage
         self.gui_setting.btn_close.clicked.connect(self.Setting_Close)     # Setting UI Close
         
         # UserSetting GUI
-        self.gui_userset.btn_yes.clicked.connect(self.User_Save)     # UserSetting
         self.gui_userset.btn_close.clicked.connect(self.User_Cancel)     # UserSet Cancel
-        
-        # UserReset GUI
-        self.gui_UserReset.btn_yes.clicked.connect(self.Resetting)     # User Resetting
-        self.gui_UserReset.btn_close.clicked.connect(self.gui_UserReset.hide)
+
 
         # PyqtSlot
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)     # PyqtSlot Connect
         
 
 
-    
+
+
     def Run(self):
         self.worker.Server_Connect()
         self.ais.Analysis()
@@ -504,12 +462,8 @@ class Connect(QObject):
                 DB_ZOSC.close
 
 
-            # 파일 제거
-
-
         else:
             self.gui_userset.show()
-            self.Hello()    # MySQL Connect
 
     def Notice_Refresh(self):
         self.gui_main.label.setText(Notice())
@@ -521,30 +475,12 @@ class Connect(QObject):
             )
 
     def Setting_Close(self):
-        self.gui_UserReset.hide()
         self.gui_setting.hide()
+        return
 
     def Information(self):
         InfoURL = 'http://nwjun.com'
         webbrowser.open(InfoURL)
-
-    def Reset_show(self):
-        self.gui_UserReset.show()
-        self.gui_main.tray_icon.showMessage(
-                "사용자 재설정 주의",
-                "사용자를 잘못 등록한 경우에만\n재설정하시기 바랍니다.",
-                QSystemTrayIcon.Warning,
-                2000
-            )
-
-    def User_Save(self):
-        Middle.ID = self.gui_userset.input_id.text()
-        Middle.Name = self.gui_userset.input_name.text()
-
-        self.middle.User_New()
-        self.gui_main.show()
-        self.gui_userset.close()
-        self.Awesome()
         
     def User_Cancel(self):
         self.gui_main.tray_icon.showMessage(
@@ -556,18 +492,10 @@ class Connect(QObject):
         time.sleep(2)
         sys.exit()
 
-    def Resetting(self):
-        Middle.ID = self.gui_UserReset.input_id.text()
-        Middle.Name = self.gui_UserReset.input_name.text()
-
-        self.middle.User_Reset()
-        self.gui_UserReset.hide()
-        self.Reset_Complete()
-
     def Welcome(self):
         self.gui_main.tray_icon.showMessage(
-                "또 만났네요!",
-                "{}님 안녕하세요!".format(Middle.Name),
+                "반가워요!",
+                "{}님 안녕하세요!\n{} {}학년 {}반".format(Middle.Name, Middle.School, Middle.Grade, Middle.Class),
                 QSystemTrayIcon.Information,
                 2000
             )
@@ -575,33 +503,10 @@ class Connect(QObject):
     def Hello(self):
         self.gui_main.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
-                "만나서 반가워요!\n학번과 이름을 입력해 주세요.",
+                "반가워요!\nZOSC를 이용하시려면 로그인이 필요합니다.",
                 QSystemTrayIcon.Information,
                 2000
-            )
-
-    def Awesome(self):
-        self.gui_main.tray_icon.showMessage(
-                "ZOOM SCHEDULER",
-                "ZOSC를 사용해주셔서 감사합니다!",
-                QSystemTrayIcon.Information,
-                2000
-            )
-        
-        self.gui_main.tray_icon.showMessage(
-                "ZOOM SCHEDULER",
-                "ZOSC 사용 방법은 공식 페이지에서 확인 가능합니다.",
-                QSystemTrayIcon.Information,
-                2000
-            )
-
-    def Reset_Complete(self):
-        self.gui_main.tray_icon.showMessage(
-                "사용자 재설정 완료",
-                "사용자가 재설정 되었습니다.\n{} {}".format(Middle.ID, Middle.Name),
-                QSystemTrayIcon.Information,
-                2000
-            )
+            )    # 미사용
 
     def ERROR_User(self):
         os.remove("C:\\ZOOM SCHEDULER\\Setting.ini")
@@ -612,7 +517,7 @@ class Connect(QObject):
                 2000
             )
         time.sleep(3)
-        sys.exit()
+        sys.exit()    # 재사용
 
 
 
@@ -624,18 +529,3 @@ if __name__ == "__main__":
     MainWindow = QMainWindow()
     ui = Connect(app)
     sys.exit(app.exec_())
-
-
-
-
-# 함수 저장
-
-def Save_Json():
-    REQURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( NodeJS 서버 )
-    REQPATH = "C:\\ZOOM SCHEDULER\\REQUEST.json"
-    urllib.request.urlretrieve(REQURL, REQPATH)
-    with open(REQPATH, 'r') as J:
-        JSON_VERSION = json.load(J)
-    UpdateVer = JSON_VERSION['zosc']['version']
-    J.close()
-    os.remove(REQPATH)

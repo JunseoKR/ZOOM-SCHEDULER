@@ -1,5 +1,6 @@
 # -*- conding: utf-8 -*-
 
+import sys
 import PyQt5    # PyQt5 / PyQt5-tools
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
@@ -8,7 +9,6 @@ from PyQt5.QtGui import *
 
 from ZOSC import *
 from Setting import *
-from UserReset import *
 
 
 
@@ -18,7 +18,7 @@ class UI_MainWindow(QMainWindow):    # Main UI
         super().__init__()
         self.setupUi(self)
         self.gui_setting = UI_Setting()
-        self.gui_UserReset = UI_UserReSet()
+        self.ais = Analysis()
 
 
 
@@ -163,7 +163,6 @@ class UI_MainWindow(QMainWindow):    # Main UI
 
 
     def Tray(self):
-        self.gui_UserReset.hide()
         self.gui_setting.hide()
         self.hide()
         self.tray_icon.showMessage(
