@@ -13,8 +13,6 @@ from PyQt5.QtCore import Qt, QRect, QCoreApplication, QEvent
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QWidget, QPushButton, QMainWindow
 from PyQt5.QtGui import QMouseEvent, QCursor
 
-
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
 
