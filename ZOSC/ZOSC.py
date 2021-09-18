@@ -77,8 +77,11 @@ def Server_Check():
     try:
         RES = requests.head(url=SERVERURL, timeout=3)
         CHECK = RES.status_code
-        print("Server Status : "+str(RES.status_code))
-        pass
+        if 400<CHECK<1000:
+            Server_Warn()
+            sys.exit()
+        else:
+            pass
 
     except requests.exceptions.Timeout:
         Server_Warn()
@@ -128,7 +131,7 @@ try:
 except:
     print("[ ZOSC ] MySQL SERVER ERROR")
     toaster = ToastNotifier()
-    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
+    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
     sys.exit()
 
 try:
@@ -137,7 +140,7 @@ try:
 except:
     print("[ ANALYSIS ] MySQL SERVER ERROR")
     toaster = ToastNotifier()
-    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
+    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
     sys.exit()
 
 
@@ -214,28 +217,28 @@ class Worker(QObject):
 
             def Server_Warn():
                 toaster = ToastNotifier()
-                toaster.show_toast("서버 연결 오류", "알림을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
-                self.sig_numbers.emit("AWS 서버 연결 오류")
+                toaster.show_toast("서버 연결 오류", "알림을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
+                self.sig_numbers.emit("ZOSC 서버 연결 오류")
                 time.sleep(5)
                 self.sig_numbers.emit("")
 
             def DB_Warn():
                 toaster = ToastNotifier()
-                toaster.show_toast("등록되지 않은 회의", "화상 회의 정보가 등록되지 않았습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=P_Insert)
+                toaster.show_toast("등록되지 않은 회의", "화상 회의 정보가 등록되지 않았습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=P_Insert)
                 self.sig_numbers.emit("회의 정보 오류")
                 time.sleep(5)
                 self.sig_numbers.emit("")
 
             def TimeREQ_Warn():
                 toaster = ToastNotifier()
-                toaster.show_toast("시간표 처리 오류 [ 수업 시간 ]", "시간표의 수업시간을 불러오는데 오류가 발생했습니다.\n여기를 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
+                toaster.show_toast("시간표 처리 오류 [ 수업 시간 ]", "시간표의 수업시간을 불러오는데 오류가 발생했습니다.\n여기를 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
                 self.sig_numbers.emit("수업시간 처리 오류")
                 time.sleep(5)
                 self.sig_numbers.emit("")
 
             def TimeTable_Warn():
                 toaster = ToastNotifier()
-                toaster.show_toast("시간표 처리 오류 [ 시간표 데이터 ]", "시간표의 수업 데이터를 불러오는데 오류가 발생했습니다.\n여기를 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
+                toaster.show_toast("시간표 처리 오류 [ 시간표 데이터 ]", "시간표의 수업 데이터를 불러오는데 오류가 발생했습니다.\n여기를 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
                 self.sig_numbers.emit("수업 데이터 처리 오류")
                 time.sleep(5)
                 self.sig_numbers.emit("")
@@ -531,8 +534,8 @@ class Connect(QObject):
 
     def Welcome(self):
         self.gui_main.tray_icon.showMessage(
-                "반가워요!",
-                "{}님 안녕하세요!\n{} {}학년 {}반".format(Middle.Name, Middle.School, Middle.Grade, Middle.Class),
+                "{}님 안녕하세요!".format(Middle.Name),
+                "{} {}학년 {}반 {}\n로그인되었습니다.".format(Middle.School, Middle.Grade, Middle.Class, Middle.Name),
                 QSystemTrayIcon.Information,
                 2000
             )
