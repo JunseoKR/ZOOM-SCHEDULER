@@ -2,7 +2,7 @@
 
 
 import os
-import os.path
+#import os.path
 import sys
 import time
 import threading
@@ -77,6 +77,7 @@ def Server_Check():
     try:
         RES = requests.head(url=SERVERURL, timeout=3)
         CHECK = RES.status_code
+        print("Server Status : "+str(RES.status_code))
         pass
 
     except requests.exceptions.Timeout:
@@ -97,10 +98,10 @@ def Version():
     REQURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( NodeJS 서버 )
     JSON_SET = requests.get(REQURL).json()
     UpdateVer = JSON_SET['zosc']['version']
-
+    print("Current Version : "+curVer+"\nServer Version : "+UpdateVer)
     # 버전 판별
     if curVer == UpdateVer:
-        pass
+        return
 
     else:
         sys.exit()
@@ -125,7 +126,7 @@ try:
     DB_ZOSC = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ZOSC', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
 except:
-    print("MySQL SERVER ERROR")
+    print("[ ZOSC ] MySQL SERVER ERROR")
     toaster = ToastNotifier()
     toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
     sys.exit()
@@ -134,7 +135,7 @@ try:
     DB_ANALYSIS = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ANALYSIS', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
 except:
-    print("MySQL SERVER ERROR")
+    print("[ ANALYSIS ] MySQL SERVER ERROR")
     toaster = ToastNotifier()
     toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
     sys.exit()
@@ -142,20 +143,12 @@ except:
 
 
 
-
 """ [ ZOSC Analysis ] -------------------------------------------------------------------------------------------------------------------- """
 
-class Analysis(QObject):
+class Analytic(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
-
-
-
-
-    def Record(self):
-        pass
-
 
 
     def Analysis(self):
@@ -164,9 +157,7 @@ class Analysis(QObject):
             try:
                 with DB_ANALYSIS.cursor() as cursor:
                     query = "INSERT INTO `{}-{}-{}-{}` (DATE, TIME, PROCESS) VALUES (NOW(), '{}', '{}')".format(Middle.School, Middle.Grade, Middle.Class, Middle.Name, NT, PROCESS)
-                    print(query)
                     cursor.execute(query)
-                    pass
 
             finally:
                 DB_ANALYSIS.close
@@ -183,12 +174,12 @@ class Analysis(QObject):
                 if DATA[List] in Process:
                     BRIDGE = DATA[List]
                     Input(NowTime(), BRIDGE)
+                    print("ANALYSIS Status : \""+BRIDGE+"\"")
                     pass
 
                 else:
                     pass
             threading.Timer(300, Check).start()
-
 
         REQURL = "http://zosc.iptime.org/ZOSC/Data/Analysis"
         JSON_ANALYSIS = requests.get(REQURL).json()
@@ -205,6 +196,7 @@ class Worker(QObject):
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
         self.gui_main = UI_MainWindow()
+        self.ais = Analytic()
 
     @pyqtSlot()
     def Server_Connect(self, parent=None):
@@ -216,20 +208,45 @@ class Worker(QObject):
 
 
 # RunTime ===============================================================================
+
         def Run():
-            self.sig_numbers.emit("서버 연결중")
-            # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            # Warn ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             def Server_Warn():
                 toaster = ToastNotifier()
-                toaster.show_toast("서버 연결 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
+                toaster.show_toast("서버 연결 오류", "알림을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
                 self.sig_numbers.emit("AWS 서버 연결 오류")
                 time.sleep(5)
                 self.sig_numbers.emit("")
 
-            def alert():
+            def DB_Warn():
+                toaster = ToastNotifier()
+                toaster.show_toast("등록되지 않은 회의", "화상 회의 정보가 등록되지 않았습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=P_Insert)
+                self.sig_numbers.emit("회의 정보 오류")
+                time.sleep(5)
+                self.sig_numbers.emit("")
+
+            def TimeREQ_Warn():
+                toaster = ToastNotifier()
+                toaster.show_toast("시간표 처리 오류 [ 수업 시간 ]", "시간표의 수업시간을 불러오는데 오류가 발생했습니다.\n여기를 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
+                self.sig_numbers.emit("수업시간 처리 오류")
+                time.sleep(5)
+                self.sig_numbers.emit("")
+
+            def TimeTable_Warn():
+                toaster = ToastNotifier()
+                toaster.show_toast("시간표 처리 오류 [ 시간표 데이터 ]", "시간표의 수업 데이터를 불러오는데 오류가 발생했습니다.\n여기를 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
+                self.sig_numbers.emit("수업 데이터 처리 오류")
+                time.sleep(5)
+                self.sig_numbers.emit("")
+
+            def Weekend_Warn():
                 toaster = ToastNotifier()
                 toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
+                self.sig_numbers.emit("주말 실행 제한")
+                time.sleep(5)
+                self.sig_numbers.emit("")
+
 
             # RunTime ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             def RunTime(School, TN, Subject, DayString, ClassTime, TIMER):  # 메인 런타임
@@ -268,13 +285,6 @@ class Worker(QObject):
 
 
             # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            def DB_Warn():
-                toaster = ToastNotifier()
-                toaster.show_toast("등록되지 않은 회의", "화상 회의 정보가 등록되지 않았습니다.\n회의 정보 등록 페이지로 이동하시려면 누르세요..", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=P_Insert)
-                self.sig_numbers.emit("회의 정보 등록이 필요합니다")
-                time.sleep(5)
-                self.sig_numbers.emit("")
-
             def Select(School, TN, Subject, DayString, ClassTime):
                 print(School, TN, Subject, ClassTime)
                 try:
@@ -296,38 +306,59 @@ class Worker(QObject):
                     
 
             # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            # TimeTable Data Request
-
-            DATA_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class)    # TimeTable Request URL
-            TimeTable = requests.get(DATA_URL).json()
 
             # SET
-            DAY_ = today()
+            DAY_ = 3
             ZOOM = []
             MEET = []
             GOORM = []
-            # Time Data Request
-            REQ_TIME = requests.get('http://zosc.iptime.org/ZOSC/Data/Time').json()
             TIME = []
-            for i in range(1, 8):
-                INPUT = REQ_TIME[i]
-                TIME.append(INPUT[2:7])
 
-            for TIME_ in range(7):
+            # 주말 예외 처리
+            if DAY_ == (5 or 6):
+                Weekend_Warn()
+                return
+
+            else:
+                # TimeTable Data Request
+                self.sig_numbers.emit("Data Request")
+                try:
+                    REQ_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class)    # TimeTable Request URL
+                    TimeTable = requests.get(REQ_URL).json()    # TimeTable Request
+                    REQ_TIME = requests.get('http://zosc.iptime.org/ZOSC/Data/Time').json()    # Time Set Request
+
+                    # 수업시간 처리
+                    for i in range(1, 8):
+                        try:
+                            INPUT = REQ_TIME[i]
+                            TIME.append(INPUT[2:7])
+                        except:
+                            break
+                            TimeREQ_Warn()
+                            return
+
+                    # 수업 데이터 처리
+                    for TIME_ in range(7):
+                        try:
                             DATA = TimeTable[DAY_][TIME_]
                             Select(Middle.School, DATA['teacher'], DATA['subject'], DATA['weekdayString'], DATA['classTime'])
-            
-            
-            # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+                        except:
+                            break
+                            TimeTable_Warn()
+                            return
 
-            # Time_Set() → RunTime() 함수 호출
-            self.sig_numbers.emit("서버 연결 완료")
-            self.sig_numbers.emit("시간표 불러오기 완료")
+                except:
+                    Server_Warn()
+                    return
 
+
+            
             # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             # [ RunTime 실행 완료 ]
-
-            self.sig_numbers.emit("RunTime Ready")
+            self.sig_numbers.emit("집중도 분석 기능 시작")
+            self.ais.Analysis()
+            time.sleep(1)
+            self.sig_numbers.emit("ALL READY")
             time.sleep(1)
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
             
@@ -373,7 +404,7 @@ class Connect(QObject):
 
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
-        
+
 
         # Worker() 쓰레드
         self.worker = Worker()
@@ -386,7 +417,7 @@ class Connect(QObject):
         self.middle.moveToThread(self.middle_thread)
         self.middle_thread.start()
         # Worker() 쓰레드
-        self.ais = Analysis()
+        self.ais = Analytic()
         self.ais_thread = QThread()
         self.ais.moveToThread(self.ais_thread)
         self.ais_thread.start()
@@ -401,12 +432,14 @@ class Connect(QObject):
         # 사용자 체크
         self.Check()
 
+    
 
     
     def _connectSignals(self):
         # Main GUI
         self.gui_main.btn_hide.clicked.connect(self.gui_main.Tray)     # Tray
-        self.gui_main.btn_run.clicked.connect(self.Run)     # Runtime
+        self.gui_main.btn_close.clicked.connect(self.gui_main.Quit)
+        self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)     # Runtime
         self.gui_main.btn_notice.clicked.connect(self.Notice_Refresh)     # Notice
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
 
@@ -417,17 +450,21 @@ class Connect(QObject):
         # UserSetting GUI
         self.gui_userset.btn_close.clicked.connect(self.User_Cancel)     # UserSet Cancel
 
-
         # PyqtSlot
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)     # PyqtSlot Connect
         
 
 
-
-
-    def Run(self):
-        self.worker.Server_Connect()
-        self.ais.Analysis()
+    def Quit(self):    # 오류 처리 확인 필요
+        self.gui_main.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "ZOSC의 모든 프로세스가 종료됩니다.",
+                QSystemTrayIcon.Information,
+                2000
+            )
+        self.gui_main.hide()
+        time.sleep(2)
+        sys.exit()    # 오류 처리 확인 필요 / 미사용
 
     def Check(self):
         CACHE = 'C:\\ZOOM SCHEDULER\\CACHE.json'
@@ -457,7 +494,7 @@ class Connect(QObject):
                     print("[DATA ERROR] MySQL DATA NOT FOUND!")
                     sys.exit()
             except:
-                print("DATA SERVER ERROR!")
+                print("[ ZOSC ] DATA SERVER ERROR!")
             finally:
                 DB_ZOSC.close
 

@@ -1,6 +1,5 @@
 # -*- conding: utf-8 -*-
 
-import sys
 import PyQt5    # PyQt5 / PyQt5-tools
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
@@ -18,8 +17,6 @@ class UI_MainWindow(QMainWindow):    # Main UI
         super().__init__()
         self.setupUi(self)
         self.gui_setting = UI_Setting()
-        self.ais = Analysis()
-
 
 
     def setupUi(self, MainWindow):
@@ -61,13 +58,15 @@ class UI_MainWindow(QMainWindow):    # Main UI
         self.tray_icon.setIcon(icon)
 
         quit_action = QAction("종료", self)
-        quit_action.triggered.connect(self.quit)
+        quit_action.triggered.connect(self.Quit)
         self.tray_icon.activated.connect(self.Activation_Reason)
+
         tray_menu = QMenu()
         tray_menu.addAction(quit_action)
         self.tray_icon.setContextMenu(tray_menu)
-        
-        
+
+
+
 
         # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
         """RunTime""" 
@@ -144,7 +143,6 @@ class UI_MainWindow(QMainWindow):    # Main UI
             ''')
         self.btn_close.setObjectName("btn_close")
 
-        self.btn_close.clicked.connect(self.quit)
         """end"""
 
 
@@ -172,7 +170,7 @@ class UI_MainWindow(QMainWindow):    # Main UI
                 2000
             )
 
-    def quit(self):
+    def Quit(self):
         self.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
                 "ZOSC의 모든 프로세스가 종료됩니다.",
