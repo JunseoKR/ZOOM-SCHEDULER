@@ -1,0 +1,18 @@
+{
+    "USER": {
+        "School": "태장고등학교",
+        "Grade": "2",
+        "Class": "9",
+        "Number": "24",
+        "Name": "홍준서",
+        "URID": "junseo0413",
+        "PW": "junseo0413@"
+    },
+    
+    "DIAGNOSIS": {
+        "City": "경기도",
+        "Level": "고등학교",
+        "Birth": "040413",
+        "PW": "0413"
+    }
+}
