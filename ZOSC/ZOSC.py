@@ -424,7 +424,7 @@ class Connect(QObject):
         self.ais_thread = QThread()
         self.ais.moveToThread(self.ais_thread)
         self.ais_thread.start()
-
+        
         # 신호 연결
         self._connectSignals()
 
@@ -441,7 +441,7 @@ class Connect(QObject):
     def _connectSignals(self):
         # Main GUI
         self.gui_main.btn_hide.clicked.connect(self.gui_main.Tray)     # Tray
-        self.gui_main.btn_close.clicked.connect(self.gui_main.Quit)
+        self.gui_main.btn_close.clicked.connect(self.gui_main.Quit)    # Exit
         self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)     # Runtime
         self.gui_main.btn_notice.clicked.connect(self.Notice_Refresh)     # Notice
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI

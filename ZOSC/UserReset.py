@@ -1,5 +1,9 @@
 # -*- conding: utf-8 -*-
 
+
+# ====================================================== [ Warning!! ] User Reset 미사용 ======================================================
+
+
 import PyQt5    # PyQt5 / PyQt5-tools
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *

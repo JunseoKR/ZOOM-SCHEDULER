@@ -10,7 +10,6 @@ from ZOSC import *
 from Setting import *
 
 
-
 class UI_MainWindow(QMainWindow):    # Main UI
 
     def __init__(self):
