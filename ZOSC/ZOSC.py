@@ -1,37 +1,50 @@
 # -*- conding: utf-8 -*-
 
+# [ ZOSC Modules ]
 
+# Normal Modules
 import os
-import os.path
 import sys
+import re
 import time
-import threading
-import wmi
-import json
 import datetime
 from datetime import datetime
 from datetime import timedelta
-import webbrowser
+import json
+from tendo import singleton    # tendo
+# Alert Modules
+from win10toast import ToastNotifier    # win10toast
+from win10toast_click import ToastNotifier    # win10toast-click
+# Request / MySQL Modules
 import pymysql
 import requests    # requests
 import urllib.request
 from urllib.parse import quote
-import configparser    # configparser
+# Selenium or Web Modules
+import chromedriver_autoinstaller
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+import webbrowser
+# Process Modules
+import wmi
+import threading
 from win32com.client import GetObject
-from tendo import singleton    # tendo
-from win10toast import ToastNotifier    # win10toast
-from win10toast_click import ToastNotifier    # win10toast-click
 
+# PyQt5 Modules
 import PyQt5    # PyQt5 / PyQt5-tools
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
+# UI Modules
 from Main import *
 from UserSet import *
 from Setting import *
-from UserReset import *
+
 
 
 
@@ -77,7 +90,11 @@ def Server_Check():
     try:
         RES = requests.head(url=SERVERURL, timeout=3)
         CHECK = RES.status_code
-        pass
+        if 400<CHECK<1000:
+            Server_Warn()
+            sys.exit()
+        else:
+            pass
 
     except requests.exceptions.Timeout:
         Server_Warn()
@@ -97,10 +114,10 @@ def Version():
     REQURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( NodeJS 서버 )
     JSON_SET = requests.get(REQURL).json()
     UpdateVer = JSON_SET['zosc']['version']
-
+    print("Current Version : "+curVer+"\nServer Version : "+UpdateVer)
     # 버전 판별
     if curVer == UpdateVer:
-        pass
+        return
 
     else:
         sys.exit()
@@ -125,61 +142,65 @@ try:
     DB_ZOSC = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ZOSC', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
 except:
-    print("MySQL SERVER ERROR")
+    print("[ ZOSC ] MySQL SERVER ERROR")
     toaster = ToastNotifier()
-    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
+    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
     sys.exit()
 
 try:
     DB_ANALYSIS = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ANALYSIS', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
 except:
-    print("MySQL SERVER ERROR")
+    print("[ ANALYSIS ] MySQL SERVER ERROR")
     toaster = ToastNotifier()
-    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
+    toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
     sys.exit()
-
 
 
 
 
 """ [ ZOSC Analysis ] -------------------------------------------------------------------------------------------------------------------- """
 
-class Analysis(QObject):
+class Analytic(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
 
 
-    def NowTime(self):
-        now = time.localtime()
-        NT = ("%04d.%02d.%02d" % (now.tm_year, now.tm_mon, now.tm_mday))
-        return NT
-
-    def Input(self):
-        pass
-
-    def Record(self):
-        pass
-
     def Analysis(self):
-        def Check():
-            Process = os.popen('wmic process get description').read().split()
 
+        def Input(NT, PROCESS):
+            try:
+                with DB_ANALYSIS.cursor() as cursor:
+                    query = "INSERT INTO `{}-{}-{}-{}` (DATE, TIME, PROCESS) VALUES (NOW(), '{}', '{}')".format(Middle.School, Middle.Grade, Middle.Class, Middle.Name, NT, PROCESS)
+                    cursor.execute(query)
+
+            finally:
+                DB_ANALYSIS.close
+
+
+        def Check():
+            def NowTime():
+                now = time.localtime()
+                NT = ("%02d:%02d" % (now.tm_hour, now.tm_min))
+                return NT
+
+            Process = os.popen('wmic process get description').read().split()
             for List in range(len(JSON_ANALYSIS['Analysis']['Process'])):
                 if DATA[List] in Process:
-                    print("Process : "+ DATA[List])
+                    BRIDGE = DATA[List]
+                    Input(NowTime(), BRIDGE)
+                    print("ANALYSIS Status : \""+BRIDGE+"\"")
                     pass
 
                 else:
                     pass
             threading.Timer(300, Check).start()
 
-            
         REQURL = "http://zosc.iptime.org/ZOSC/Data/Analysis"
         JSON_ANALYSIS = requests.get(REQURL).json()
         DATA = JSON_ANALYSIS['Analysis']['Process']
-        threading.Timer(300, Check).start()
+        threading.Timer(5, Check).start()
         
 
 
@@ -191,6 +212,7 @@ class Worker(QObject):
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
         self.gui_main = UI_MainWindow()
+        self.ais = Analytic()
 
     @pyqtSlot()
     def Server_Connect(self, parent=None):
@@ -202,20 +224,45 @@ class Worker(QObject):
 
 
 # RunTime ===============================================================================
+
         def Run():
-            self.sig_numbers.emit("서버 연결중")
-            # Alert ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+            # Warn ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
             def Server_Warn():
                 toaster = ToastNotifier()
-                toaster.show_toast("서버 연결 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=Support)
-                self.sig_numbers.emit("AWS 서버 연결 오류")
+                toaster.show_toast("서버 연결 오류", "알림을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
+                self.sig_numbers.emit("ZOSC 서버 연결 오류")
                 time.sleep(5)
                 self.sig_numbers.emit("")
 
-            def alert():
+            def DB_Warn():
+                toaster = ToastNotifier()
+                toaster.show_toast("등록되지 않은 회의", "화상 회의 정보가 등록되지 않았습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=P_Insert)
+                self.sig_numbers.emit("회의 정보 오류")
+                time.sleep(5)
+                self.sig_numbers.emit("")
+
+            def TimeREQ_Warn():
+                toaster = ToastNotifier()
+                toaster.show_toast("시간표 처리 오류 [ 수업 시간 ]", "시간표의 수업시간을 불러오는데 오류가 발생했습니다.\n여기를 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
+                self.sig_numbers.emit("수업시간 처리 오류")
+                time.sleep(5)
+                self.sig_numbers.emit("")
+
+            def TimeTable_Warn():
+                toaster = ToastNotifier()
+                toaster.show_toast("시간표 처리 오류 [ 시간표 데이터 ]", "시간표의 수업 데이터를 불러오는데 오류가 발생했습니다.\n여기를 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
+                self.sig_numbers.emit("수업 데이터 처리 오류")
+                time.sleep(5)
+                self.sig_numbers.emit("")
+
+            def Weekend_Warn():
                 toaster = ToastNotifier()
                 toaster.show_toast("ZOOM SCHEDULER", "주말에는 실행할 수 없습니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Error.ico", duration=2, threaded=False)
+                self.sig_numbers.emit("주말 실행 제한")
+                time.sleep(5)
+                self.sig_numbers.emit("")
+
 
             # RunTime ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             def RunTime(School, TN, Subject, DayString, ClassTime, TIMER):  # 메인 런타임
@@ -254,14 +301,8 @@ class Worker(QObject):
 
 
             # DB ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            def DB_Warn():
-                toaster = ToastNotifier()
-                toaster.show_toast("등록되지 않은 회의", "화상 회의 정보가 등록되지 않았습니다.\n회의 정보 등록 페이지로 이동하시려면 누르세요..", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=5, threaded=True, callback_on_click=P_Insert)
-                self.sig_numbers.emit("회의 정보 등록이 필요합니다")
-                time.sleep(5)
-                self.sig_numbers.emit("")
-
             def Select(School, TN, Subject, DayString, ClassTime):
+                print(School, TN, Subject, ClassTime)
                 try:
                     with DB_ZOSC.cursor() as cursor:
                         query = "SELECT ZOOM, GOOGLEMEET, GOORM FROM TEACHER WHERE School = '{}' AND REQN = '{}'".format(School, TN)
@@ -281,38 +322,59 @@ class Worker(QObject):
                     
 
             # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            # TimeTable Data Request
-
-            DATA_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class)    # TimeTable Request URL
-            TimeTable = requests.get(DATA_URL).json()
 
             # SET
-            DAY_ = today()
+            DAY_ = 3
             ZOOM = []
             MEET = []
             GOORM = []
-            # Time Data Request
-            REQ_TIME = requests.get('http://zosc.iptime.org/ZOSC/Data/Time').json()
             TIME = []
-            for i in range(1, 8):
-                INPUT = REQ_TIME[i]
-                TIME.append(INPUT[2:7])
 
-            for TIME_ in range(7):
+            # 주말 예외 처리
+            if DAY_ == (5 or 6):
+                Weekend_Warn()
+                return
+
+            else:
+                # TimeTable Data Request
+                self.sig_numbers.emit("Data Request")
+                try:
+                    REQ_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class)    # TimeTable Request URL
+                    TimeTable = requests.get(REQ_URL).json()    # TimeTable Request
+                    REQ_TIME = requests.get('http://zosc.iptime.org/ZOSC/Data/Time').json()    # Time Set Request
+
+                    # 수업시간 처리
+                    for i in range(1, 8):
+                        try:
+                            INPUT = REQ_TIME[i]
+                            TIME.append(INPUT[2:7])
+                        except:
+                            break
+                            TimeREQ_Warn()
+                            return
+
+                    # 수업 데이터 처리
+                    for TIME_ in range(7):
+                        try:
                             DATA = TimeTable[DAY_][TIME_]
                             Select(Middle.School, DATA['teacher'], DATA['subject'], DATA['weekdayString'], DATA['classTime'])
-            
-            
-            # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+                        except:
+                            break
+                            TimeTable_Warn()
+                            return
 
-            # Time_Set() → RunTime() 함수 호출
-            self.sig_numbers.emit("서버 연결 완료")
-            self.sig_numbers.emit("시간표 불러오기 완료")
+                except:
+                    Server_Warn()
+                    return
 
+
+            
             # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
             # [ RunTime 실행 완료 ]
-
-            self.sig_numbers.emit("RunTime Ready")
+            self.sig_numbers.emit("집중도 분석 기능 시작")
+            self.ais.Analysis()
+            time.sleep(1)
+            self.sig_numbers.emit("ALL READY")
             time.sleep(1)
             self.sig_numbers.emit("ZOSC 백그라운드 실행중")
             
@@ -326,75 +388,202 @@ class Worker(QObject):
 
 
 """ [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
-# 사용자 회원가입 웹 이동 필요
-# 수정 필요
 
 class Middle(QObject):
 
     # Class 변수 선언
-    School = "NULL"
+    School = None
     Grade = 0
     Class = 00
     Number = 00
     Name = "NULL"
     URID = "NULL"
     PW = "NULL"
+    City = "NULL"
+    Level = "NULL"
+    Birth = 000000
+    DSPW = None
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
-        
 
-    def User_New(self):
-        Setting_ini = 'C:\\ZOOM SCHEDULER\\Cache_User.json'
-        JSON_USER = dict()
-        User = dict()
-        User[""]
-        Middle.Grade = Middle.ID[0:1]
-        Middle.Class = Middle.ID[1:3]
-        Middle.Number = Middle.ID[3:5]
-        Middle.ClassR = Middle.Class.strip("0")
 
-        with open(Setting_ini, 'w', encoding='utf-8') as configfile:
-            config_User.write(configfile)
-        return
 
-    def User_Reset(self):
-        Setting_ini = 'C:\\ZOOM SCHEDULER\\Setting.ini'
-        os.remove(Setting_ini)
-        config_User = configparser.ConfigParser()
-        config_User['User'] = {}
-        config_User['User']['Grade'] = Middle.ID[0:1]
-        config_User['User']['Class'] = Middle.ID[1:3]
-        config_User['User']['Number'] = Middle.ID[3:5]
-        config_User['User']['Name'] = Middle.Name
-        Middle.Grade = Middle.ID[0:1]
-        Middle.Class = Middle.ID[1:3]
-        Middle.Number = Middle.ID[3:5]
-        Middle.ClassR = Middle.Class.strip("0")
 
-        with open(Setting_ini, 'w', encoding='utf-8') as configfile:
-            config_User.write(configfile)
+class Diagnosis(QObject):
 
-        # FTP Server Upload
-        User_Temp = "C:\\ZOOM SCHEDULER\\"+str(Middle.ID)+" "+str(Middle.Name)+".ini"
+    def __init__(self, parent=None):
+        super(self.__class__, self).__init__(parent)
 
-        config_FTP = configparser.ConfigParser()
-        config_FTP['User'] = {}
-        config_FTP['User']['Grade'] = Middle.ID[0:1]
-        config_FTP['User']['Class'] = Middle.ID[1:3]
-        config_FTP['User']['Number'] = Middle.ID[3:5]
-        config_FTP['User']['Name'] = Middle.Name
+    def Start(self):
+        try:
+            path = chromedriver_autoinstaller.install()
+            options = webdriver.ChromeOptions()
+            options.add_argument("headless")
+            options.add_argument("window-size=1920x1080")
+            options.add_argument("disable-gpu")
+            self.driver = webdriver.Chrome(path)
+            self.driver.get("https://hcs.eduro.go.kr/#/loginHome")
+            print("웹 로딩 완료")
+            WebDriverWait(self.driver, 200).until(
+                            EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div/ul[1]/li[1]/div/button'))
+                        )
+            
+            # 중학교 선택 후 자가진단 참여하기 시작
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div/ul[1]/li[1]/div/button').click()
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div/button').click()
+            print("분류 선택 완료")
 
-        with open(User_Temp, 'w', encoding='utf-8') as configfile:
-            config_FTP.write(configfile)
+            # 학교 검색 버튼이 누를 수 있을때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                            EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/div[1]/table/tbody/tr[1]/td/button'))
+                        )
+            # 학교 검색 창 입장
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/div[1]/table/tbody/tr[1]/td/input').click()
+            print("검색 창 클릭 이벤트 완료")
 
-        # FTP Upload
-        FTP_UpPath = "./HDD1/DATA/ZOSC/User/"+str(Middle.Grade)+"학년 "+str(Middle.Class)+"반/"    # FTP Path 지정
-        FTP_UpName = Middle.ID+" "+Middle.Name+".ini"    # User ini 파일 이름 지정
-        FTP_UserCheck(FTP_UpName, FTP_UpPath, User_Temp)    # 사용자 확인
-        os.remove(User_Temp)    # Upload Temp File Delete
-        return
+            # 학교 선택창이 누를 수 있을때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                            EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div/div[2]/div[2]/input'))
+                        )
+            # 드롭다운 메뉴창 관련 오브젝트 select 활용으로 전라남도 선택
+            select = Select(self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/table/tbody/tr[1]/td/select')) 
+            if self.getCityLevel(Middle.City) == '-1':
+                os.system('cls')
+                print("지역 선택값에서 예외가 발생하였습니다")
+                self.driver.quit()
+                return
+            select.select_by_value(self.getCityLevel(Middle.City))
+            print("지역 선택 완료")
 
+            # 위와 동일하게 학교 급 수 중학교로 설정
+            select = Select(self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/table/tbody/tr[2]/td/select'))
+            if self.getSchoolLevel(Middle.Level) == '-1':
+                os.system('cls')
+                print("학교 급 수 선택값에서 예외가 발생하였습니다")
+                self.driver.quit()
+                return
+            select.select_by_value(self.getSchoolLevel(Middle.Level))
+            print("Level 선택 완료")
+
+            # 학교명 광양 백운중으로 검색 후 검색 버튼 클릭
+            self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/table/tbody/tr[3]/td[1]/input').send_keys(Middle.School)
+            self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/table/tbody/tr[3]/td[2]/button').click()
+            print("학교 지정 완료")
+
+            # 검색 버튼 아래 확인 버튼 나올때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div/div[2]/div[1]/ul/li/a'))
+            )
+
+            # 확인 창 누르고 학교 선택 클릭
+            self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/ul/li/a').click()
+            self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[2]/input').click()
+            print("최종 선택 완료")
+
+            # 추가 창 뜰때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/input'))
+            )
+
+            # 성명 , 생년월일 기입
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/div[1]/table/tbody/tr[2]/td/input').send_keys(Middle.Name)
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/div[1]/table/tbody/tr[3]/td/input').send_keys(Middle.Birth)
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/input').click()
+            print("사용자 정보 출력 완료")
+            
+            # 패스워드 창 뜰때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.ID, 'password'))
+            )
+            
+            # 패스워드 창 클릭해서 보안 키보드 띄우기
+            self.driver.find_element_by_id('password').click()
+            print("PW 창 클릭 이벤트 완료")
+
+            # aria-label 에 버튼 번호 뜨는거 활용해서 클릭
+            for pw in list(Middle.DSPW):
+                self.driver.find_element_by_xpath("//a[@aria-label='{}']".format(pw)).click()  
+            
+            # 로그인
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/input').click()
+            print("로그인 클릭 이벤트 완료")
+
+            # 자가진단 시작 확인
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div[2]/div/section[2]/div[2]/ul/li/a/span[1]'))
+            )
+
+            # 자가진단 시작
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/section[2]/div[2]/ul/li/a/span[1]').click() 
+            print("자가진단 시작")
+            
+            # 완료 버튼 누를 수 있을때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div[2]/div/div[2]/div[2]/div[2]/dl[1]/dd/ul/li[1]/input'))
+            )
+            
+            # 모두 아니오 , 후 최종 완료
+            self.driver.find_element_by_id('survey_q1a1').click()    # survey_q1a2 → '예' 버튼 ID [ 건강 이상 ]
+            self.driver.find_element_by_id('survey_q2a1').click()    # survey_q2a2 → '예' 버튼 ID
+            self.driver.find_element_by_id('survey_q3a1').click()    # survey_q3a2 → '예' 버튼 ID
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div[2]/input').click()
+            print("Complete")
+        except Exception as e:
+            print("예외가 발생하였습니다")
+            return    # 체크 유무에 따라서 선택 따로
+    
+    def getCityLevel(self, city):
+        if city == "서울특별시":
+            return '1'
+        elif city == "부산광역시":
+            return '2'   
+        elif city == "대구광역시":
+            return '3'
+        elif city == "인천광역시":
+            return '4'  
+        elif city == "광주광역시":
+            return '5'
+        elif city == "대전광역시":
+            return '6'  
+        elif city == "울산광역시":
+            return '7'
+        elif city == "세종특별자치시":
+            return '8'  
+        elif city == "경기도":
+            return '10'
+        elif city == "강원도":
+            return '11'  
+        elif city == "충청북도":
+            return '12'
+        elif city == "충청남도":
+            return '13'  
+        elif city == "전라북도":
+            return '14'
+        elif city == "전라남도":
+            return '15'  
+        elif city == "경상북도":
+            return '16'
+        elif city == "경상남도":
+            return '17'  
+        elif city == "제주특별자치도":
+            return '18' 
+        else:
+            return '-1'  
+
+    def getSchoolLevel(self, school):
+        if school == "유치원":
+            return '1'      
+        elif school == "초등학교":
+            return '2' 
+        elif school == "중학교":
+            return '3' 
+        elif school == "고등학교":
+            return '4' 
+        elif school == "특수학교 등":
+            return '5'      
+        else:
+            return '-1'
 
 
 
@@ -405,13 +594,12 @@ class Connect(QObject):
         self.gui_main = UI_MainWindow()
         self.gui_userset = UI_User()
         self.gui_setting = UI_Setting()
-        self.gui_UserReset = UI_UserReSet()
 
         Version()
 
         # 창 setupUi
         self.gui_main.setupUi(MainWindow)
-        
+
 
         # Worker() 쓰레드
         self.worker = Worker()
@@ -423,12 +611,17 @@ class Connect(QObject):
         self.middle_thread = QThread()
         self.middle.moveToThread(self.middle_thread)
         self.middle_thread.start()
-        # Worker() 쓰레드
-        self.ais = Analysis()
+        # Diagnosis() 쓰레드
+        self.diagnosis = Diagnosis()
+        self.diagnosis_thread = QThread()
+        self.diagnosis.moveToThread(self.diagnosis_thread)
+        self.diagnosis_thread.start()
+        # Analytic() 쓰레드
+        self.ais = Analytic()
         self.ais_thread = QThread()
         self.ais.moveToThread(self.ais_thread)
         self.ais_thread.start()
-
+        
         # 신호 연결
         self._connectSignals()
 
@@ -438,38 +631,40 @@ class Connect(QObject):
         
         # 사용자 체크
         self.Check()
-
+    
 
     
     def _connectSignals(self):
         # Main GUI
         self.gui_main.btn_hide.clicked.connect(self.gui_main.Tray)     # Tray
-        self.gui_main.btn_run.clicked.connect(self.Run)     # Runtime
+        self.gui_main.btn_close.clicked.connect(self.gui_main.Quit)    # Exit
+        self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)     # Runtime
         self.gui_main.btn_notice.clicked.connect(self.Notice_Refresh)     # Notice
+        #self.gui_main.btn_notice.clicked.connect(self.diagnosis.Start)     # 자가진단 기능 테스트용
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
 
         # Setting GUI
-        self.gui_setting.btn_reset.clicked.connect(self.Reset_show)     # UserReset UI
         self.gui_setting.btn_info.clicked.connect(self.Information)     # Information Webpage
         self.gui_setting.btn_close.clicked.connect(self.Setting_Close)     # Setting UI Close
         
         # UserSetting GUI
-        self.gui_userset.btn_yes.clicked.connect(self.User_Save)     # UserSetting
         self.gui_userset.btn_close.clicked.connect(self.User_Cancel)     # UserSet Cancel
-        
-        # UserReset GUI
-        self.gui_UserReset.btn_yes.clicked.connect(self.Resetting)     # User Resetting
-        self.gui_UserReset.btn_close.clicked.connect(self.gui_UserReset.hide)
 
         # PyqtSlot
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)     # PyqtSlot Connect
         
 
 
-    
-    def Run(self):
-        self.worker.Server_Connect()
-        self.ais.Analysis()
+    def Quit(self):    # 오류 처리 확인 필요
+        self.gui_main.tray_icon.showMessage(
+                "ZOOM SCHEDULER",
+                "ZOSC의 모든 프로세스가 종료됩니다.",
+                QSystemTrayIcon.Information,
+                2000
+            )
+        self.gui_main.hide()
+        time.sleep(2)
+        sys.exit()    # 오류 처리 확인 필요 / 미사용
 
     def Check(self):
         CACHE = 'C:\\ZOOM SCHEDULER\\CACHE.json'
@@ -485,6 +680,10 @@ class Connect(QObject):
             Middle.URID = JSON_USER['USER']['URID']
             Middle.PW = JSON_USER['USER']['PW']
             Middle.ID = Middle.Grade+Middle.Class+Middle.Number
+            Middle.City = JSON_USER['DIAGNOSIS']['City']
+            Middle.Level = JSON_USER['DIAGNOSIS']['Level']
+            Middle.Birth = JSON_USER['DIAGNOSIS']['Birth']
+            Middle.DSPW = JSON_USER['DIAGNOSIS']['PW']
             J.close()
 
             try:
@@ -499,17 +698,13 @@ class Connect(QObject):
                     print("[DATA ERROR] MySQL DATA NOT FOUND!")
                     sys.exit()
             except:
-                print("DATA SERVER ERROR!")
+                print("[ ZOSC ] DATA SERVER ERROR!")
             finally:
                 DB_ZOSC.close
 
 
-            # 파일 제거
-
-
         else:
             self.gui_userset.show()
-            self.Hello()    # MySQL Connect
 
     def Notice_Refresh(self):
         self.gui_main.label.setText(Notice())
@@ -521,30 +716,12 @@ class Connect(QObject):
             )
 
     def Setting_Close(self):
-        self.gui_UserReset.hide()
         self.gui_setting.hide()
+        return
 
     def Information(self):
         InfoURL = 'http://nwjun.com'
         webbrowser.open(InfoURL)
-
-    def Reset_show(self):
-        self.gui_UserReset.show()
-        self.gui_main.tray_icon.showMessage(
-                "사용자 재설정 주의",
-                "사용자를 잘못 등록한 경우에만\n재설정하시기 바랍니다.",
-                QSystemTrayIcon.Warning,
-                2000
-            )
-
-    def User_Save(self):
-        Middle.ID = self.gui_userset.input_id.text()
-        Middle.Name = self.gui_userset.input_name.text()
-
-        self.middle.User_New()
-        self.gui_main.show()
-        self.gui_userset.close()
-        self.Awesome()
         
     def User_Cancel(self):
         self.gui_main.tray_icon.showMessage(
@@ -556,18 +733,10 @@ class Connect(QObject):
         time.sleep(2)
         sys.exit()
 
-    def Resetting(self):
-        Middle.ID = self.gui_UserReset.input_id.text()
-        Middle.Name = self.gui_UserReset.input_name.text()
-
-        self.middle.User_Reset()
-        self.gui_UserReset.hide()
-        self.Reset_Complete()
-
     def Welcome(self):
         self.gui_main.tray_icon.showMessage(
-                "또 만났네요!",
                 "{}님 안녕하세요!".format(Middle.Name),
+                "{} {}학년 {}반 {}\n로그인되었습니다.".format(Middle.School, Middle.Grade, Middle.Class, Middle.Name),
                 QSystemTrayIcon.Information,
                 2000
             )
@@ -575,33 +744,10 @@ class Connect(QObject):
     def Hello(self):
         self.gui_main.tray_icon.showMessage(
                 "ZOOM SCHEDULER",
-                "만나서 반가워요!\n학번과 이름을 입력해 주세요.",
+                "반가워요!\nZOSC를 이용하시려면 로그인이 필요합니다.",
                 QSystemTrayIcon.Information,
                 2000
-            )
-
-    def Awesome(self):
-        self.gui_main.tray_icon.showMessage(
-                "ZOOM SCHEDULER",
-                "ZOSC를 사용해주셔서 감사합니다!",
-                QSystemTrayIcon.Information,
-                2000
-            )
-        
-        self.gui_main.tray_icon.showMessage(
-                "ZOOM SCHEDULER",
-                "ZOSC 사용 방법은 공식 페이지에서 확인 가능합니다.",
-                QSystemTrayIcon.Information,
-                2000
-            )
-
-    def Reset_Complete(self):
-        self.gui_main.tray_icon.showMessage(
-                "사용자 재설정 완료",
-                "사용자가 재설정 되었습니다.\n{} {}".format(Middle.ID, Middle.Name),
-                QSystemTrayIcon.Information,
-                2000
-            )
+            )    # 미사용
 
     def ERROR_User(self):
         os.remove("C:\\ZOOM SCHEDULER\\Setting.ini")
@@ -612,7 +758,7 @@ class Connect(QObject):
                 2000
             )
         time.sleep(3)
-        sys.exit()
+        sys.exit()    # 재사용
 
 
 
@@ -624,18 +770,3 @@ if __name__ == "__main__":
     MainWindow = QMainWindow()
     ui = Connect(app)
     sys.exit(app.exec_())
-
-
-
-
-# 함수 저장
-
-def Save_Json():
-    REQURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( NodeJS 서버 )
-    REQPATH = "C:\\ZOOM SCHEDULER\\REQUEST.json"
-    urllib.request.urlretrieve(REQURL, REQPATH)
-    with open(REQPATH, 'r') as J:
-        JSON_VERSION = json.load(J)
-    UpdateVer = JSON_VERSION['zosc']['version']
-    J.close()
-    os.remove(REQPATH)
