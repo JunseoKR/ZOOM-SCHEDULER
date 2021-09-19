@@ -1,33 +1,46 @@
 # -*- conding: utf-8 -*-
 
+# [ ZOSC Modules ]
 
+# Normal Modules
 import os
-#import os.path
 import sys
+import re
 import time
-import threading
-import wmi
-import json
 import datetime
 from datetime import datetime
 from datetime import timedelta
-import webbrowser
+import json
+from tendo import singleton    # tendo
+# Alert Modules
+from win10toast import ToastNotifier    # win10toast
+from win10toast_click import ToastNotifier    # win10toast-click
+# Request / MySQL Modules
 import pymysql
 import requests    # requests
 import urllib.request
 from urllib.parse import quote
-import configparser    # configparser
+# Selenium or Web Modules
+import chromedriver_autoinstaller
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+import webbrowser
+# Process Modules
+import wmi
+import threading
 from win32com.client import GetObject
-from tendo import singleton    # tendo
-from win10toast import ToastNotifier    # win10toast
-from win10toast_click import ToastNotifier    # win10toast-click
 
+# PyQt5 Modules
 import PyQt5    # PyQt5 / PyQt5-tools
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
+# UI Modules
 from Main import *
 from UserSet import *
 from Setting import *
@@ -375,23 +388,202 @@ class Worker(QObject):
 
 
 """ [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
-# 사용자 회원가입 웹 이동 필요
-# 수정 필요
 
 class Middle(QObject):
 
     # Class 변수 선언
-    School = "NULL"
+    School = None
     Grade = 0
     Class = 00
     Number = 00
     Name = "NULL"
     URID = "NULL"
     PW = "NULL"
+    City = "NULL"
+    Level = "NULL"
+    Birth = 000000
+    DSPW = None
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
 
+
+
+
+class Diagnosis(QObject):
+
+    def __init__(self, parent=None):
+        super(self.__class__, self).__init__(parent)
+
+    def Start(self):
+        try:
+            path = chromedriver_autoinstaller.install()
+            options = webdriver.ChromeOptions()
+            options.add_argument("headless")
+            options.add_argument("window-size=1920x1080")
+            options.add_argument("disable-gpu")
+            self.driver = webdriver.Chrome(path)
+            self.driver.get("https://hcs.eduro.go.kr/#/loginHome")
+            print("웹 로딩 완료")
+            WebDriverWait(self.driver, 200).until(
+                            EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div/ul[1]/li[1]/div/button'))
+                        )
+            
+            # 중학교 선택 후 자가진단 참여하기 시작
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div/ul[1]/li[1]/div/button').click()
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div/button').click()
+            print("분류 선택 완료")
+
+            # 학교 검색 버튼이 누를 수 있을때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                            EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/div[1]/table/tbody/tr[1]/td/button'))
+                        )
+            # 학교 검색 창 입장
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/div[1]/table/tbody/tr[1]/td/input').click()
+            print("검색 창 클릭 이벤트 완료")
+
+            # 학교 선택창이 누를 수 있을때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                            EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div/div[2]/div[2]/input'))
+                        )
+            # 드롭다운 메뉴창 관련 오브젝트 select 활용으로 전라남도 선택
+            select = Select(self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/table/tbody/tr[1]/td/select')) 
+            if self.getCityLevel(Middle.City) == '-1':
+                os.system('cls')
+                print("지역 선택값에서 예외가 발생하였습니다")
+                self.driver.quit()
+                return
+            select.select_by_value(self.getCityLevel(Middle.City))
+            print("지역 선택 완료")
+
+            # 위와 동일하게 학교 급 수 중학교로 설정
+            select = Select(self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/table/tbody/tr[2]/td/select'))
+            if self.getSchoolLevel(Middle.Level) == '-1':
+                os.system('cls')
+                print("학교 급 수 선택값에서 예외가 발생하였습니다")
+                self.driver.quit()
+                return
+            select.select_by_value(self.getSchoolLevel(Middle.Level))
+            print("Level 선택 완료")
+
+            # 학교명 광양 백운중으로 검색 후 검색 버튼 클릭
+            self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/table/tbody/tr[3]/td[1]/input').send_keys(Middle.School)
+            self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/table/tbody/tr[3]/td[2]/button').click()
+            print("학교 지정 완료")
+
+            # 검색 버튼 아래 확인 버튼 나올때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div/div[2]/div[1]/ul/li/a'))
+            )
+
+            # 확인 창 누르고 학교 선택 클릭
+            self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[1]/ul/li/a').click()
+            self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div/div/div[2]/div[2]/input').click()
+            print("최종 선택 완료")
+
+            # 추가 창 뜰때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/input'))
+            )
+
+            # 성명 , 생년월일 기입
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/div[1]/table/tbody/tr[2]/td/input').send_keys(Middle.Name)
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/div[1]/table/tbody/tr[3]/td/input').send_keys(Middle.Birth)
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/input').click()
+            print("사용자 정보 출력 완료")
+            
+            # 패스워드 창 뜰때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.ID, 'password'))
+            )
+            
+            # 패스워드 창 클릭해서 보안 키보드 띄우기
+            self.driver.find_element_by_id('password').click()
+            print("PW 창 클릭 이벤트 완료")
+
+            # aria-label 에 버튼 번호 뜨는거 활용해서 클릭
+            for pw in list(Middle.DSPW):
+                self.driver.find_element_by_xpath("//a[@aria-label='{}']".format(pw)).click()  
+            
+            # 로그인
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div/input').click()
+            print("로그인 클릭 이벤트 완료")
+
+            # 자가진단 시작 확인
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div[2]/div/section[2]/div[2]/ul/li/a/span[1]'))
+            )
+
+            # 자가진단 시작
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/section[2]/div[2]/ul/li/a/span[1]').click() 
+            print("자가진단 시작")
+            
+            # 완료 버튼 누를 수 있을때까지 대기
+            WebDriverWait(self.driver, 200).until(
+                EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div[1]/div[2]/div/div[2]/div[2]/div[2]/dl[1]/dd/ul/li[1]/input'))
+            )
+            
+            # 모두 아니오 , 후 최종 완료
+            self.driver.find_element_by_id('survey_q1a1').click()    # survey_q1a2 → '예' 버튼 ID [ 건강 이상 ]
+            self.driver.find_element_by_id('survey_q2a1').click()    # survey_q2a2 → '예' 버튼 ID
+            self.driver.find_element_by_id('survey_q3a1').click()    # survey_q3a2 → '예' 버튼 ID
+            self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div[2]/input').click()
+            print("Complete")
+        except Exception as e:
+            print("예외가 발생하였습니다")
+            return    # 체크 유무에 따라서 선택 따로
+    
+    def getCityLevel(self, city):
+        if city == "서울특별시":
+            return '1'
+        elif city == "부산광역시":
+            return '2'   
+        elif city == "대구광역시":
+            return '3'
+        elif city == "인천광역시":
+            return '4'  
+        elif city == "광주광역시":
+            return '5'
+        elif city == "대전광역시":
+            return '6'  
+        elif city == "울산광역시":
+            return '7'
+        elif city == "세종특별자치시":
+            return '8'  
+        elif city == "경기도":
+            return '10'
+        elif city == "강원도":
+            return '11'  
+        elif city == "충청북도":
+            return '12'
+        elif city == "충청남도":
+            return '13'  
+        elif city == "전라북도":
+            return '14'
+        elif city == "전라남도":
+            return '15'  
+        elif city == "경상북도":
+            return '16'
+        elif city == "경상남도":
+            return '17'  
+        elif city == "제주특별자치도":
+            return '18' 
+        else:
+            return '-1'  
+
+    def getSchoolLevel(self, school):
+        if school == "유치원":
+            return '1'      
+        elif school == "초등학교":
+            return '2' 
+        elif school == "중학교":
+            return '3' 
+        elif school == "고등학교":
+            return '4' 
+        elif school == "특수학교 등":
+            return '5'      
+        else:
+            return '-1'
 
 
 
@@ -419,7 +611,12 @@ class Connect(QObject):
         self.middle_thread = QThread()
         self.middle.moveToThread(self.middle_thread)
         self.middle_thread.start()
-        # Worker() 쓰레드
+        # Diagnosis() 쓰레드
+        self.diagnosis = Diagnosis()
+        self.diagnosis_thread = QThread()
+        self.diagnosis.moveToThread(self.diagnosis_thread)
+        self.diagnosis_thread.start()
+        # Analytic() 쓰레드
         self.ais = Analytic()
         self.ais_thread = QThread()
         self.ais.moveToThread(self.ais_thread)
@@ -434,7 +631,6 @@ class Connect(QObject):
         
         # 사용자 체크
         self.Check()
-
     
 
     
@@ -444,6 +640,7 @@ class Connect(QObject):
         self.gui_main.btn_close.clicked.connect(self.gui_main.Quit)    # Exit
         self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)     # Runtime
         self.gui_main.btn_notice.clicked.connect(self.Notice_Refresh)     # Notice
+        #self.gui_main.btn_notice.clicked.connect(self.diagnosis.Start)     # 자가진단 기능 테스트용
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
 
         # Setting GUI
@@ -483,6 +680,10 @@ class Connect(QObject):
             Middle.URID = JSON_USER['USER']['URID']
             Middle.PW = JSON_USER['USER']['PW']
             Middle.ID = Middle.Grade+Middle.Class+Middle.Number
+            Middle.City = JSON_USER['DIAGNOSIS']['City']
+            Middle.Level = JSON_USER['DIAGNOSIS']['Level']
+            Middle.Birth = JSON_USER['DIAGNOSIS']['Birth']
+            Middle.DSPW = JSON_USER['DIAGNOSIS']['PW']
             J.close()
 
             try:
