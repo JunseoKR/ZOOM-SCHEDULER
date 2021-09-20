@@ -360,6 +360,7 @@ class Worker(QObject):
                         try:
                             DATA = TimeTable[DAY_][TIME_]
                             Select(Middle.School, DATA['teacher'], DATA['subject'], DATA['weekdayString'], DATA['classTime'])
+                            print(DATA)
                         except:
                             break
                             TimeTable_Warn()
@@ -424,7 +425,7 @@ class Diagnosis(QObject):
             options.add_argument("headless")
             options.add_argument("window-size=1920x1080")
             options.add_argument("disable-gpu")
-            self.driver = webdriver.Chrome(path)
+            self.driver = webdriver.Chrome(path, options = options)
             self.driver.get("https://hcs.eduro.go.kr/#/loginHome")
             print("웹 로딩 완료")
             WebDriverWait(self.driver, 200).until(
@@ -531,6 +532,8 @@ class Diagnosis(QObject):
             self.driver.find_element_by_id('survey_q3a1').click()    # survey_q3a2 → '예' 버튼 ID
             self.driver.find_element_by_xpath('/html/body/app-root/div/div[1]/div[2]/div/div[2]/div[2]/input').click()
             print("Complete")
+            self.driver.quit()
+            return
         except Exception as e:
             print("예외가 발생하였습니다")
             return    # 체크 유무에 따라서 선택 따로
@@ -596,8 +599,8 @@ class Connect(QObject):
         self.gui_main = UI_MainWindow()
         self.gui_userset = UI_User()
         self.gui_setting = UI_Setting()
-        self.diagset = UI_DiagSet()
-        self.diagcheck = UI_Diagnosis()
+        self.gui_diagset = UI_DiagSet()
+        self.gui_diagnosis = UI_Diagnosis()
 
         Version()
 
@@ -644,7 +647,6 @@ class Connect(QObject):
         self.gui_main.btn_close.clicked.connect(self.gui_main.Quit)    # Exit
         self.gui_main.btn_run.clicked.connect(self.worker.Server_Connect)     # Runtime
         self.gui_main.btn_notice.clicked.connect(self.Notice_Refresh)     # Notice
-        #self.gui_main.btn_notice.clicked.connect(self.diagnosis.Start)     # 자가진단 기능 테스트용
         self.gui_main.btn_setting.clicked.connect(self.gui_setting.show)     # Setting UI
 
         # Setting GUI
@@ -653,6 +655,10 @@ class Connect(QObject):
         
         # UserSetting GUI
         self.gui_userset.btn_close.clicked.connect(self.User_Cancel)     # UserSet Cancel
+
+        # Diagnosis
+        self.gui_diagnosis.btn_yes.clicked.connect(self.gui_diagnosis.hide)
+        self.gui_diagnosis.btn_yes.clicked.connect(self.diagnosis.Start)
 
         # PyqtSlot
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)     # PyqtSlot Connect
@@ -703,9 +709,9 @@ class Connect(QObject):
                         Middle.Level = JSON_USER['DIAGNOSIS']['Level']
                         Middle.Birth = JSON_USER['DIAGNOSIS']['Birth']
                         Middle.DSPW = JSON_USER['DIAGNOSIS']['PW']
-                        self.diagcheck.show()
+                        self.gui_diagnosis.show()
                     except:
-                        self.diagset.show()
+                        self.gui_diagset.show()
                     finally:
                         J.close()
                 if DB_RES == 0:
@@ -719,6 +725,11 @@ class Connect(QObject):
 
         else:
             self.gui_userset.show()
+
+    def Diagnosis(self):
+        self.gui_diagnosis.hide()
+        self.diagnosis.Start()
+        pass
 
     def Notice_Refresh(self):
         self.gui_main.label.setText(Notice())
