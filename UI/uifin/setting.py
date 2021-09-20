@@ -31,19 +31,19 @@ class Ui_MainWindow(object):
         self.background = QtWidgets.QLabel(self.centralwidget)
         self.background.setGeometry(QtCore.QRect(0, 0, 600, 500))
         self.background.setText("")
-        self.background.setPixmap(QtGui.QPixmap("D:/AdobePJ/XD/ZOSC UI/landscape/Setting.png"))
+        self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/Setting.png"))
         self.background.setObjectName("background")
 
         self.dot = QtWidgets.QLabel(self.centralwidget)
         self.dot.setGeometry(QtCore.QRect(70, 130, 21, 61))
         self.dot.setText("")
-        self.dot.setPixmap(QtGui.QPixmap("D:/AdobePJ/XD/ZOSC UI/elements/•.png"))
+        self.dot.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/•.png"))
         self.dot.setObjectName("dot")
 
         self.dot = QtWidgets.QLabel(self.centralwidget)
         self.dot.setGeometry(QtCore.QRect(70, 200, 21, 61))
         self.dot.setText("")
-        self.dot.setPixmap(QtGui.QPixmap("D:/AdobePJ/XD/ZOSC UI/elements/•.png"))
+        self.dot.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/elements/•.png"))
         self.dot.setObjectName("dot")
 
         """close button"""
@@ -52,8 +52,8 @@ class Ui_MainWindow(object):
         self.btn_close.setObjectName("btn_close")
         self.btn_close.setStyleSheet(
             '''
-            QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/btn.close.png); border:0px;}
-            QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/btn.close.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
             '''
         )
 
@@ -66,8 +66,8 @@ class Ui_MainWindow(object):
         self.btn_useredit.setObjectName("btn_useredit")
         self.btn_useredit.setStyleSheet(
             '''
-            QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/user.reset.png); border:0px;}
-            QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/user.reset.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/user.reset.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/user.reset.active.png); border:0px;}
             '''
         )
 
@@ -80,8 +80,8 @@ class Ui_MainWindow(object):
         self.btn_addurl.setObjectName("btn_addurl")
         self.btn_addurl.setStyleSheet(
             '''
-            QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/add.url.png); border:0px;}
-            QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/add.url.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/add.url.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/add.url.active.png); border:0px;}
             '''
         )
 
@@ -94,8 +94,8 @@ class Ui_MainWindow(object):
         self.btn_info.setObjectName("btn_info")
         self.btn_info.setStyleSheet(
             '''
-            QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/info.png); border:0px;}
-            QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/info.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/info.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/info.active.png); border:0px;}
             '''
         )
         """end"""
@@ -106,8 +106,8 @@ class Ui_MainWindow(object):
         self.btn_devinfo.setObjectName("btn_devinfo")
         self.btn_devinfo.setStyleSheet(
             '''
-            QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/dev.png); border:0px;}
-            QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/dev.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/dev.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resourceI/button/active/dev.active.png); border:0px;}
             '''
         )
 
@@ -119,8 +119,8 @@ class Ui_MainWindow(object):
         self.btn_signout.setObjectName("btn_signout")
         self.btn_signout.setStyleSheet(
             '''
-            QPushButton{image:url(D:/AdobePJ/XD/ZOSC UI/button/normal/signout.png); border:0px;}
-            QPushButton:hover{image:url(D:/AdobePJ/XD/ZOSC UI/button/active/signout.active.png); border:0px;}
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resourceI/button/normal/signout.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/signout.active.png); border:0px;}
             '''
         )
 

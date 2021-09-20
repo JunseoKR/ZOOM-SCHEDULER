@@ -44,6 +44,8 @@ from PyQt5.QtGui import *
 from Main import *
 from UserSet import *
 from Setting import *
+from DiagSet import *
+from Diagnosis import *
 
 
 
@@ -594,6 +596,8 @@ class Connect(QObject):
         self.gui_main = UI_MainWindow()
         self.gui_userset = UI_User()
         self.gui_setting = UI_Setting()
+        self.diagset = UI_DiagSet()
+        self.diagcheck = UI_Diagnosis()
 
         Version()
 
@@ -680,11 +684,11 @@ class Connect(QObject):
             Middle.URID = JSON_USER['USER']['URID']
             Middle.PW = JSON_USER['USER']['PW']
             Middle.ID = Middle.Grade+Middle.Class+Middle.Number
-            Middle.City = JSON_USER['DIAGNOSIS']['City']
-            Middle.Level = JSON_USER['DIAGNOSIS']['Level']
-            Middle.Birth = JSON_USER['DIAGNOSIS']['Birth']
-            Middle.DSPW = JSON_USER['DIAGNOSIS']['PW']
-            J.close()
+            #Middle.City = JSON_USER['DIAGNOSIS']['City']
+            #Middle.Level = JSON_USER['DIAGNOSIS']['Level']
+            #Middle.Birth = JSON_USER['DIAGNOSIS']['Birth']
+            #Middle.DSPW = JSON_USER['DIAGNOSIS']['PW']
+            
 
             try:
                 with DB_ZOSC.cursor() as self.cursor:
@@ -694,6 +698,16 @@ class Connect(QObject):
                 if DB_RES == 1:
                     self.gui_main.show()
                     self.Welcome()
+                    try:
+                        Middle.City = JSON_USER['DIAGNOSIS']['City']
+                        Middle.Level = JSON_USER['DIAGNOSIS']['Level']
+                        Middle.Birth = JSON_USER['DIAGNOSIS']['Birth']
+                        Middle.DSPW = JSON_USER['DIAGNOSIS']['PW']
+                        self.diagcheck.show()
+                    except:
+                        self.diagset.show()
+                    finally:
+                        J.close()
                 if DB_RES == 0:
                     print("[DATA ERROR] MySQL DATA NOT FOUND!")
                     sys.exit()

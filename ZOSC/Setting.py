@@ -18,63 +18,63 @@ class UI_Setting(QMainWindow):
 
     def setupUi(self, MainWindow):
 
-            MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        MainWindow.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.setWindowIcon(icon)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/icon.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.setWindowIcon(icon)
 
-            self.setObjectName("설정")
-            self.resize(600, 500)
-            self.setMinimumSize(QtCore.QSize(600, 500))
-            self.center()
+        self.setObjectName("설정")
+        self.resize(600, 500)
+        self.setMinimumSize(QtCore.QSize(600, 500))
+        self.center()
 
-            self.centralwidget = QtWidgets.QWidget(MainWindow)
-            self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
             
-            self.background = QtWidgets.QLabel(self.centralwidget)
-            self.background.setGeometry(QtCore.QRect(0, 0, 600, 500))
-            self.background.setText("")
-            self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/Setting.png"))
-            self.background.setObjectName("background")
+        self.background = QtWidgets.QLabel(self.centralwidget)
+        self.background.setGeometry(QtCore.QRect(0, 0, 600, 500))
+        self.background.setText("")
+        self.background.setPixmap(QtGui.QPixmap("C:/GitHub/ZOOM-SCHEDULER/UI/resource/landscape/Setting.png"))
+        self.background.setObjectName("background")
 
-            """close button"""
-            self.btn_close = QtWidgets.QPushButton(self.centralwidget)
-            self.btn_close.setGeometry(QtCore.QRect(540, 10, 40, 20))
-            self.btn_close.setObjectName("btn_close")
-            self.btn_close.setStyleSheet(
-                '''
-                QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
-                QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
-                '''
-            )
-
-            """end"""
-
-            self.btn_info = QtWidgets.QPushButton(self.centralwidget)
-            self.btn_info.setGeometry(QtCore.QRect(515, 440, 41, 23))
-            self.btn_info.setObjectName("btn_info")
-            self.btn_info.setStyleSheet(
-                '''
-                QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/info.png); border:0px;}
-                QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/info.active.png); border:0px;}
-                '''
-            )
-
-            self.btn_reset = QtWidgets.QPushButton(self.centralwidget)
-            self.btn_reset.setGeometry(QtCore.QRect(40, 150, 140, 61))
-            self.btn_reset.setObjectName("btn_reset")
-            self.btn_reset.setStyleSheet(
-                '''
-                QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.reset.png); border:0px;}
-                QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.reset.active.png); border:0px;}
-                '''
+        """close button"""
+        self.btn_close = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_close.setGeometry(QtCore.QRect(540, 10, 40, 20))
+        self.btn_close.setObjectName("btn_close")
+        self.btn_close.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.close.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.close.active.png); border:0px;}
+            '''
         )
 
-            MainWindow.setCentralWidget(self.centralwidget)
+        """end"""
 
-            self.retranslateUi(MainWindow)
-            QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.btn_info = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_info.setGeometry(QtCore.QRect(515, 440, 41, 23))
+        self.btn_info.setObjectName("btn_info")
+        self.btn_info.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/info.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/info.active.png); border:0px;}
+            '''
+        )
+
+        self.btn_reset = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_reset.setGeometry(QtCore.QRect(40, 150, 140, 61))
+        self.btn_reset.setObjectName("btn_reset")
+        self.btn_reset.setStyleSheet(
+            '''
+            QPushButton{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/normal/btn.reset.png); border:0px;}
+            QPushButton:hover{image:url(C:/GitHub/ZOOM-SCHEDULER/UI/resource/button/active/btn.reset.active.png); border:0px;}
+            '''
+    )
+
+        self.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
 
