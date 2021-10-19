@@ -47,7 +47,7 @@ class UI_MainWindow(QMainWindow):    # Main UI
         self.label.setText(Notice())
 
         self.RunState = QtWidgets.QLabel(self.centralwidget)
-        self.RunState.setGeometry(QtCore.QRect(765, 515, 280, 40)) # (x, y, w, h)
+        self.RunState.setGeometry(QtCore.QRect(575, 580, 280, 40)) # (x, y, w, h) (765, 515, 280, 40)
         self.RunState.setFont(QtGui.QFont("Noto Sans CJK KR Medium",15))
         self.RunState.setStyleSheet("Color : Black")
         self.RunState.setAlignment(Qt.AlignHCenter)
