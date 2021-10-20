@@ -388,8 +388,6 @@ class Worker(QObject):
 
 
 
-
-
 """ [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
 
 class Middle(QObject):
@@ -409,7 +407,6 @@ class Middle(QObject):
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
-
 
 
 
@@ -659,6 +656,7 @@ class Connect(QObject):
         # Diagnosis
         self.gui_diagnosis.btn_yes.clicked.connect(self.gui_diagnosis.hide)
         self.gui_diagnosis.btn_yes.clicked.connect(self.diagnosis.Start)
+        self.gui_diagnosis.btn_close.clicked.connect(self.gui_diagnosis.hide)
 
         # PyqtSlot
         self.worker.sig_numbers.connect(self.gui_main.updateStatus)     # PyqtSlot Connect
@@ -783,8 +781,7 @@ class Connect(QObject):
                 2000
             )
         time.sleep(3)
-        sys.exit()    # 재사용
-
+        sys.exit()
 
 
 

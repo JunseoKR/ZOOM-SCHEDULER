@@ -97,7 +97,6 @@ class UI_Diagnosis(QMainWindow):
             '''
         )
         """end"""
-        self.btn_close.clicked.connect(QCoreApplication.instance().quit)
 
         """yes button"""
         self.btn_yes = QtWidgets.QPushButton(self.centralwidget)
