@@ -20,7 +20,7 @@ import pymysql
 import requests    # requests
 import urllib.request
 from urllib.parse import quote
-# Selenium or Web Modules
+# Selenium / Web Modules
 import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -40,7 +40,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
-# UI Modules
+# UI Modules (*.py)
 from Main import *
 from UserSet import *
 from Setting import *
@@ -51,7 +51,6 @@ from Diagnosis import *
 
 
 
-""" -----------------------------------------------------------------------------------------------------------------------------------"""
 
 # ======================================================================================== #
 # =================================== [ ZOSC 버전 확인 ] ===================================== #
@@ -67,7 +66,7 @@ curVer = "3.0"
 
 
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
-# Support Section =========================================================================
+# Support Section ==============================================================================
 def Support():
     SupportChat = "https://open.kakao.com/o/s2HyPjpc"
     webbrowser.open(SupportChat)
@@ -76,11 +75,7 @@ def P_Insert():
     Link = "http://nwjun.com/ZOSC"
     webbrowser.open(Link)
 
-# Method Section =========================================================================
-
-# 지원
-
-
+# System Check Section =========================================================================
 # 서버 상태 확인
 def Server_Check():
     def Server_Warn():
@@ -122,6 +117,7 @@ def Version():
         return
 
     else:
+        print("ZOSC Update Required")
         sys.exit()
 
 # 공지 로딩
@@ -138,8 +134,8 @@ def Notice():
 
 
 
-# DB SECTION ===========================================================================
-
+# DB SECTION =================================================================================
+# DB ZOSC Connection
 try:
     DB_ZOSC = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ZOSC', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
@@ -149,6 +145,7 @@ except:
     toaster.show_toast("ZOSC DATA 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=3, threaded=True, callback_on_click=Support)
     sys.exit()
 
+# DB ANALYSIS Connection
 try:
     DB_ANALYSIS = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ANALYSIS', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
@@ -160,9 +157,7 @@ except:
 
 
 
-
-""" [ ZOSC Analysis ] -------------------------------------------------------------------------------------------------------------------- """
-
+# Class ANALYTIC ================================================================================
 class Analytic(QObject):
 
     def __init__(self, parent=None):
@@ -203,10 +198,10 @@ class Analytic(QObject):
         JSON_ANALYSIS = requests.get(REQURL).json()
         DATA = JSON_ANALYSIS['Analysis']['Process']
         threading.Timer(5, Check).start()
-        
 
 
-""" [ ZOSC RunTime ] ------------------------------------------------------------------------------------------------------------------- """
+
+# Class WORKER ================================================================================
 # sig_numbers 문제 해결 필요 / 오류 처리 필요
 class Worker(QObject):
     sig_numbers = pyqtSignal(str)
@@ -388,8 +383,7 @@ class Worker(QObject):
 
 
 
-""" [ Connect ] -------------------------------------------------------------------------------------------------------------------- """
-
+# Class MIDDLE =================================================================================
 class Middle(QObject):
 
     # Class 변수 선언
@@ -410,6 +404,7 @@ class Middle(QObject):
 
 
 
+# Class DIAGNOSIS ===============================================================================
 class Diagnosis(QObject):
 
     def __init__(self, parent=None):
@@ -589,6 +584,7 @@ class Diagnosis(QObject):
 
 
 
+# Class CONNECT(Main) ==========================================================================
 class Connect(QObject):
 
     def __init__(self, parent=None):
@@ -785,8 +781,7 @@ class Connect(QObject):
 
 
 
-""" -----------------------------------------------------------------------------------------------------------------------------------"""
-
+# ===============================================================================================
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     MainWindow = QMainWindow()
