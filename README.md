@@ -6,29 +6,6 @@
 ---------------------------------------
 ---------------------------------------
 
-## Korea HighSchool ZOOM Class Auto Entry
-
-
-
-
-
-### English
-**This program is co-project to reorganize it in Python, and you can find the program currently being released at the link below.**
-
-<br/>
-
-[ZOSC Release](https://develop-junseo.tistory.com "Developer Page")
-
-<br/>
-<br/>
-<br/>
-[ Developer ]<br/>
-
-* JunseoKR<br/>
-
-
----------------------------------------
-
 ## 온라인 줌 수업 자동 참여
 
 ### Korean
