@@ -136,8 +136,11 @@ def Notice():
 
 # DB SECTION =================================================================================
 # DB ZOSC Connection
+
+# Ubuntu Server has been reset.
+
 try:
-    DB_ZOSC = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ZOSC', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
+    DB_ZOSC = pymysql.connect(host='Deleted', user='Deleted', passwd='Deleted', db='Deleted', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
 except:
     print("[ ZOSC ] MySQL SERVER ERROR")
@@ -147,7 +150,7 @@ except:
 
 # DB ANALYSIS Connection
 try:
-    DB_ANALYSIS = pymysql.connect(host='zosc.iptime.org', user='ZOSC', passwd='JunseoKR', db='ANALYSIS', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
+    DB_ANALYSIS = pymysql.connect(host='Deleted', user='Deleted', passwd='Deleted', db='Deleted', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
 except:
     print("[ ANALYSIS ] MySQL SERVER ERROR")
