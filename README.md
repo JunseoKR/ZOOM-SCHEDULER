@@ -117,5 +117,5 @@
 ## 프로젝트 멤버
 ### [태장고등학교] 홍준서
 - [JunseoKR](https://github.com/JunseoKR)
-- [Developer Page](nwjun.com)
+- [Developer Page](http://nwjun.com)
 - [Instagram](https://www.instagram.com/hungry_junseo)
