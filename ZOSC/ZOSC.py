@@ -68,11 +68,11 @@ curVer = "3.0"
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
 # Support Section ==============================================================================
 def Support():
-    SupportChat = "https://open.kakao.com/o/s2HyPjpc"
+    SupportChat = "Support URL"
     webbrowser.open(SupportChat)
 
 def P_Insert():
-    Link = "http://nwjun.com/ZOSC"
+    Link = "Webpage URL"
     webbrowser.open(Link)
 
 # System Check Section =========================================================================
@@ -83,7 +83,7 @@ def Server_Check():
         toaster.show_toast("ZOSC 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
 
     # SERVER Check
-    SERVERURL = 'http://zosc.iptime.org/'
+    SERVERURL = 'Server IP'
     try:
         RES = requests.head(url=SERVERURL, timeout=3)
         CHECK = RES.status_code
@@ -108,7 +108,7 @@ Server_Check()
 # 버전 체크
 def Version():
     # 경로 지정
-    REQURL = "http://zosc.iptime.org/ZOSC/Data/Set"    # Version Check 파일 경로 ( NodeJS 서버 )
+    REQURL = "Version Req"    # Version Check 파일 경로 ( NodeJS 서버 )
     JSON_SET = requests.get(REQURL).json()
     UpdateVer = JSON_SET['zosc']['version']
     print("Current Version : "+curVer+"\nServer Version : "+UpdateVer)
@@ -122,7 +122,7 @@ def Version():
 
 # 공지 로딩
 def Notice():
-    REQURL = "http://zosc.iptime.org/ZOSC/Data/Notice"
+    REQURL = "Notice Req"
     REQPATH = "C:\\ZOOM SCHEDULER\\Notice.txt"
     urllib.request.urlretrieve(REQURL, REQPATH)
     # 파일 읽기
@@ -197,7 +197,7 @@ class Analytic(QObject):
                     pass
             threading.Timer(300, Check).start()
 
-        REQURL = "http://zosc.iptime.org/ZOSC/Data/Analysis"
+        REQURL = "Process List Req"
         JSON_ANALYSIS = requests.get(REQURL).json()
         DATA = JSON_ANALYSIS['Analysis']['Process']
         threading.Timer(5, Check).start()
@@ -339,9 +339,9 @@ class Worker(QObject):
                 # TimeTable Data Request
                 self.sig_numbers.emit("Data Request")
                 try:
-                    REQ_URL = "http://zosc.iptime.org/ZOSC/Data/" + str(Middle.Grade) + "/" + str(Middle.Class)    # TimeTable Request URL
+                    REQ_URL = "TimeTable Data Req" + str(Middle.Grade) + "/" + str(Middle.Class)    # TimeTable Request URL
                     TimeTable = requests.get(REQ_URL).json()    # TimeTable Request
-                    REQ_TIME = requests.get('http://zosc.iptime.org/ZOSC/Data/Time').json()    # Time Set Request
+                    REQ_TIME = requests.get('TimeTable Data Req').json()    # Time Set Request
 
                     # 수업시간 처리
                     for i in range(1, 8):
@@ -742,7 +742,7 @@ class Connect(QObject):
         return
 
     def Information(self):
-        InfoURL = 'http://nwjun.com'
+        InfoURL = 'Information URL'
         webbrowser.open(InfoURL)
         
     def User_Cancel(self):
