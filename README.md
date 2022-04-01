@@ -121,7 +121,7 @@
 ### [태장고등학교] 홍준서 (Hong Junseo)
 - [JunseoKR](https://github.com/JunseoKR)
 - [Developer Page](http://nwjun.com)
-- [Instagram](https://www.instagram.com/hungry_junseo)
+- jsfun413@gmail.com
 
 ### [태장고등학교] 이세원 (Lee Sewon)
 - [sewonl](https://github.com/sewonl)
