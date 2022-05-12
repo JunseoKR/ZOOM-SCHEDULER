@@ -79,9 +79,51 @@
 #### 3. 자가진단
   - 앱 내에서 자가진단을 요청(제출)하면, Selenium 모듈을 통해 백그라운드로 처리함.
 
-## [SW공모전 보고서](https://drive.google.com/file/d/1-c5rdFHXZJQZJyS0UNvzL1iMwIsELFLL/view?usp=sharing)
+<br/>
+<br/>
+<br/>
+
+- - -
+
+## 🔗 프로젝트 구조
+
+### 전체 구조
+
+![전체 구조](https://user-images.githubusercontent.com/70479192/167988020-990e3824-e24e-4ea1-a441-7085c9dd4ff8.jpg)
 
 <br/>
+
+### Class 구조
+
+![Class 구조](https://user-images.githubusercontent.com/70479192/167988129-73069ab7-bed6-4c2e-975b-fe143682f646.jpg)
+
+
+<br/>
+<br/>
+<br/>
+
+- - -
+
+## 📄 프로젝트 보고서
+### SW공모전 본선 보고서
+
+<br/>
+
+![ZOSC 보고서](https://user-images.githubusercontent.com/70479192/167986241-44a9a238-367f-4c8b-bfb9-e9a7e4234002.jpg)
+
+<h2><a href='https://drive.google.com/file/d/1-c5rdFHXZJQZJyS0UNvzL1iMwIsELFLL/view?usp=sharing' target='_blank'><div align="center">
+  📄 프로젝트 보고서
+</div></a></h2>
+
+<h3><b><div align="center">
+  자세한 프로젝트 내용은 보고서를 확인해 주세요.
+</div></b></h3>
+
+<br/>
+<br/>
+<br/>
+
+- - -
 
 ## 🛠 기술 스택
 
@@ -96,16 +138,6 @@
 
 <br/>
 <br/>
-<br/>
-
-- - -
-
-<h1><b><div align="center">
-  수정 진행중
-</div></b></h1>
-
-- - -
-
 <br/>
 <br/>
 <br/>
