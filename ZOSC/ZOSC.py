@@ -127,10 +127,11 @@ def Notice():
 
 
 # DB SECTION =================================================================================
-# DB ZOSC Connection
 
 # Ubuntu Server has been reset.
 
+
+# DB ZOSC Connection
 try:
     DB_ZOSC = pymysql.connect(host='Deleted', user='Deleted', passwd='Deleted', db='Deleted', charset='utf8', autocommit=True, cursorclass=pymysql.cursors.DictCursor)
     pass
@@ -315,7 +316,7 @@ class Worker(QObject):
 
             # Request ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
-            # SET
+            # Set
             DAY_ = 3
             ZOOM = []
             MEET = []
