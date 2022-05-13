@@ -51,16 +51,8 @@ from Diagnosis import *
 
 
 
-
-# ======================================================================================== #
-# =================================== [ ZOSC 버전 확인 ] ===================================== #
-# ======================================================================================== #
-
+# ZOSC Version
 curVer = "3.0"
-
-# ======================================================================================== #
-# ==================================== [ 버전 꼭 확인! ] ====================================== #
-# ======================================================================================== #
 
 
 
@@ -68,11 +60,11 @@ curVer = "3.0"
 """ -----------------------------------------------------------------------------------------------------------------------------------"""
 # Support Section ==============================================================================
 def Support():
-    SupportChat = "Support URL"
+    SupportChat = "!& Support URL"
     webbrowser.open(SupportChat)
 
 def P_Insert():
-    Link = "Webpage URL"
+    Link = "!& Webpage URL"
     webbrowser.open(Link)
 
 # System Check Section =========================================================================
@@ -83,7 +75,7 @@ def Server_Check():
         toaster.show_toast("ZOSC 서버 오류", "여기을 누르시면 지원 채팅으로 이동합니다.", icon_path="C:\\GitHub\\ZOOM-SCHEDULER\\UI\\resource\\Support.ico", duration=7, threaded=True, callback_on_click=Support)
 
     # SERVER Check
-    SERVERURL = 'Server IP'
+    SERVERURL = '!& Server IP'
     try:
         RES = requests.head(url=SERVERURL, timeout=3)
         CHECK = RES.status_code
@@ -108,7 +100,7 @@ Server_Check()
 # 버전 체크
 def Version():
     # 경로 지정
-    REQURL = "Version Req"    # Version Check 파일 경로 ( NodeJS 서버 )
+    REQURL = "!& Version Req"    # Version Check 파일 경로 ( NodeJS 서버 )
     JSON_SET = requests.get(REQURL).json()
     UpdateVer = JSON_SET['zosc']['version']
     print("Current Version : "+curVer+"\nServer Version : "+UpdateVer)
@@ -122,7 +114,7 @@ def Version():
 
 # 공지 로딩
 def Notice():
-    REQURL = "Notice Req"
+    REQURL = "!& Notice Req"
     REQPATH = "C:\\ZOOM SCHEDULER\\Notice.txt"
     urllib.request.urlretrieve(REQURL, REQPATH)
     # 파일 읽기
