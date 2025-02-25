@@ -29,10 +29,6 @@
 
 <br/>
 
-- - -
-
-<br/>
-
 ## ZOSC 기능
 
 ### 1. 온라인 수업 자동 참여
@@ -51,8 +47,6 @@
 <br/>
 
 <br/>
-
-- - -
 
 ## 💻 프로젝트 소개
 
@@ -135,28 +129,3 @@
 - JavaScript
 - Node.js
 - MySQL
-
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-- - -
-
-## ZOSC 공식 페이지
-
-### [ZOSC 공식 페이지](https://nurous.com "Developer Page")
-
-<br/>
-
-- - -
-
-## 프로젝트 멤버
-### [태장고등학교] 홍준서 (Hong Junseo)
-- [JunseoKR](https://github.com/JunseoKR)
-- [Developer Page](http://nwjun.com)
-- jsfun413@gmail.com
-
-### [태장고등학교] 이세원 (Lee Sewon)
-- [sewonl](https://github.com/sewonl)
